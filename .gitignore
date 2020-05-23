@@ -3,13 +3,11 @@
 *.war
 *.ear
 
-*.class
+#*.class
 
 .idea/
 *.iml
-.DS_Store
 
-nb-configuration.xml
 .checkstyle
 .classpath
 .project
