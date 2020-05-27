@@ -1,4 +1,4 @@
-package employee;
+package eu.senla.course.employee;
 
 public class TeamLead extends Employee {
     private double rate;

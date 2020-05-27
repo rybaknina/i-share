@@ -1,14 +1,14 @@
-package tank.test;
+package eu.senla.course.tank.test;
 
-import tank.IAssemblyLine;
-import tank.entity.Engine;
-import tank.entity.Hull;
-import tank.entity.Tank;
-import tank.entity.Turret;
-import tank.line.AssemblyLine;
-import tank.line.EngineLineStep;
-import tank.line.HullLineStep;
-import tank.line.TurretLineStep;
+import eu.senla.course.tank.entity.Tank;
+import eu.senla.course.tank.line.EngineLineStep;
+import eu.senla.course.tank.IAssemblyLine;
+import eu.senla.course.tank.entity.Engine;
+import eu.senla.course.tank.entity.Hull;
+import eu.senla.course.tank.entity.Turret;
+import eu.senla.course.tank.line.AssemblyLine;
+import eu.senla.course.tank.line.HullLineStep;
+import eu.senla.course.tank.line.TurretLineStep;
 
 /**
  * @author Nina Rybak

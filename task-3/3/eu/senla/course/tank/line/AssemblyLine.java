@@ -1,10 +1,10 @@
-package tank.line;
+package eu.senla.course.tank.line;
 
-import tank.IAssemblyLine;
-import tank.IProduct;
-import tank.entity.Engine;
-import tank.entity.Hull;
-import tank.entity.Turret;
+import eu.senla.course.tank.IAssemblyLine;
+import eu.senla.course.tank.IProduct;
+import eu.senla.course.tank.entity.Engine;
+import eu.senla.course.tank.entity.Hull;
+import eu.senla.course.tank.entity.Turret;
 
 public class AssemblyLine implements IAssemblyLine {
     private Hull hull;

@@ -1,4 +1,4 @@
-package random;
+package eu.senla.course.random;
 
 import java.util.Random;
 

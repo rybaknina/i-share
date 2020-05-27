@@ -1,4 +1,4 @@
-package random;
+package eu.senla.course.random;
 
 /**
  * @author Nina Rybak

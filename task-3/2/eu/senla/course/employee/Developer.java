@@ -1,6 +1,4 @@
-package employee;
-
-import employee.Employee;
+package eu.senla.course.employee;
 
 public class Developer extends Employee {
 

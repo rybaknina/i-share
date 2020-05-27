@@ -1,8 +1,8 @@
-package tank.line;
+package eu.senla.course.tank.line;
 
-import tank.ILineStep;
-import tank.IProductPart;
-import tank.entity.Hull;
+import eu.senla.course.tank.ILineStep;
+import eu.senla.course.tank.IProductPart;
+import eu.senla.course.tank.entity.Hull;
 
 public class HullLineStep implements ILineStep {
     @Override

@@ -1,4 +1,4 @@
-package employee;
+package eu.senla.course.employee;
 
 public abstract class Employee{
     private String name;

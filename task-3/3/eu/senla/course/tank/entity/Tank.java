@@ -1,7 +1,7 @@
-package tank.entity;
+package eu.senla.course.tank.entity;
 
-import tank.IProduct;
-import tank.IProductPart;
+import eu.senla.course.tank.IProduct;
+import eu.senla.course.tank.IProductPart;
 
 public class Tank implements IProduct {
     private Hull hull;

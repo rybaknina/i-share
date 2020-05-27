@@ -1,4 +1,4 @@
-package employee;
+package eu.senla.course.employee;
 
 /**
  * @author Nina Rybak
