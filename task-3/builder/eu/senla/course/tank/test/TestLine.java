@@ -1,12 +1,12 @@
 package eu.senla.course.tank.test;
 
+import eu.senla.course.tank.line.AssemblyLine;
 import eu.senla.course.tank.entity.Tank;
 import eu.senla.course.tank.line.EngineLineStep;
 import eu.senla.course.tank.IAssemblyLine;
 import eu.senla.course.tank.entity.Engine;
 import eu.senla.course.tank.entity.Hull;
 import eu.senla.course.tank.entity.Turret;
-import eu.senla.course.tank.line.AssemblyLine;
 import eu.senla.course.tank.line.HullLineStep;
 import eu.senla.course.tank.line.TurretLineStep;
 

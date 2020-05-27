@@ -1,11 +1,11 @@
 package eu.senla.course.employee;
 
-public abstract class Employee{
+public abstract class AEmployee {
     private String name;
     private String securityNumber;
     private double salary;
 
-    public Employee(String name, String securityNumbet, double salary) {
+    public AEmployee(String name, String securityNumbet, double salary) {
         this.name = name;
         this.securityNumber = securityNumbet;
         this.salary = salary;
@@ -37,7 +37,7 @@ public abstract class Employee{
 
     @Override
     public String toString() {
-        return "Employee " +
+        return "AEmployee " +
                 "name = \"" + name + "\"" +
                 ", Ssecurity Number = " + securityNumber +
                 ", salary = " + salary;

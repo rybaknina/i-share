@@ -1,4 +1,6 @@
-package eu.senla.course.random;
+package eu.senla.course;
+
+import eu.senla.course.random.SumThreeDigitNumber;
 
 /**
  * @author Nina Rybak

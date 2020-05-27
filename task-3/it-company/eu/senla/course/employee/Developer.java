@@ -1,6 +1,6 @@
 package eu.senla.course.employee;
 
-public class Developer extends Employee {
+public class Developer extends AEmployee {
 
     private double rate;
 

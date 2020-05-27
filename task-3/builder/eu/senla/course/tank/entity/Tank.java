@@ -4,9 +4,9 @@ import eu.senla.course.tank.IProduct;
 import eu.senla.course.tank.IProductPart;
 
 public class Tank implements IProduct {
-    private Hull hull;
-    private Engine engine;
-    private Turret turret;
+    public Hull hull;
+    protected Engine engine;
+    protected Turret turret;
 
     @Override
     public void installFirstPart(IProductPart firstProductPart) {

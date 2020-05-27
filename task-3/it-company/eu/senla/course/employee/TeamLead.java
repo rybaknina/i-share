@@ -1,6 +1,6 @@
 package eu.senla.course.employee;
 
-public class TeamLead extends Employee {
+public class TeamLead extends AEmployee {
     private double rate;
     private double bonus;
     private Developer[] developers;
