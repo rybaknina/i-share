@@ -2,27 +2,23 @@ package eu.senla.course.tank.line;
 
 import eu.senla.course.tank.IAssemblyLine;
 import eu.senla.course.tank.IProduct;
-import eu.senla.course.tank.entity.Engine;
-import eu.senla.course.tank.entity.Hull;
-import eu.senla.course.tank.entity.Tank;
-import eu.senla.course.tank.entity.Turret;
-
+import eu.senla.course.tank.IProductPart;
 
 public class TankAssemblyLine implements IAssemblyLine {
-    private Hull hull;
-    private Engine engine;
-    private Turret turret;
+    private IProductPart hull;
+    private IProductPart engine;
+    private IProductPart turret;
 
-    public TankAssemblyLine(Hull hull, Engine engine, Turret turret) {
+    public TankAssemblyLine(IProductPart hull, IProductPart engine, IProductPart turret) {
         this.hull = hull;
         this.engine = engine;
         this.turret = turret;
     }
 
     @Override
-    public Tank assembleProduct(IProduct tank) {
+    public IProduct assembleProduct(IProduct tank) {
 
-        System.out.println("Start of tank building.\n");
+        System.out.println("\nStart of tank building.\n");
 
         tank.installFirstPart(hull);
         tank.installSecondPart(engine);
@@ -30,6 +26,6 @@ public class TankAssemblyLine implements IAssemblyLine {
 
         System.out.println("\nComplete the tank.");
 
-        return (Tank) tank;
+        return tank;
     }
 }

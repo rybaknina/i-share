@@ -5,7 +5,7 @@ public class SumThreeDigitNumber {
     private int number;
     private int sum;
 
-    public SumThreeDigitNumber(int number, int sum) {
+    public SumThreeDigitNumber(int number) {
         this.number = number;
         this.sum = sumDigitsInNumber(number);
     }

@@ -13,8 +13,8 @@ import eu.senla.course.random.SumThreeDigitNumber;
 public class TestSumDigits {
     public static void main(String[] args) {
 
-        SumThreeDigitNumber sumThreeDigitNumber = new SumThreeDigitNumber(new Generator().generateNumber(), 0);
-        
+        SumThreeDigitNumber sumThreeDigitNumber = new SumThreeDigitNumber(new Generator().generateNumber());
+
         System.out.println(sumThreeDigitNumber.toString());
     }
 }

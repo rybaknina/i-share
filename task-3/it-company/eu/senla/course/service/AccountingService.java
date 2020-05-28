@@ -5,8 +5,8 @@ import eu.senla.course.entity.Employee;
 public class AccountingService {
     private double currentMonthSalary;
 
-    public AccountingService(double currentMonthSalary) {
-        this.currentMonthSalary = currentMonthSalary;
+    public AccountingService() {
+        this.currentMonthSalary = 0;
     }
 
     public double sumCurrentMonthSalary(Employee[] employees){

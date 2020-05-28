@@ -32,6 +32,6 @@ public class TestCreateService {
 
         System.out.println(company.toString());
 
-        System.out.println("\nSalary payments per month " + new AccountingService(0).sumCurrentMonthSalary(employees));
+        System.out.println("\nSalary payments per month " + new AccountingService().sumCurrentMonthSalary(employees));
     }
 }

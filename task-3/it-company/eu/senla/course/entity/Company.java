@@ -12,12 +12,13 @@ public class Company {
 
         if (employees[MAX_NUMBER_OF_STAFF - 1] != null) {
             System.out.println("\nDear, " + employee.getName() + ". Company has no vacancy now. Try again later..\n");
-            return;
         }
-        for (int i = 0; i < MAX_NUMBER_OF_STAFF; i++){
-            if (employees[i] == null){
-                employees[i] = employee;
-                break;
+        else {
+            for (int i = 0; i < MAX_NUMBER_OF_STAFF; i++) {
+                if (employees[i] == null) {
+                    employees[i] = employee;
+                    break;
+                }
             }
         }
     }
