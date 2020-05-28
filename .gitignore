@@ -3,7 +3,7 @@
 *.war
 *.ear
 
-#*.class
+*.class
 
 .idea/
 *.iml
@@ -13,6 +13,7 @@
 .project
 .settings/
 .springBeans
+**/out/**
 **/bin/**
 **/testbin/**
 **/target/**
