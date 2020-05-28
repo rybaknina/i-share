@@ -1,15 +1,15 @@
 package eu.senla.course.random;
 
-import java.util.Random;
-
-
 public class SumThreeDigitNumber {
-    private static final int RANDOM_MIN = 100;
-    private static final int RANDOM_MAX = 999;
 
-    public int generateNumber(){
-        return new Random().nextInt(RANDOM_MAX - RANDOM_MIN + 1) + RANDOM_MIN;
+    private int number;
+    private int sum;
+
+    public SumThreeDigitNumber(int number, int sum) {
+        this.number = number;
+        this.sum = sumDigitsInNumber(number);
     }
+
     public int sumDigitsInNumber(int number){
         int sum = 0;
         do {
@@ -19,8 +19,9 @@ public class SumThreeDigitNumber {
         return sum;
     }
 
-    public void printNumber(int randomNumber, int sumDigits) {
-        System.out.printf("Random number: %s%nSum of numbers: %s%n", randomNumber, sumDigits);
+    @Override
+    public String toString() {
+        return "Random number = " + number +
+                "\nSum of numbers = " + sum;
     }
-
 }

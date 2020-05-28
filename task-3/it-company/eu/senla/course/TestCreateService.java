@@ -1,9 +1,10 @@
 package eu.senla.course;
 
-import eu.senla.course.employee.AEmployee;
-import eu.senla.course.employee.Developer;
-import eu.senla.course.employee.TeamLead;
-import eu.senla.course.service.CompanyService;
+import eu.senla.course.entity.Company;
+import eu.senla.course.entity.Employee;
+import eu.senla.course.entity.Developer;
+import eu.senla.course.entity.TeamLead;
+import eu.senla.course.service.AccountingService;
 
 /**
  * @author Nina Rybak
@@ -14,30 +15,23 @@ import eu.senla.course.service.CompanyService;
 
 public class TestCreateService {
 
-    private static final int MAX_NUMBER_OF_STAFF = 4;
-
     public static void main(String[] args) {
 
-        Developer[] developers = new Developer[3];
-        AEmployee developer1 = developers[0] = new Developer("Developer Senior", "3150489A001PB0", 1000.55, 2.5);
-        AEmployee developer2 = developers[1] = new Developer("Developer Middle", "3230792A002PB0", 555.2, 2);
-        AEmployee developer3 = developers[2] = new Developer("Developer Junior", "3220491A003PB2", 400, 1);
-        AEmployee teamLead = new TeamLead("Team Lead", "3250185A003PB1", 1200, 3, 125);
-        ((TeamLead) teamLead).setDevelopers(developers);
+        Employee[] employees = new Employee[5];
+        Company company = new Company();
 
-        AEmployee[] staff = new AEmployee[MAX_NUMBER_OF_STAFF];
+        employees[0] = new Developer("Developer Senior", "3150489A001PB0", 1000.55, 2.5);
+        employees[1] = new Developer("Developer Middle", "3230792A002PB0", 555.2, 2);
+        employees[2] = new Developer("Developer Junior", "3220491A003PB2", 400, 1);
+        employees[3] = new TeamLead("Team Lead", "3250185A003PB1", 1200, 3, 125);
+        employees[4] = new TeamLead("Team Lead assisstant", "3250183A003PB1", 1000, 1, 110);
 
-        CompanyService company = new CompanyService(staff);
-        company.orderEmployee(developer1);
-        company.orderEmployee(developer2);
-        company.orderEmployee(developer3);
+        for (int i= 0; i< employees.length; i++){
+            company.addEmployee(employees[i]);
+        }
 
-        company.orderEmployee(teamLead);
+        System.out.println(company.toString());
 
-        company.orderEmployee(new TeamLead("Team Lead assisstant", "3250183A003PB1", 1000, 1, 110));
-
-        company.printEmployees();
-
-        System.out.println("\nSalary payments per month " + company.sumCurrentMonthSalary(staff));
+        System.out.println("\nSalary payments per month " + new AccountingService(0).sumCurrentMonthSalary(employees));
     }
 }

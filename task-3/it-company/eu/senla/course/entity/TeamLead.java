@@ -1,6 +1,6 @@
-package eu.senla.course.employee;
+package eu.senla.course.entity;
 
-public class TeamLead extends AEmployee {
+public class TeamLead extends Employee {
     private double rate;
     private double bonus;
     private Developer[] developers;
@@ -48,6 +48,6 @@ public class TeamLead extends AEmployee {
                 ", Base salary = " + super.getSalary() +
                 ", Salary per month = " + getSalary() +
                 " with rate = " + rate +
-                " and bonus = " + bonus;
+                " and bonus = " + bonus + "\n";
     }
 }

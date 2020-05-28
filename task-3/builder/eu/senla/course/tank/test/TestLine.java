@@ -1,6 +1,6 @@
 package eu.senla.course.tank.test;
 
-import eu.senla.course.tank.line.AssemblyLine;
+import eu.senla.course.tank.line.TankAssemblyLine;
 import eu.senla.course.tank.entity.Tank;
 import eu.senla.course.tank.line.EngineLineStep;
 import eu.senla.course.tank.IAssemblyLine;
@@ -25,7 +25,7 @@ public class TestLine {
 
         System.out.println();
 
-        IAssemblyLine line = new AssemblyLine(hull, engine, turret);
+        IAssemblyLine line = new TankAssemblyLine(hull, engine, turret);
 
         line.assembleProduct(new Tank());
     }

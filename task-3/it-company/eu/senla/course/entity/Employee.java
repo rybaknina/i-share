@@ -1,11 +1,11 @@
-package eu.senla.course.employee;
+package eu.senla.course.entity;
 
-public abstract class AEmployee {
+public class Employee {
     private String name;
     private String securityNumber;
     private double salary;
 
-    public AEmployee(String name, String securityNumbet, double salary) {
+    public Employee(String name, String securityNumbet, double salary) {
         this.name = name;
         this.securityNumber = securityNumbet;
         this.salary = salary;
@@ -37,9 +37,9 @@ public abstract class AEmployee {
 
     @Override
     public String toString() {
-        return "AEmployee " +
+        return "Employee " +
                 "name = \"" + name + "\"" +
                 ", Ssecurity Number = " + securityNumber +
-                ", salary = " + salary;
+                ", salary = " + salary + "\n";
     }
 }

@@ -1,6 +1,6 @@
-package eu.senla.course.employee;
+package eu.senla.course.entity;
 
-public class Developer extends AEmployee {
+public class Developer extends Employee {
 
     private double rate;
 
@@ -29,6 +29,6 @@ public class Developer extends AEmployee {
                 ", Security Number = " + getSecurityNumber() +
                 ", Base salary = " + super.getSalary() +
                 ", Salary per month = " + getSalary() +
-                " with rate = " + rate;
+                " with rate = " + rate + "\n";
     }
 }
