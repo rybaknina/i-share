@@ -39,16 +39,18 @@ public class TestServiceCenter {
         // Выбор даты
         LocalDateTime plannedDate = LocalDateTime.now().plusHours(2);
 
-        // выбор свободного места в гараже - to be continue
-        // выбор свободного механика - to be continue
+        // TODO: выбор свободного места в гараже
+        // TODO: выбор свободного механика
 
         // Выбор гаража
         Garage garage = garages[0]; // пока так
-        // выбор места
-        Spot spot = garage.getSpots()[0]; // to be continue.. for example nextAvailableSpot
-        // Создание заказа - to be continue - нужно как-то свободные даты выбирать
+
+        // TODO: выбор места, for example nextAvailableSpot
+        Spot spot = garage.getSpots()[0];
+        // TODO: Создание заказа - нужно как-то свободные даты выбирать
         Order order = new Order(1, plannedDate, mechanics[0], garage, spot);
-        order.setServices(servicesForOrder); // добавили сервисы, но их может не быть
+        // добавили сервисы, но их может не быть
+        order.setServices(servicesForOrder);
 
         // заказ сделан
         System.out.println(order.toString());
@@ -59,7 +61,7 @@ public class TestServiceCenter {
         // после выставления счета - закрываем заказ
         order.setStatus(OrderStatus.CLOSE);
         System.out.println(order.toString());
-        // вся сортировка и сдвиг по времени - to be continue
+        // TODO: вся сортировка и сдвиг по времени
     }
 
 }

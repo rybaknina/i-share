@@ -12,7 +12,6 @@ public class BillService {
 
     public void bill(Service[] services){
         if (order == null) return;
-        //Service[] services = order.getServices();
         if (services == null){
             System.out.println("Order was close or cancel...");
         }

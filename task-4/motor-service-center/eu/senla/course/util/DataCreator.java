@@ -20,7 +20,7 @@ public class DataCreator {
     public Garage[] createGarages(){
         int count = 0;
         do {
-            Garage garage = new Garage(count+1, new Generator().generateNumber());
+            Garage garage = new Garage(count+1, GeneratorUtil.generateNumber());
             workshop.addGarage(garage);
             // при создании гаража создаются места. Количество мест = capacity Гаража - рандом от 1 до 6
             garage.setSpots(createSpots(garage));
