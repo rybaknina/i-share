@@ -1,8 +1,9 @@
 # Package Files #
-*.jar
+#*.jar
 #*.war
 #*.ear
 
+*.mf
 *.class
 
 .idea/
