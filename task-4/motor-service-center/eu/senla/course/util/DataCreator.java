@@ -10,13 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class DataCreator {
-//    private Workshop workshop;
-//    private MechanicManager mechanicManager;
-
-//    public DataCreator(Workshop workshop, MechanicManager mechanicManager) {
-//        this.workshop = new Workshop();
-//        this.mechanicManager = new MechanicManager();
-//    }
 
     public Garage[] createGarages(Workshop workshop){
         int len = workshop.lengthGarages();
