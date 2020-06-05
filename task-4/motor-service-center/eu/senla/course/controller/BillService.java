@@ -4,23 +4,22 @@ import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Service;
 
 public class BillService {
-    private Order order;
 
-    public BillService(Order order) {
-        this.order = order;
-    }
-
-    public void bill(Service[] services){
-        if (order == null) return;
-        if (services == null){
-            System.out.println("Order was close or cancel...");
+    public void bill(Order order){
+        if (order == null){
+            System.out.println("Order is not exist");
+            return;
+        }
+        if (order.getServices() == null){
+            System.out.println("Order has no services...");
         }
         else {
             double amount = 0;
-            for (Service service : services) {
+            for (Service service : order.getServices()) {
                 amount += service.getHours()*service.getHourlyPrice();
             }
-            System.out.println("Pay your bill: " + Math.round(amount));
+            order.setPrice(Math.round(amount));
+            System.out.println("Pay your bill: " + order.getPrice());
         }
     }
 }

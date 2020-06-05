@@ -38,11 +38,24 @@ public class Mechanic {
 
     // если у механика есть заказ, у которого дата завершения меньше (до) текущего времени или в статусе выполнения, то - не свободен
     public boolean isMechanicFree(){
+        if (orders == null){
+            return true;
+        }
         for (Order order: orders){
-            if (order == null) continue;
-            if (order.getCompleteDate().isBefore(LocalDateTime.now())) { return false;}
+            if (order == null) {
+                continue;
+            }
+            if (order.getCompleteDate()!= null && order.getCompleteDate().isBefore(LocalDateTime.now())) { return false;}
             if (order.getStatus()==OrderStatus.IN_PROGRESS) {return false;}
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Mechanic{" +
+                "id = " + id +
+                ", name = '" + name + '\'' +
+                '}';
     }
 }

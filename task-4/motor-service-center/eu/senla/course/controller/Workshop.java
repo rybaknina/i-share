@@ -1,13 +1,13 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Service;
+import eu.senla.course.entity.*;
+
+import java.time.LocalDateTime;
 
 public class Workshop {
-    public static final int MAX_CAPACITY = 4;
-    public static final int MAX_NUMBER_OF_SERVICES = 5;
-    public static final int LIMIT_ORDERS = 8;
+    private static final int MAX_CAPACITY = 4;
+    private static final int MAX_NUMBER_OF_SERVICES = 5;
+    private static final int LIMIT_ORDERS = 8;
 
     private Garage[] garages;
     private Service[] services;
@@ -64,8 +64,9 @@ public class Workshop {
         }
     }
 
+    // Добавить заказ
     public void addOrder(Order order){
-        if (services[LIMIT_ORDERS - 1] != null) {
+        if (orders[LIMIT_ORDERS - 1] != null) {
             System.out.println("Orders limit is over");
         }
         else {
@@ -78,6 +79,7 @@ public class Workshop {
         }
     }
 
+    // удалить заказ
     public void deleteOrder(int id){
         for (int i=0; i<LIMIT_ORDERS; i++){
             if (orders[i].getId() == id){
@@ -91,10 +93,24 @@ public class Workshop {
         return garages;
     }
 
+    public int lengthGarages(){
+        return garages.length;
+    }
+
+    public int lengthAllSpots(){
+        int len = 0;
+        for (Garage garage: garages){
+            len += garage.getSpots().length;
+        }
+        return len;
+    }
     public Service[] listServices(){
         return services;
     }
 
+    public int lengthServices(){
+        return services.length;
+    }
     public Order[] listOrders(){
         return orders;
     }
@@ -108,4 +124,89 @@ public class Workshop {
         return null;
     }
 
+    public Spot[] spotsOnDate(Garage garage, LocalDateTime date){
+        Spot[] spots = new Spot[garage.getSpots().length];
+        int j = 0;
+        for (Order order: orders){
+            if (order != null && (order.getCompleteDate()!= null &&
+              (order.getCompleteDate().isAfter(date) && order.getStatus() != OrderStatus.CLOSE) ||
+              order.getStatus() == OrderStatus.IN_PROGRESS)){
+
+                spots[j] = order.getSpot();
+                j++;
+            }
+        }
+        return spots;
+    }
+    public Spot[] listAvailableSpots(LocalDateTime date){
+        Spot[] freeSpots = new Spot[lengthAllSpots()];
+        Spot[] busySpots;
+        int j = 0;
+        for (Garage garage: garages){
+            busySpots = spotsOnDate(garage, date);
+            for (Spot spot: garage.getSpots()){
+                if (spot == null) {
+                    continue;
+                }
+                int contains = 0;
+                for (Spot busySpot: busySpots){
+                    if (busySpot != null && busySpot.equals(spot)){
+                        contains = 1;
+                        break;
+                    }
+                }
+                if (contains == 0){
+                    freeSpots[j] = spot;
+                    j++;
+                }
+            }
+        }
+        return freeSpots;
+    }
+
+    public int numberAvailableSpots(LocalDateTime futureDate){
+        Spot[] spots = listAvailableSpots(futureDate);
+        int number = 0;
+        for (Spot spot: spots){
+            if (spot != null) {
+                number += 1;
+            }
+        }
+        return number;
+
+    }
+
+    public Order mechanicOrder(Mechanic mechanic){
+        if (mechanic == null){
+            System.out.println("Mechanic does not exist");
+            return null;
+        }
+        for (Order order: orders){
+            if (order.getStatus() == OrderStatus.IN_PROGRESS){
+                return order;
+            }
+        }
+        return null;
+    }
+
+    public Mechanic orderMechanic(Order order){
+        for (Order orderExist: orders){
+            if (orderExist!= null && orderExist.equals(order)){
+                return orderExist.getMechanic();
+            }
+        }
+        return null;
+    }
+    public void changeStartDateOrders(int hours){
+        LocalDateTime date = LocalDateTime.now().plusHours(hours);
+        for(Order order: orders){
+            if (order != null && (order.getStartDate()!=null) && order.getStatus() != OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
+                order.setStartDate(order.getStartDate().plusHours(hours));
+                if (order.getCompleteDate() != null) {
+                    order.setCompleteDate(order.getCompleteDate().plusHours(hours));
+                }
+
+            }
+        }
+    }
 }

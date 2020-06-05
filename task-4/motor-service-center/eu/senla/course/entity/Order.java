@@ -1,6 +1,7 @@
 package eu.senla.course.entity;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class Order {
     private int id;
@@ -9,24 +10,26 @@ public class Order {
     private LocalDateTime startDate;
     private LocalDateTime completeDate;
     private Mechanic mechanic;
-    private Garage garage;
     private Spot spot;
     private Service[] services;
     private double price;
     private OrderStatus status;
 
-    public Order(int id, LocalDateTime plannedDate, Mechanic mechanic, Garage garage, Spot spot) {
+    public Order(int id, LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
         this.id = id;
-        this.requestDate = LocalDateTime.now();
+        this.requestDate = requestDate;
         this.plannedDate = plannedDate;
         this.mechanic = mechanic;
-        this.garage = garage;
         this.spot = spot;
         this.status = OrderStatus.IN_PROGRESS;
     }
 
     public int getId() {
         return id;
+    }
+
+    public LocalDateTime getRequestDate() {
+        return requestDate;
     }
 
     public LocalDateTime getPlannedDate() {
@@ -59,6 +62,33 @@ public class Order {
 
     public void setServices(Service[] services) {
         this.services = services;
+        if (services != null){
+            int hours = 0;
+            for (Service service: services){
+                if (service!= null) {
+                    hours += service.getHours();
+                }
+            }
+            if (startDate != null) {
+                this.setCompleteDate(startDate.plusHours(hours));
+            }
+        }
+    }
+
+    public Mechanic getMechanic() {
+        return mechanic;
+    }
+
+    public void setMechanic(Mechanic mechanic) {
+        this.mechanic = mechanic;
+    }
+
+    public Spot getSpot() {
+        return spot;
+    }
+
+    public void setSpot(Spot spot) {
+        this.spot = spot;
     }
 
     public double getPrice() {
@@ -72,7 +102,7 @@ public class Order {
     public OrderStatus getStatus() {
         return status;
     }
-
+    // закрыть/отменить заказ
     public void setStatus(OrderStatus status) {
         this.status = status;
     }

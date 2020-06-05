@@ -1,38 +1,31 @@
 package eu.senla.course.entity;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class Spot {
     private int id;
-    private LocalDateTime reservedDate;
+    private Garage garage;
 
-    public Spot(int id) {
+    public Spot(int id, Garage garage) {
         this.id = id;
-    }
-
-    public Spot(int id, LocalDateTime reservedDate) {
-        this.id = id;
-        this.reservedDate = reservedDate;
+        this.garage = garage;
     }
 
     public int getId() {
         return id;
     }
 
-    public LocalDateTime getReservedDate() {
-        return reservedDate;
+    public Garage getGarage() {
+        return garage;
     }
 
-    public void setReservedDate(LocalDateTime reservedDate) {
-        this.reservedDate = reservedDate;
+    public void setGarage(Garage garage) {
+        this.garage = garage;
     }
 
     @Override
     public String toString() {
         return "Spot{" +
-                "id=" + id +
-                ", reservedDate=" + ((reservedDate==null)?"":reservedDate.format(DateTimeFormatter.ofPattern("dd.mm.yyyy hh:mm:ss"))) +
+                "id = " + id +
+                ", garage = " + garage +
                 '}';
     }
 }
