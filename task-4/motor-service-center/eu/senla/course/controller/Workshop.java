@@ -1,8 +1,11 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.entity.*;
-
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
 
 public class Workshop {
     private static final int MAX_CAPACITY = 4;
@@ -111,8 +114,22 @@ public class Workshop {
     public int lengthServices(){
         return services.length;
     }
-    public Order[] listOrders(){
+    public Order[] listOrders(Comparator<Order> comparator){
+        Arrays.sort(orders, comparator);
         return orders;
+    }
+
+    public Order[] listCurrentOrders(Comparator<Order> comparator){
+        Order[] currentOrders = new Order[orders.length];
+        int i = 0;
+        for (Order order: orders){
+            if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS){
+                currentOrders[i] = order;
+                i++;
+            }
+        }
+        Arrays.sort(currentOrders, comparator);
+        return currentOrders;
     }
 
     public Service getServiceByName(String name){
@@ -125,10 +142,10 @@ public class Workshop {
     }
 
     public Spot[] spotsOnDate(Garage garage, LocalDateTime date){
-        Spot[] spots = new Spot[garage.getSpots().length];
+        Spot[] spots = new Spot[lengthAllSpots()];
         int j = 0;
         for (Order order: orders){
-            if (order != null && (order.getCompleteDate()!= null &&
+            if (order != null && order.getSpot()!=null && (order.getCompleteDate()!= null &&
               (order.getCompleteDate().isAfter(date) && order.getStatus() != OrderStatus.CLOSE) ||
               order.getStatus() == OrderStatus.IN_PROGRESS)){
 
@@ -175,6 +192,19 @@ public class Workshop {
 
     }
 
+    public LocalDateTime nextAvailableDate(){
+        int days = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+        LocalDateTime nextDate = LocalDateTime.now();
+        for (int i=0; i < days; i++) {
+            if (numberAvailableSpots(nextDate) > 0) {
+                return nextDate;
+            } else {
+                nextDate = nextDate.plusDays(1);
+            }
+        }
+        return null;
+    }
+
     public Order mechanicOrder(Mechanic mechanic){
         if (mechanic == null){
             System.out.println("Mechanic does not exist");
@@ -199,7 +229,7 @@ public class Workshop {
     public void changeStartDateOrders(int hours){
         LocalDateTime date = LocalDateTime.now().plusHours(hours);
         for(Order order: orders){
-            if (order != null && (order.getStartDate()!=null) && order.getStatus() != OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
+            if (order != null && (order.getStartDate()!=null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
                 order.setStartDate(order.getStartDate().plusHours(hours));
                 if (order.getCompleteDate() != null) {
                     order.setCompleteDate(order.getCompleteDate().plusHours(hours));
@@ -207,5 +237,18 @@ public class Workshop {
 
             }
         }
+    }
+    public Order[] ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate){
+        Order[] ordersForPeriod = new Order[orders.length];
+        int k = 0;
+        for (Order order: orders){
+            if (order!= null && order.getStartDate()!=null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0 ){
+                ordersForPeriod[k] = order;
+                k++;
+            }
+        }
+        Arrays.sort(ordersForPeriod, comparator);
+
+        return ordersForPeriod;
     }
 }

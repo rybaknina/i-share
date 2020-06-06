@@ -1,7 +1,7 @@
 package eu.senla.course.entity;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 
 public class Order {
     private int id;
@@ -111,6 +111,10 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id = " + id +
+                ", requestDate = " + ((requestDate!=null)? requestDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
+                ", plannedDate = " + ((plannedDate!=null)? plannedDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
+                ", completeDate = " + ((completeDate!=null)? completeDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
+                ", price = " + price +
                 ", status = " + status +
                 '}';
     }

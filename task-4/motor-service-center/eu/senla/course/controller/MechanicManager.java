@@ -56,7 +56,7 @@ public class MechanicManager {
     public void sortMechanicsBy(Comparator<Mechanic> comparator){
         Arrays.sort(mechanics, comparator);
         for (Mechanic mechanic: mechanics){
-            System.out.println(mechanic.getId() + " " + mechanic.getName());
+            System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());
         }
     }
 

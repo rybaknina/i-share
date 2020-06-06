@@ -18,7 +18,7 @@ public class BillService {
                 amount += service.getHours()*service.getHourlyPrice();
             }
             order.setPrice(Math.round(amount));
-            System.out.println("Pay your bill: " + order.getPrice());
+            System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
         }
     }
 }
