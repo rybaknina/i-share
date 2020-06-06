@@ -145,19 +145,18 @@ public class Workshop {
         for (Garage garage: garages){
             busySpots = spotsOnDate(garage, date);
             for (Spot spot: garage.getSpots()){
-                if (spot == null) {
-                    continue;
-                }
-                int contains = 0;
-                for (Spot busySpot: busySpots){
-                    if (busySpot != null && busySpot.equals(spot)){
-                        contains = 1;
-                        break;
+                if (spot != null) {
+                    int contains = 0;
+                    for (Spot busySpot : busySpots) {
+                        if (busySpot != null && busySpot.equals(spot)) {
+                            contains = 1;
+                            break;
+                        }
                     }
-                }
-                if (contains == 0){
-                    freeSpots[j] = spot;
-                    j++;
+                    if (contains == 0) {
+                        freeSpots[j] = spot;
+                        j++;
+                    }
                 }
             }
         }

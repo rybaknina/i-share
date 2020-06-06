@@ -8,7 +8,6 @@ public class BillService {
     public void bill(Order order){
         if (order == null){
             System.out.println("Order is not exist");
-            return;
         }
         if (order.getServices() == null){
             System.out.println("Order has no services...");

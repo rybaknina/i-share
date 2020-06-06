@@ -65,11 +65,9 @@ public class MechanicManager {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("\nFull current staff: \n");
         for (Mechanic mechanic : mechanics) {
-            if (mechanic == null) {
-                continue;
+            if (mechanic != null) {
+                stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append("; ");
             }
-            stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append("; ");
-
         }
         return stringBuilder.toString();
     }
