@@ -1,0 +1,1 @@
+java -jar ServiceCenter.jar
