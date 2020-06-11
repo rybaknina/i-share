@@ -1,63 +1,39 @@
 package eu.senla.course.entity;
 
+import java.util.List;
+
 public class Garage {
     private int id;
-    private Spot[] spots;
-    private Mechanic[] mechanics;
+    private List<Spot> spots = null;
+    private List<Mechanic> mechanics = null;
 
     public Garage(int id) {
         this.id = id;
-        this.spots = new Spot[1];
     }
 
-    public Garage(int id, int capacity) {
-        this.id = id;
-        this.spots = new Spot[capacity];
-    }
     public int getId() {
         return id;
     }
 
-    public void setSpots(Spot[] spots) {
-        this.spots = spots;
-    }
-
-    public Spot[] getSpots() {
+    public List<Spot> getSpots() {
         return spots;
     }
 
-    public Mechanic[] getMechanics() {
+    public void setSpots(List<Spot> spots) {
+        this.spots = spots;
+    }
+
+    public List<Mechanic> getMechanics() {
         return mechanics;
     }
 
-    public void setMechanics(Mechanic[] mechanics) {
+    public void setMechanics(List<Mechanic> mechanics) {
         this.mechanics = mechanics;
     }
 
-    // Добавить место в гараже
-    public void addSpot(Spot spot){
-        int len = spots.length;
-        if (spots[len - 1] != null) {
-            System.out.println("Garage is full");
-        }
-        else {
-            for (int i = 0; i < len; i++) {
-                if (spots[i] == null) {
-                    spots[i] = spot;
-                    break;
-                }
-            }
-        }
-    }
-
     // удалить место в гараже
-    public void deleteSpot(int id){
-        for (int i=0; i < spots.length; i++){
-            if (spots[i].getId() == id){
-                spots[i] = null;
-                break;
-            }
-        }
+    public void deleteSpot(Spot spot) {
+        spots.removeIf(e -> e.equals(spot));
     }
 
     @Override

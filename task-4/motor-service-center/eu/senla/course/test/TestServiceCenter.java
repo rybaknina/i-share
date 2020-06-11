@@ -2,7 +2,7 @@ package eu.senla.course.test;
 
 import eu.senla.course.controller.BillService;
 import eu.senla.course.controller.MechanicManager;
-import eu.senla.course.controller.Workshop;
+import eu.senla.course.view.Workshop;
 import eu.senla.course.entity.*;
 import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
 import eu.senla.course.entity.comparator.mechanic.ByBusy;
@@ -14,26 +14,24 @@ import eu.senla.course.util.DataCreator;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestServiceCenter {
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm");
     public static void main(String[] args) {
 
+        Workshop workshop = Workshop.getInstance();
 
-
-        Workshop workshop = new Workshop();
-        MechanicManager mechanicManager = new MechanicManager();
         DataCreator creator = new DataCreator();
 
-        Garage[] garages = creator.createGarages(workshop);
-        Service[] services = creator.createServices(workshop);
-        Mechanic[] mechanics = creator.createMechanics(mechanicManager);
-        Order[] ordersForPeriod;
+        List<Garage> garages = creator.createGarages();
+        List<Service> services = creator.createServices();
+        List<Mechanic> mechanics = creator.createMechanics();
+        List<Order> ordersForPeriod;
 
         // В автомастерской есть гаражи с местами
-        for (Garage garage: garages){
-            System.out.print(garage + "; ");
-        }
+        garages.forEach(System.out:: println);
 
         // Мастерская оказывает услуги
         System.out.println("\nList of Services: ");
@@ -42,42 +40,47 @@ public class TestServiceCenter {
         }
 
         // В автомастерской есть мастера
-        System.out.println(mechanicManager.toString());
+        System.out.println(workshop.getMechanics().toString());
 
         // Далее действия по услугам и заказу - безличное
 
         // выбор услуг
         System.out.println("Your choice of services: ");
-        int hours = 0;
-        Service[] servicesForOrder = new Service[]{services[0], services[2]};
-        for (Service service: servicesForOrder){
-            System.out.println(service.toString());
-        }
+
+        List<Service> servicesForOrder = new ArrayList<>(){
+            {
+                add(services.get(0));
+                add(services.get(2));
+            }
+        };
+
+        servicesForOrder.forEach(System.out::println);
+
         // Выбор даты
         LocalDateTime plannedDate = LocalDateTime.now().plusHours(1);
         System.out.println("Planned date: " + plannedDate.format(timeFormatter));
 
         // места на определенную дату workshop.listAvailableSpots
-        Spot[] freeSpots = workshop.listAvailableSpots(plannedDate);
+        List<Spot> freeSpots = workshop.listAvailableSpots(plannedDate, workshop.getOrders());
         printSpot(freeSpots);
         // Количество свободных мест на сервисе на любую дату в будущем
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate, workshop.getOrders()));
 
         // выбор свободного места в гараже, например, первое доступное
-        Spot spot = freeSpots[0];
+        Spot spot = freeSpots.get(0);
         // Создание заказа
-        Order order = new Order(1, LocalDateTime.now(), plannedDate, mechanics[0], spot);
-        Order order2 = new Order(2, LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics[0], freeSpots[1]);
+        Order order = new Order(1, LocalDateTime.now(), plannedDate, mechanics.get(0), spot);
+        Order order2 = new Order(2, LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.get(1));
 
-        Order[] ordersMechanic = new Order[2];
-        ordersMechanic[0] = order;
-        ordersMechanic[1] = order2;
-        mechanics[0].setOrders(ordersMechanic);
+        List<Order> ordersMechanic = new ArrayList<>();
+        ordersMechanic.add(order);
+        ordersMechanic.add(order2);
+        mechanics.get(0).setOrders(ordersMechanic);
 
         workshop.addOrder(order);
         workshop.addOrder(order2);
 
-        System.out.println("Your mechanic " + mechanics[0].getName());
+        System.out.println("Your mechanic " + mechanics.get(0).getName());
 
         // добавили сервисы, но их может не быть
         order.setStartDate(plannedDate.plusHours(1));
@@ -88,7 +91,13 @@ public class TestServiceCenter {
 
         // order 2
         order2.setStartDate(plannedDate.plusHours(4));
-        order2.setServices(new Service[]{services[1], services[3]});
+
+        order2.setServices(new ArrayList<>(){
+            {
+                add(services.get(1));
+                add(services.get(3));
+            }
+        });
 
         // заказ сделан
         System.out.println(order.toString());
@@ -101,7 +110,7 @@ public class TestServiceCenter {
 
         // Список заказов по дате подачи
         System.out.println("All Orders by Request Date");
-        Order[] orders = workshop.listOrders(new ByRequestDate());
+        List<Order> orders = workshop.listOrders(new ByRequestDate());
         printOrders(orders);
 
         // заказ сделан
@@ -114,22 +123,22 @@ public class TestServiceCenter {
         new BillService().bill(order2);
 
         // Заказ, выполняемый конкретным мастером
-        System.out.println("Mechanic's exact order: " + workshop.mechanicOrder(mechanics[0]).toString());
+        System.out.println("Mechanic's exact order: " + workshop.mechanicOrder(mechanics.get(0)).toString());
 
         // Мастера, выполняющего конкретный заказ
         System.out.println("Order's mechanic: " + workshop.orderMechanic(order));
 
         // переопределяем доступные места
-        printSpot(workshop.listAvailableSpots(plannedDate));
+        printSpot(workshop.listAvailableSpots(plannedDate, workshop.getOrders()));
 
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate, workshop.getOrders()));
 
         // Ближайшая свободная дата
-        System.out.println("Next available date " + workshop.nextAvailableDate().format(timeFormatter));
+        System.out.println("Next available date " + workshop.nextAvailableDate(workshop.getOrders()).format(timeFormatter));
 
         // сортировка по занятости
         System.out.println("Sorting Mechanics by busy ");
-        mechanicManager.sortMechanicsBy(new ByBusy());
+        workshop.sortMechanicsBy(new ByBusy());
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders in progress for the period");
@@ -143,18 +152,18 @@ public class TestServiceCenter {
 
         //Список текущих выполняемых заказов
         System.out.println("List of current orders in progress");
-        Order[] currentOrders = workshop.listCurrentOrders(new ByRequestDate());
+        List<Order> currentOrders = workshop.listCurrentOrders(new ByRequestDate());
         printOrders(currentOrders);
 
         System.out.println("Closing second order");
         order2.setStatus(OrderStatus.CLOSE);
         System.out.println(order2.toString());
         // место сново доступно
-        printSpot(workshop.listAvailableSpots(plannedDate));
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        printSpot(workshop.listAvailableSpots(plannedDate, workshop.getOrders()));
+        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate, workshop.getOrders()));
 
         System.out.println("Sorting Mechanics by alphabet ");
-        mechanicManager.sortMechanicsBy(new ByAlphabet());
+        workshop.sortMechanicsBy(new ByAlphabet());
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders by Complete Date");
@@ -175,15 +184,14 @@ public class TestServiceCenter {
 
 
     }
-    private static void printOrders(Order[] orders){
+    private static void printOrders(List<Order> orders){
         for (Order order: orders){
             if (order != null){
                 System.out.println(order.toString());
-                //System.out.println(order.toString() + " " + order.getCompleteDate().format(timeFormatter) + " " + order.getPrice());
             }
         }
     }
-    private static void printSpot(Spot[] freeSpots){
+    private static void printSpot(List<Spot> freeSpots){
         for (Spot freeSpot: freeSpots){
             if (freeSpot != null) {
                 System.out.println("Available spot: " + freeSpot.toString());

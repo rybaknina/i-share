@@ -1,11 +1,12 @@
 package eu.senla.course.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Mechanic {
     private int id;
     private String name;
-    private Order[] orders;
+    private List<Order> orders = null;
     private Garage garage;
 
     public Mechanic(int id, String name) {
@@ -20,11 +21,11 @@ public class Mechanic {
         return name;
     }
 
-    public Order[] getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 
-    public void setOrders(Order[] orders) {
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
 
@@ -38,15 +39,18 @@ public class Mechanic {
 
     // если у механика есть заказ, у которого дата завершения меньше (до) текущего времени или в статусе выполнения, то - не свободен
     public boolean isMechanicFree(){
-        if (orders == null){
+        if (orders == null || orders.size() == 0){
             return true;
         }
-        for (Order order: orders){
-            if (order == null) {
-                continue;
+        for (Order order: orders) {
+            if (order != null) {
+                if (order.getCompleteDate() != null && order.getCompleteDate().isBefore(LocalDateTime.now())) {
+                    return false;
+                }
+                if (order.getStatus() == OrderStatus.IN_PROGRESS) {
+                    return false;
+                }
             }
-            if (order.getCompleteDate()!= null && order.getCompleteDate().isBefore(LocalDateTime.now())) { return false;}
-            if (order.getStatus()==OrderStatus.IN_PROGRESS) {return false;}
         }
         return true;
     }

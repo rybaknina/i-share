@@ -2,47 +2,44 @@ package eu.senla.course.controller;
 
 import eu.senla.course.entity.Mechanic;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class MechanicManager {
     private final static int MAX_NUMBER_MECHANIC = 6;
-    private Mechanic[] mechanics;
+    private List<Mechanic> mechanics;
 
     public MechanicManager() {
-        this.mechanics = new Mechanic[MAX_NUMBER_MECHANIC];
+        this.mechanics = new ArrayList<>();
     }
 
-    // Добавить мастера
     public void addMechanic(Mechanic mechanic) {
-        if (mechanics[MAX_NUMBER_MECHANIC - 1] != null) {
+        if (mechanics.size() == MAX_NUMBER_MECHANIC) {
             System.out.println("Mechanics is full");
         } else {
-            for (int i = 0; i < MAX_NUMBER_MECHANIC; i++) {
-                if (mechanics[i] == null) {
-                    mechanics[i] = mechanic;
-                    break;
-                }
-            }
+            mechanics.add(mechanic);
         }
-    }
-
-    // удалить мастера
-    public void deleteMechanic(int id){
-        for (int i=0; i<MAX_NUMBER_MECHANIC; i++){
-            if (mechanics[i].getId() == id){
-                mechanics[i] = null;
-                break;
-            }
-        }
-    }
-
-    public Mechanic[] listMechanics(){
-        return mechanics;
     }
 
     public int lengthMechanics(){
-        return mechanics.length;
+            return MAX_NUMBER_MECHANIC;
+    }
+
+    public List<Mechanic> getMechanics() {
+        return mechanics;
+    }
+
+    public void setMechanics(List<Mechanic> mechanics) {
+        this.mechanics = mechanics;
+    }
+
+    public void deleteMechanic(Mechanic mechanic){
+        mechanics.removeIf(e -> e.equals(mechanic));
+    }
+
+    public Mechanic gerMechanicById(int id){
+        return (mechanics == null)? null: mechanics.get(id);
     }
     public Mechanic firstFreeMechanic(){
         for (Mechanic mechanic: mechanics){
@@ -54,12 +51,11 @@ public class MechanicManager {
     }
 
     public void sortMechanicsBy(Comparator<Mechanic> comparator){
-        Arrays.sort(mechanics, comparator);
+        mechanics.sort(comparator);
         for (Mechanic mechanic: mechanics){
             System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());
         }
     }
-
 
     @Override
     public String toString() {
