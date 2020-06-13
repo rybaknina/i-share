@@ -1,16 +1,20 @@
-package eu.senla.course.controller;
+package eu.senla.course.service;
 
+import eu.senla.course.api.IOrder;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
+import eu.senla.course.entity.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderManager {
-    private static final int LIMIT_ORDERS = 8;
+public class OrderManager implements IOrder {
     private List<Order> orders;
 
     public OrderManager() {
@@ -26,16 +30,15 @@ public class OrderManager {
     }
 
     public Order getOrderById(int id){
-        return (orders == null)? null: orders.get(id);
+        if (orders == null){
+            System.out.println("Orders are not exist");
+            return null;
+        }
+        return orders.get(id);
     }
 
     public void addOrder(Order order){
-        if (orders.size() == LIMIT_ORDERS) {
-            System.out.println("Orders limit is over");
-        }
-        else {
-            orders.add(order);
-        }
+        orders.add(order);
     }
 
     public void deleteOrder(Order order){
@@ -100,5 +103,33 @@ public class OrderManager {
             }
         }
         return null;
+    }
+    public LocalDateTime nextAvailableDate(LocalDate endDate){
+        int days = Period.between(LocalDate.now(), endDate).getDays();
+        LocalDateTime nextDate = LocalDateTime.now();
+        for (int i=0; i < days; i++) {
+            if (ManagerProvider.getInstance().getGarageManager().numberAvailableSpots(nextDate, orders) > 0) {
+                return nextDate;
+            } else {
+                nextDate = nextDate.plusDays(1);
+            }
+        }
+        System.out.println("Have no free date");
+        return null;
+    }
+
+    public void bill(Order order){
+        if (order == null){
+            System.out.println("Order is not exist");
+        } else if (order.getServices() == null){
+            System.out.println("Order has no services...");
+        } else {
+            BigDecimal amount = BigDecimal.ZERO;
+            for (Service service : order.getServices()) {
+                amount = amount.add(service.getHourlyPrice().multiply(BigDecimal.valueOf(service.getHours())));
+            }
+            order.setPrice(amount);
+            System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
+        }
     }
 }

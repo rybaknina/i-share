@@ -1,11 +1,12 @@
 package eu.senla.course.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Garage {
     private int id;
-    private List<Spot> spots = null;
-    private List<Mechanic> mechanics = null;
+    private List<Spot> spots = new ArrayList<>();
+    private List<Mechanic> mechanics = new ArrayList<>();
 
     public Garage(int id) {
         this.id = id;
@@ -31,10 +32,6 @@ public class Garage {
         this.mechanics = mechanics;
     }
 
-    // удалить место в гараже
-    public void deleteSpot(Spot spot) {
-        spots.removeIf(e -> e.equals(spot));
-    }
 
     @Override
     public String toString() {

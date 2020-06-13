@@ -1,59 +1,43 @@
 package eu.senla.course.menu;
 
+import eu.senla.course.menu.constant.MainMenu;
 import eu.senla.course.util.InputValidator;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
+import java.util.Scanner;
 
 public class MenuController {
-    private Builder builder;
-    private Navigator navigator;
-
-    public MenuController() {
-        this.builder = new Builder();
-        this.navigator = new Navigator();
-    }
+    private Builder builder = Builder.getInstance();
+    private Navigator navigator = Navigator.getInstance();
 
     public void run(){
 
-        navigator.setCurrentMenu(builder.buildMenu());
+        navigator.setCurrentMenu(builder.getRootMenu());
         navigator.printMenu();
+
         boolean exit = false;
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+        try (Scanner in = new Scanner(System.in)) {
 
             while (!exit) {
+                // TODO: Fix bug after add in menu - fall
 
-              //  LocalDateTime dateTime = InputValidator.readDateTime(reader); - just for test
-              //  BigDecimal decimal = InputValidator.readDecimal(reader);
+                int input = InputValidator.readInteger(in) - 1;
 
-                int input = InputValidator.readInteger(reader) - 1;
-
-                if (navigator.getCurrentMenu() == null){
-                    exit = true;
-                    continue;
-                }
-                List<MenuItem> items = navigator.getCurrentMenu().getMenuItems();
-                if (items == null || input < 0 || items.size() <= input){
-                    System.out.println("You made the wrong choice. Try again...");
+                if (input < 0 || input >= navigator.getCurrentMenu().getMenuItems().size()) {
+                    System.out.println("Try again...");
                     continue;
                 } else {
                     navigator.navigate(input);
                 }
-                if (items.get(input).getNextMenu() == null){
+
+                if (navigator.getCurrentMenu().getMenuItems().get(input).getTitle().equals(MainMenu.EXIT.getName())) {
                     exit = true;
                     continue;
                 }
-                navigator.setCurrentMenu(items.get(input).getNextMenu());
+
+                navigator.setCurrentMenu(navigator.getCurrentMenu().getMenuItems().get(input).getNextMenu());
                 navigator.printMenu();
             }
-
-            System.out.println("I'll be back ... soon");
-
-        } catch (IOException e) {
-            System.out.println("Something wrong happens...");
         }
+        System.out.println("I'll be back ... soon");
     }
 }

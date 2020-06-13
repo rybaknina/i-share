@@ -1,12 +1,13 @@
 package eu.senla.course.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Mechanic {
     private int id;
     private String name;
-    private List<Order> orders = null;
+    private List<Order> orders = new ArrayList<>();
     private Garage garage;
 
     public Mechanic(int id, String name) {

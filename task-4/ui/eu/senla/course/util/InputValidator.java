@@ -1,121 +1,85 @@
 package eu.senla.course.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.util.regex.Pattern;
+import java.util.Scanner;
 
 public class InputValidator {
-    private static Pattern pattern = Pattern.compile("-?[0-9]+");
     private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                                     .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
                                     .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                                     .toFormatter();
-    public static String readString(BufferedReader reader, String message) {
+    public static String readString(Scanner scanner, String message) {
         System.out.println(message);
-        return readString(reader);
+        return readString(scanner);
     }
-    public static String readString(BufferedReader reader) {
-        String line = null;
-        try {
-            System.out.println("Enter text: ");
-            line = reader.readLine();
-        } catch (IOException e) {
-            System.out.println("Crush...");
-        }
-        return line;
+    public static String readString(Scanner scanner) {
+        return scanner.nextLine();
     }
 
-    public static Integer readInteger(BufferedReader reader, String message){
+    public static Integer readInteger(Scanner scanner, String message){
         System.out.println(message);
-        return readInteger(reader);
+        return readInteger(scanner);
     }
-    public static Integer readInteger(BufferedReader reader){
+    public static Integer readInteger(Scanner scanner){
         Integer number = null;
         boolean valid = false;
         while (!valid) {
-            System.out.println("Enter number: ");
-            try {
-                String line = reader.readLine();
-                if (line != null && !line.isEmpty() && pattern.matcher(line).matches()) {
-                    number = Integer.parseInt(line);
-                    valid = true;
-                    continue;
-                } else {
-                    System.out.println("Not a Number entered! Try again...");
-                    continue;
-                }
-            } catch (IOException e) {
-                System.out.println("Crush...");
+            if (scanner.hasNextInt()){
+                number = scanner.nextInt();
                 valid = true;
+            } else {
+                System.out.println("Not a Number entered! Try again...");
+                scanner.next();
+                continue;
             }
         }
         return number;
     }
-    public static LocalDateTime readDateTime(BufferedReader reader, String message){
+    public static LocalDateTime readDateTime(Scanner scanner, String message){
         System.out.println(message);
-        return readDateTime(reader);
+        return readDateTime(scanner);
     }
-    public static LocalDateTime readDateTime(BufferedReader reader){
+    public static LocalDateTime readDateTime(Scanner scanner){
         LocalDateTime dateTime = null;
         boolean valid = false;
+        String line;
         while (!valid) {
             System.out.println("Enter date-time in format \"dd.MM.yyyy HH:mm\" or \"yyyy-MM-dd HH:mm\": ");
-            try {
-                String line = reader.readLine();
-                if (line != null && !line.isEmpty()) {
-                    try {
-                        dateTime = LocalDateTime.parse(line, formatter);
-                    } catch (DateTimeParseException ex){
-                        System.out.println("Wrong date-time entered! Try again...");
-                        continue;
-                    }
+            if (scanner.hasNextLine()){
+                line = scanner.nextLine();
+                try {
+                    dateTime = LocalDateTime.parse(line, formatter);
                     valid = true;
-                    continue;
-                } else {
+                } catch (DateTimeParseException ex){
                     System.out.println("Wrong date-time entered! Try again...");
+                    scanner.next();
                     continue;
                 }
-            } catch (IOException e) {
-                System.out.println("Crush...");
-                valid = true;
             }
         }
         return dateTime;
     }
 
-    public static BigDecimal readDecimal(BufferedReader reader, String message){
+    public static BigDecimal readDecimal(Scanner scanner, String message){
         System.out.println(message);
-        return readDecimal(reader);
+        return readDecimal(scanner);
     }
 
-    public static BigDecimal readDecimal(BufferedReader reader){
+    public static BigDecimal readDecimal(Scanner scanner){
         BigDecimal decimal = BigDecimal.ZERO;
         boolean valid = false;
         while (!valid) {
-            System.out.println("Enter decimal: ");
-            try {
-                String line = reader.readLine();
-                if (line != null && !line.isEmpty()) {
-                    try {
-                        decimal = new BigDecimal(line);
-                    } catch (NumberFormatException ex){
-                        System.out.println("Not a BigDecimal entered! Try again...");
-                        continue;
-                    }
-                    valid = true;
-                    continue;
-                } else {
-                    System.out.println("Not a BigDecimal entered! Try again...");
-                    continue;
-                }
-            } catch (IOException e) {
-                System.out.println("Crush...");
+            if (scanner.hasNextBigDecimal()){
+                decimal = scanner.nextBigDecimal();
                 valid = true;
+            } else {
+                System.out.println("Not a BigDecimal entered! Try again...");
+                scanner.next();
+                continue;
             }
         }
         return decimal;

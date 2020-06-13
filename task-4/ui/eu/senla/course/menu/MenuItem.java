@@ -52,4 +52,8 @@ public class MenuItem {
         action.execute();
     }
 
+    @Override
+    public String toString() {
+        return title;
+    }
 }

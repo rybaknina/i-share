@@ -1,13 +1,14 @@
-package eu.senla.course.controller;
+package eu.senla.course.service;
 
+import eu.senla.course.api.IMechanic;
 import eu.senla.course.entity.Mechanic;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class MechanicManager {
-    private final static int MAX_NUMBER_MECHANIC = 6;
+public class MechanicManager implements IMechanic {
+
     private List<Mechanic> mechanics;
 
     public MechanicManager() {
@@ -15,15 +16,7 @@ public class MechanicManager {
     }
 
     public void addMechanic(Mechanic mechanic) {
-        if (mechanics.size() == MAX_NUMBER_MECHANIC) {
-            System.out.println("Mechanics is full");
-        } else {
-            mechanics.add(mechanic);
-        }
-    }
-
-    public int lengthMechanics(){
-            return MAX_NUMBER_MECHANIC;
+        mechanics.add(mechanic);
     }
 
     public List<Mechanic> getMechanics() {
@@ -39,7 +32,11 @@ public class MechanicManager {
     }
 
     public Mechanic gerMechanicById(int id){
-        return (mechanics == null)? null: mechanics.get(id);
+        if (mechanics == null){
+            System.out.println("Auto mechanics are not exist");
+            return null;
+        }
+        return mechanics.get(id);
     }
     public Mechanic firstFreeMechanic(){
         for (Mechanic mechanic: mechanics){
@@ -47,6 +44,7 @@ public class MechanicManager {
                 return mechanic;
             }
         }
+        System.out.println("Free mechanic is not exist");
         return null;
     }
 

@@ -3,6 +3,7 @@ package eu.senla.course.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -13,7 +14,7 @@ public class Order {
     private LocalDateTime completeDate;
     private Mechanic mechanic;
     private Spot spot;
-    private List<Service> services = null;
+    private List<Service> services = new ArrayList<>();
     private BigDecimal price;
     private OrderStatus status;
 
@@ -64,15 +65,15 @@ public class Order {
 
     public void setServices(List<Service> services) {
         this.services = services;
+        int hours = 0;
         if (services != null){
-            final int[] hours = {0};
-            services.forEach( e -> {
-                if (e != null){
-                    hours[0] += e.getHours();
+            for (int i=0; i< services.size(); i++){
+                if (services.get(i) != null){
+                    hours += services.get(i).getHours();
                 }
-            });
+            }
             if (startDate != null) {
-                this.setCompleteDate(startDate.plusHours(hours[0]));
+                this.setCompleteDate(startDate.plusHours(hours));
             }
         }
     }

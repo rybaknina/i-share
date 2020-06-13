@@ -1,7 +1,6 @@
 package eu.senla.course.util;
 
-import eu.senla.course.controller.MechanicManager;
-import eu.senla.course.view.Workshop;
+import eu.senla.course.service.ManagerProvider;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Service;
@@ -14,27 +13,30 @@ import java.util.List;
 
 
 public class DataCreator {
-    Workshop workshop = Workshop.getInstance();
+    private final static int MAX_GARAGES = 4;
+    private final static int MAX_MECHANICS = 5;
+
+    private ManagerProvider provider = ManagerProvider.getInstance();
     public List<Garage> createGarages(){
-        int len = workshop.lengthGarages();
+        int len = MAX_GARAGES;
         List<Garage> garages = new ArrayList<>();
         for (int i = 0; i < len; i++){
             Garage garage = new Garage(i+1);
-            garage.setSpots(createSpots(garage));
             garages.add(garage);
+            provider.getGarageManager().addGarage(garage);
         }
-        workshop.setGarages(garages);
+        provider.getGarageManager().setGarages(garages);
         return garages;
     }
 
-    public List<Spot> createSpots(@NotNull Garage garage){
-        int len = GeneratorUtil.generateNumber();
-        List<Spot> spots = new ArrayList<>();
-        for (int i = 0; i < len; i++){
-            spots.add(new Spot(i+1, garage));
-        }
-        return spots;
-    }
+//    public List<Spot> createSpots(@NotNull Garage garage){
+//        int len = GeneratorUtil.generateNumber();
+//        List<Spot> spots = new ArrayList<>();
+//        for (int i = 0; i < len; i++){
+//            spots.add(new Spot(i+1, garage));
+//        }
+//        return spots;
+//    }
 
     public List<Service> createServices(){
 
@@ -43,17 +45,17 @@ public class DataCreator {
         BigDecimal[] prices = {new BigDecimal(10), new BigDecimal(35), new BigDecimal(55), new BigDecimal(40), new BigDecimal(70)};
         List<Service> services = new ArrayList<>();
 
-        int len = workshop.lengthServices();
+        int len = names.length;
         for (int i = 0; i < len; i++){
             services.add(new Service(i+1, names[i], hours[i], prices[i]));
         }
-        workshop.setServices(services);
+        provider.getServiceManager().setServices(services);
         return services;
     }
 
     public List<Mechanic> createMechanics(){
         List<Mechanic> mechanics = new ArrayList<>();
-        int len = workshop.lengthMechanics();
+        int len = MAX_MECHANICS;
         int count = 0;
         char i = 'Z';
         do {
@@ -61,7 +63,7 @@ public class DataCreator {
             mechanics.add(new Mechanic(count, i + "_Mechanic"));
             i--;
         } while (count < len);
-        workshop.setMechanics(mechanics);
+        provider.getMechanicManager().setMechanics(mechanics);
         return mechanics;
     }
 }

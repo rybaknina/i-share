@@ -1,12 +1,12 @@
-package eu.senla.course.controller;
+package eu.senla.course.service;
 
+import eu.senla.course.api.IService;
 import eu.senla.course.entity.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceManager {
-    private static final int MAX_NUMBER_OF_SERVICES = 5;
+public class ServiceManager implements IService {
     private List<Service> services;
 
     public ServiceManager() {
@@ -20,20 +20,17 @@ public class ServiceManager {
     public void setServices(List<Service> services) {
         this.services = services;
     }
-    public int lengthServices(){
-        return MAX_NUMBER_OF_SERVICES;
-    }
+
     public void addService(Service service){
-        if (services.size() == MAX_NUMBER_OF_SERVICES) {
-            System.out.println("Services is over");
-        }
-        else {
-            services.add(service);
-        }
+        services.add(service);
     }
 
     public Service getSerbiceBiId(int id){
-        return (services == null)? null: services.get(id);
+        if (services == null){
+            System.out.println("Services is not exist");
+            return null;
+        }
+        return services.get(id);
     }
 
     public void deleteService(Service service){
@@ -46,6 +43,7 @@ public class ServiceManager {
                 return service;
             }
         }
+        System.out.println("Service is not found");
         return null;
     }
 }

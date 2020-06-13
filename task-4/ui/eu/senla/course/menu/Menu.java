@@ -27,7 +27,12 @@ public class Menu {
         this.menuItems = menuItems;
     }
 
-    public void add(MenuItem item){
-        menuItems.add(item);
+    public void add(MenuItem menuItem){
+        menuItems.add(menuItem);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

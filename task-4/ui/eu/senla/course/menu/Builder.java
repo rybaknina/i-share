@@ -1,32 +1,49 @@
 package eu.senla.course.menu;
 
-import eu.senla.course.action.MenuType;
+import eu.senla.course.action.garage.AddGarageAction;
+import eu.senla.course.menu.constant.GarageMenu;
+import eu.senla.course.menu.constant.MainMenu;
 import eu.senla.course.action.service.AddServiceAction;
+import eu.senla.course.menu.constant.ServiceMenu;
 
 public class Builder {
-    private static final String ROOT_MENU = MenuType.ROOT_MENU.getName();
-    private static final String SUB_MENU = MenuType.SUB_MENU.getName();
 
-    private Menu serviceMenu = new Menu(SUB_MENU);
-    private Menu rootMenu = new Menu(ROOT_MENU);
+    private final static Builder instance = new Builder();
+
+    private Menu serviceMenu = new Menu(MainMenu.SUB.getName());
+    private Menu garageMenu = new Menu(MainMenu.SUB.getName());
+    private Menu rootMenu = new Menu(MainMenu.ROOT.getName());
 
 
-    public Builder() {
+    private Builder() {
     }
 
-    public eu.senla.course.menu.Menu buildMenu(){
+    public static Builder getInstance(){
+        return instance;
+    }
 
-        // TODO: All actions and check valid entered values
+    private Menu buildMenu(){
 
-        serviceMenu.add(new MenuItem("Add service", serviceMenu, new AddServiceAction()));
+        MenuItem mainItem = new MenuItem(MainMenu.ROOT.getName(), rootMenu);
+        MenuItem exitItem = new MenuItem(MainMenu.EXIT.getName());
 
-        rootMenu.add(new MenuItem("Main menu", rootMenu));
-        rootMenu.add(new MenuItem("Service menu", serviceMenu));
+        garageMenu.add(new MenuItem(GarageMenu.ADD.getName(), garageMenu, new AddGarageAction()));
+        garageMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
+        mainItem.setNextMenu(garageMenu);
 
+        serviceMenu.add(new MenuItem(ServiceMenu.ADD.getName(), serviceMenu, new AddServiceAction()));
+        serviceMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
+        mainItem.setNextMenu(serviceMenu);
+
+        rootMenu.add(new MenuItem(GarageMenu.GARAGE.getName(), garageMenu));
+        rootMenu.add(new MenuItem(ServiceMenu.SERVICE.getName(), serviceMenu));
+
+        // TODO: All actions and other menu items
+        rootMenu.add(exitItem);
 
         return rootMenu;
     }
-    public eu.senla.course.menu.Menu getRootMenu(){
+    public Menu getRootMenu(){
         return this.buildMenu();
     }
 }

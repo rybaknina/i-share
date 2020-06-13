@@ -1,18 +1,20 @@
-package eu.senla.course.controller;
+package eu.senla.course.service;
 
+import eu.senla.course.api.IGarage;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.Spot;
+import eu.senla.course.util.GeneratorUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-public class GarageManager {
-    private static final int MAX_CAPACITY = 4;
+public class GarageManager implements IGarage {
+
     private List<Garage> garages;
 
     public GarageManager() {
@@ -28,11 +30,9 @@ public class GarageManager {
     }
 
     public void addGarage(Garage garage){
-        if (garages.size() == MAX_CAPACITY) {
-            System.out.println("Workshop is full");
-        }
-        else {
-            garages.add(garage);
+        garages.add(garage);
+        if (garage != null){
+            garage.setSpots(createSpots(garage));
         }
     }
     public void deleteGarage(Garage garage){
@@ -40,11 +40,22 @@ public class GarageManager {
     }
 
     public Garage getGarageById(int id){
-        return (garages == null)? null: garages.get(id);
+        if (garages == null){
+            System.out.println("Garages are not exist");
+            return null;
+        }
+        return garages.get(id);
     }
-    public int lengthGarages(){
-        return MAX_CAPACITY;
+
+    public List<Spot> createSpots(@NotNull Garage garage){
+        int len = GeneratorUtil.generateNumber();
+        List<Spot> spots = new ArrayList<>();
+        for (int i = 0; i < len; i++){
+            spots.add(new Spot(i+1, garage));
+        }
+        return spots;
     }
+
     public int lengthAllSpots(){
         int len = 0;
         for (Garage garage: garages){
@@ -75,16 +86,7 @@ public class GarageManager {
 
             for (Spot spot: garage.getSpots()){
                 if (spot != null) {
-                    int contains = 0;
-                    if (busySpots.size()!= 0 ) {
-                        for (Spot busySpot : busySpots) {
-                            if (busySpot != null && busySpot.equals(spot)) {
-                                contains = 1;
-                                break;
-                            }
-                        }
-                    }
-                    if (contains == 0) {
+                    if (busySpots.size() == 0 || !busySpots.contains(spot)) {
                         freeSpots.add(spot);
                     }
                 }
@@ -97,17 +99,6 @@ public class GarageManager {
         return (int) listAvailableSpots(futureDate, orders).stream().filter(Objects::nonNull).count();
     }
 
-    public LocalDateTime nextAvailableDate(List<Order> orders){
-        int days = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
-        LocalDateTime nextDate = LocalDateTime.now();
-        for (int i=0; i < days; i++) {
-            if (numberAvailableSpots(nextDate, orders) > 0) {
-                return nextDate;
-            } else {
-                nextDate = nextDate.plusDays(1);
-            }
-        }
-        return null;
-    }
+
 
 }

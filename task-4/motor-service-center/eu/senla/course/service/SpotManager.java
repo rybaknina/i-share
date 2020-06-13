@@ -1,11 +1,12 @@
-package eu.senla.course.controller;
+package eu.senla.course.service;
 
+import eu.senla.course.api.ISpot;
 import eu.senla.course.entity.Spot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpotManager {
+public class SpotManager implements ISpot {
     List<Spot> spots;
 
     public SpotManager() {
@@ -25,7 +26,11 @@ public class SpotManager {
     }
 
     public Spot getSpotById(int id){
-        return (spots == null)? null: spots.get(id);
+        if (spots == null){
+            System.out.println("Spots are not exist");
+            return null;
+        }
+        return spots.get(id);
     }
 
     public void deleteSpot(Spot spot){
