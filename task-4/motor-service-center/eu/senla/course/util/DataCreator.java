@@ -1,11 +1,9 @@
 package eu.senla.course.util;
 
-import eu.senla.course.service.ManagerProvider;
+import eu.senla.course.entity.Tool;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Service;
-import eu.senla.course.entity.Spot;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ public class DataCreator {
     private final static int MAX_GARAGES = 4;
     private final static int MAX_MECHANICS = 5;
 
-    private ManagerProvider provider = ManagerProvider.getInstance();
+    private ServiceProvider provider = ServiceProvider.getInstance();
     public List<Garage> createGarages(){
         int len = MAX_GARAGES;
         List<Garage> garages = new ArrayList<>();
@@ -29,16 +27,16 @@ public class DataCreator {
         return garages;
     }
 
-    public List<Service> createServices(){
+    public List<Tool> createServices(){
 
         String[] names = {"Diagnosis", "Check Engine", "Oil Change", "Tyre Change", "Spare Part Change"};
         int[] hours = {1,2,2,1,4};
         BigDecimal[] prices = {new BigDecimal(10), new BigDecimal(35), new BigDecimal(55), new BigDecimal(40), new BigDecimal(70)};
-        List<Service> services = new ArrayList<>();
+        List<Tool> services = new ArrayList<>();
 
         int len = names.length;
         for (int i = 0; i < len; i++){
-            services.add(new Service(i+1, names[i], hours[i], prices[i]));
+            services.add(new Tool(i+1, names[i], hours[i], prices[i]));
         }
         provider.getServiceManager().setServices(services);
         return services;

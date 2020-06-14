@@ -1,31 +1,31 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IService;
-import eu.senla.course.entity.Service;
+import eu.senla.course.api.IToolService;
+import eu.senla.course.entity.Tool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceManager implements IService {
-    private List<Service> services;
+public class ToolService implements IToolService {
+    private List<Tool> services;
 
-    public ServiceManager() {
+    public ToolService() {
         this.services = new ArrayList<>();
     }
 
-    public List<Service> getServices() {
+    public List<Tool> getServices() {
         return services;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<Tool> services) {
         this.services = services;
     }
 
-    public void addService(Service service){
+    public void addService(Tool service){
         services.add(service);
     }
 
-    public Service getSerbiceBiId(int id){
+    public Tool getSerbiceBiId(int id){
         if (services == null){
             System.out.println("Services is not exist");
             return null;
@@ -33,17 +33,17 @@ public class ServiceManager implements IService {
         return services.get(id);
     }
 
-    public void deleteService(Service service){
+    public void deleteService(Tool service){
         services.removeIf(e -> e.equals(service));
     }
 
-    public Service getServiceByName(String name){
-        for (Service service: services){
+    public Tool getServiceByName(String name){
+        for (Tool service: services){
             if (service.getName() == name){
                 return service;
             }
         }
-        System.out.println("Service is not found");
+        System.out.println("Tool is not found");
         return null;
     }
 }

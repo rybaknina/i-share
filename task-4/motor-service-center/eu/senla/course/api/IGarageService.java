@@ -7,7 +7,7 @@ import eu.senla.course.entity.Spot;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface IGarage {
+public interface IGarageService {
     void addGarage(Garage garage);
     void setGarages(List<Garage> garages);
     List<Garage> getGarages();

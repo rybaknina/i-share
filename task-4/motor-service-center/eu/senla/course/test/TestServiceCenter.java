@@ -1,6 +1,6 @@
 package eu.senla.course.test;
 
-import eu.senla.course.service.ManagerProvider;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.entity.*;
 import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
 import eu.senla.course.entity.comparator.mechanic.ByBusy;
@@ -20,12 +20,12 @@ public class TestServiceCenter {
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" dd.mm.yyyy HH:mm");
     public static void main(String[] args) {
 
-        ManagerProvider provider  = ManagerProvider.getInstance();
+        ServiceProvider provider  = ServiceProvider.getInstance();
 
         DataCreator creator = new DataCreator();
 
         List<Garage> garages = creator.createGarages();
-        List<Service> services = creator.createServices();
+        List<Tool> services = creator.createServices();
         List<Mechanic> mechanics = creator.createMechanics();
         List<Order> ordersForPeriod;
 
@@ -34,7 +34,7 @@ public class TestServiceCenter {
 
         // Мастерская оказывает услуги
         System.out.println("List of Services: ");
-        for (Service service: services){
+        for (Tool service: services){
             System.out.print(service.getName() + "; ");
         }
 
@@ -46,7 +46,7 @@ public class TestServiceCenter {
         // выбор услуг
         System.out.println("Your choice of services: ");
 
-        List<Service> servicesForOrder = new ArrayList<>();
+        List<Tool> servicesForOrder = new ArrayList<>();
         servicesForOrder.add(services.get(0));
         servicesForOrder.add(services.get(2));
 
@@ -88,7 +88,7 @@ public class TestServiceCenter {
         // order 2
         order2.setStartDate(plannedDate.plusHours(4));
 
-        List<Service> servicesListO2 = new ArrayList<>();
+        List<Tool> servicesListO2 = new ArrayList<>();
         servicesListO2.add(services.get(1));
         servicesListO2.add(services.get(3));
         order2.setServices(servicesListO2);

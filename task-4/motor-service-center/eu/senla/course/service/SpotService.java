@@ -1,15 +1,15 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.ISpot;
+import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Spot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpotManager implements ISpot {
+public class SpotService implements ISpotService {
     List<Spot> spots;
 
-    public SpotManager() {
+    public SpotService() {
         this.spots = new ArrayList<>();
     }
 

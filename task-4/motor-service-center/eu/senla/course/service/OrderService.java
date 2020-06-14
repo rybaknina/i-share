@@ -1,11 +1,11 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IGarage;
-import eu.senla.course.api.IOrder;
+import eu.senla.course.api.IGarageService;
+import eu.senla.course.api.IOrderService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
-import eu.senla.course.entity.Service;
+import eu.senla.course.entity.Tool;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderManager implements IOrder {
+public class OrderService implements IOrderService {
     private List<Order> orders;
 
-    public OrderManager() {
+    public OrderService() {
         this.orders = new ArrayList<>();
     }
 
@@ -105,7 +105,7 @@ public class OrderManager implements IOrder {
         }
         return null;
     }
-    public LocalDateTime nextAvailableDate(IGarage garage, LocalDate endDate){
+    public LocalDateTime nextAvailableDate(IGarageService garage, LocalDate endDate){
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
         for (int i=0; i < days; i++) {
@@ -126,7 +126,7 @@ public class OrderManager implements IOrder {
             System.out.println("Order has no services...");
         } else {
             BigDecimal amount = BigDecimal.ZERO;
-            for (Service service : order.getServices()) {
+            for (Tool service : order.getServices()) {
                 amount = amount.add(service.getHourlyPrice().multiply(BigDecimal.valueOf(service.getHours())));
             }
             order.setPrice(amount);

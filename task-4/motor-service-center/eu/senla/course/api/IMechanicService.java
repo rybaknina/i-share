@@ -5,7 +5,7 @@ import eu.senla.course.entity.Mechanic;
 import java.util.Comparator;
 import java.util.List;
 
-public interface IMechanic {
+public interface IMechanicService {
     void addMechanic(Mechanic mechanic);
     List<Mechanic> getMechanics();
     void setMechanics(List<Mechanic> mechanics);

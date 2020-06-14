@@ -2,20 +2,20 @@ package eu.senla.course.entity;
 
 import java.math.BigDecimal;
 
-public class Service {
+public class Tool {
     private int id;
     private String name;
     private int hours;
     private BigDecimal hourlyPrice;
 
-    public Service(int id, String name) {
+    public Tool(int id, String name) {
         this.id = id;
         this.name = name;
         this.hours = 1;
         this.hourlyPrice = new BigDecimal(5);
     }
 
-    public Service(int id, String name, int hours, BigDecimal hourlyPrice) {
+    public Tool(int id, String name, int hours, BigDecimal hourlyPrice) {
         this.id = id;
         this.name = name;
         this.hours = hours;
@@ -52,7 +52,7 @@ public class Service {
 
     @Override
     public String toString() {
-        return "Service{" +
+        return "Tool{" +
                 "id = " + id +
                 ", name = '" + name + '\'' +
                 '}';

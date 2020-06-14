@@ -14,7 +14,7 @@ public class Order {
     private LocalDateTime completeDate;
     private Mechanic mechanic;
     private Spot spot;
-    private List<Service> services = new ArrayList<>();
+    private List<Tool> services = new ArrayList<>();
     private BigDecimal price;
     private OrderStatus status;
 
@@ -59,11 +59,11 @@ public class Order {
         this.completeDate = completeDate;
     }
 
-    public List<Service> getServices() {
+    public List<Tool> getServices() {
         return services;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<Tool> services) {
         this.services = services;
         int hours = 0;
         if (services != null){

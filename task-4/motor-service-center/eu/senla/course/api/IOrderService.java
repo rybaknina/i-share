@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-public interface IOrder {
+public interface IOrderService {
     void addOrder(Order order);
     List<Order> getOrders();
     List<Order> listOrders(Comparator<Order> comparator);
     void changeStartDateOrders(int hours);
-    LocalDateTime nextAvailableDate(IGarage garage, LocalDate endDate);
+    LocalDateTime nextAvailableDate(IGarageService garage, LocalDate endDate);
     Order mechanicOrder(Mechanic mechanic);
     Mechanic orderMechanic(Order order);
     List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate);

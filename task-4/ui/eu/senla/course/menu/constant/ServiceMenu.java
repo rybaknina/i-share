@@ -1,7 +1,7 @@
 package eu.senla.course.menu.constant;
 
 public enum ServiceMenu {
-    SERVICE("Service menu"),
+    SERVICE("Tool menu"),
     ADD("Add service");
 
     private String name;

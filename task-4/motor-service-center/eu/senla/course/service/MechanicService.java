@@ -1,17 +1,17 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IMechanic;
+import eu.senla.course.api.IMechanicService;
 import eu.senla.course.entity.Mechanic;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class MechanicManager implements IMechanic {
+public class MechanicService implements IMechanicService {
 
     private List<Mechanic> mechanics;
 
-    public MechanicManager() {
+    public MechanicService() {
         this.mechanics = new ArrayList<>();
     }
 

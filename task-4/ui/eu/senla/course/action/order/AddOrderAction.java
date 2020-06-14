@@ -5,7 +5,7 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
-import eu.senla.course.service.ManagerProvider;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
 import java.time.LocalDateTime;
@@ -22,10 +22,10 @@ public class AddOrderAction implements IAction {
             Integer mechanicId = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
             Integer spotId = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
 
-            Mechanic mechanic = ManagerProvider.getInstance().getMechanicManager().gerMechanicById(mechanicId);
-            Spot spot = ManagerProvider.getInstance().getSpotManager().getSpotById(spotId);
+            Mechanic mechanic = ServiceProvider.getInstance().getMechanicManager().gerMechanicById(mechanicId);
+            Spot spot = ServiceProvider.getInstance().getSpotManager().getSpotById(spotId);
 
-            ManagerProvider.getInstance().getOrderManager().addOrder(new Order(id, requestDate, plannedDate, mechanic, spot));
+            ServiceProvider.getInstance().getOrderManager().addOrder(new Order(id, requestDate, plannedDate, mechanic, spot));
         }
     }
 }

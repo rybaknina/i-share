@@ -1,6 +1,6 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IGarage;
+import eu.senla.course.api.IGarageService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GarageManager implements IGarage {
+public class GarageService implements IGarageService {
 
     private List<Garage> garages;
 
-    public GarageManager() {
+    public GarageService() {
         this.garages = new ArrayList<>();
     }
 
