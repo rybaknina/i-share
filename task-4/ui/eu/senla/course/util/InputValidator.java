@@ -1,6 +1,7 @@
 package eu.senla.course.util;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -8,10 +9,15 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class InputValidator {
-    private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                    .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-                                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                                    .toFormatter();
+    private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+            .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            .toFormatter();
+    private static DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder()
+            .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            .toFormatter();
+
     public static String readString(Scanner scanner, String message) {
         System.out.println(message);
         return readString(scanner);
@@ -39,20 +45,47 @@ public class InputValidator {
         }
         return number;
     }
+
+    public static LocalDate readDate(Scanner scanner, String message){
+        System.out.println(message);
+        return readDate(scanner);
+    }
+
+    public static LocalDate readDate(Scanner scanner){
+        LocalDate date = null;
+        boolean valid = false;
+        String line;
+        while (!valid) {
+            if (scanner.hasNext()){
+                line = scanner.next();
+                try {
+                    date = LocalDate.parse(line, dateFormatter);
+                    valid = true;
+                } catch (DateTimeParseException ex){
+                    System.out.println("Wrong date entered! Try again...");
+                    scanner.next();
+                    continue;
+                }
+            }
+        }
+        return date;
+    }
+
     public static LocalDateTime readDateTime(Scanner scanner, String message){
         System.out.println(message);
         return readDateTime(scanner);
     }
+
     public static LocalDateTime readDateTime(Scanner scanner){
         LocalDateTime dateTime = null;
         boolean valid = false;
         String line;
         while (!valid) {
-            System.out.println("Enter date-time in format \"dd.MM.yyyy HH:mm\" or \"yyyy-MM-dd HH:mm\": ");
-            if (scanner.hasNextLine()){
-                line = scanner.nextLine();
+            if (scanner.hasNext()){
+                line = scanner.next();
                 try {
-                    dateTime = LocalDateTime.parse(line, formatter);
+                    //TODO: Check input. Something wrong - may be lccal
+                    dateTime = LocalDateTime.parse(line, dateTimeFormatter);
                     valid = true;
                 } catch (DateTimeParseException ex){
                     System.out.println("Wrong date-time entered! Try again...");
