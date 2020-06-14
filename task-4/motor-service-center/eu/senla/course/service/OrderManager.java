@@ -1,5 +1,6 @@
 package eu.senla.course.service;
 
+import eu.senla.course.api.IGarage;
 import eu.senla.course.api.IOrder;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
@@ -104,11 +105,11 @@ public class OrderManager implements IOrder {
         }
         return null;
     }
-    public LocalDateTime nextAvailableDate(LocalDate endDate){
+    public LocalDateTime nextAvailableDate(IGarage garage, LocalDate endDate){
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
         for (int i=0; i < days; i++) {
-            if (ManagerProvider.getInstance().getGarageManager().numberAvailableSpots(nextDate, orders) > 0) {
+            if (garage.numberAvailableSpots(nextDate, orders) > 0) {
                 return nextDate;
             } else {
                 nextDate = nextDate.plusDays(1);

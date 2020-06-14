@@ -29,10 +29,12 @@ public class Builder {
 
         garageMenu.add(new MenuItem(GarageMenu.ADD.getName(), garageMenu, new AddGarageAction()));
         garageMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
+        garageMenu.add(exitItem);
         mainItem.setNextMenu(garageMenu);
 
         serviceMenu.add(new MenuItem(ServiceMenu.ADD.getName(), serviceMenu, new AddServiceAction()));
         serviceMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
+        serviceMenu.add(exitItem);
         mainItem.setNextMenu(serviceMenu);
 
         rootMenu.add(new MenuItem(GarageMenu.GARAGE.getName(), garageMenu));

@@ -33,7 +33,7 @@ public class TestServiceCenter {
         garages.forEach(System.out:: println);
 
         // Мастерская оказывает услуги
-        System.out.println("\nList of Services: ");
+        System.out.println("List of Services: ");
         for (Service service: services){
             System.out.print(service.getName() + "; ");
         }
@@ -128,7 +128,7 @@ public class TestServiceCenter {
         System.out.println("Number Available Spots on Date: " + provider.getGarageManager().numberAvailableSpots(plannedDate, provider.getOrderManager().getOrders()));
 
         // Ближайшая свободная дата
-        System.out.println("Next available date " + provider.getOrderManager().nextAvailableDate(LocalDate.now().plusDays(7)).format(timeFormatter));
+        System.out.println("Next available date " + provider.getOrderManager().nextAvailableDate(provider.getGarageManager(), LocalDate.now().plusDays(7)).format(timeFormatter));
 
         // сортировка по занятости
         System.out.println("Sorting Mechanics by busy ");

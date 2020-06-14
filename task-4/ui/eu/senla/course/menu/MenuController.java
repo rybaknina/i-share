@@ -5,11 +5,11 @@ import eu.senla.course.util.InputValidator;
 import java.util.Scanner;
 
 public class MenuController {
+
     private Builder builder = Builder.getInstance();
     private Navigator navigator = Navigator.getInstance();
 
     public void run(){
-
         navigator.setCurrentMenu(builder.getRootMenu());
         navigator.printMenu();
 
@@ -18,8 +18,7 @@ public class MenuController {
         try (Scanner in = new Scanner(System.in)) {
 
             while (!exit) {
-                // TODO: Fix bug after add in menu - fall
-
+                // TODO: Fix bug after add in menu - fall - can't fix yet
                 int input = InputValidator.readInteger(in) - 1;
 
                 if (input < 0 || input >= navigator.getCurrentMenu().getMenuItems().size()) {

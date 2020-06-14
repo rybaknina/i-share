@@ -17,7 +17,7 @@ public class InputValidator {
         return readString(scanner);
     }
     public static String readString(Scanner scanner) {
-        return scanner.nextLine();
+        return scanner.next();
     }
 
     public static Integer readInteger(Scanner scanner, String message){

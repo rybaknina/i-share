@@ -14,7 +14,7 @@ public interface IOrder {
     List<Order> getOrders();
     List<Order> listOrders(Comparator<Order> comparator);
     void changeStartDateOrders(int hours);
-    LocalDateTime nextAvailableDate(LocalDate endDate);
+    LocalDateTime nextAvailableDate(IGarage garage, LocalDate endDate);
     Order mechanicOrder(Mechanic mechanic);
     Mechanic orderMechanic(Order order);
     List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate);

@@ -29,15 +29,6 @@ public class DataCreator {
         return garages;
     }
 
-//    public List<Spot> createSpots(@NotNull Garage garage){
-//        int len = GeneratorUtil.generateNumber();
-//        List<Spot> spots = new ArrayList<>();
-//        for (int i = 0; i < len; i++){
-//            spots.add(new Spot(i+1, garage));
-//        }
-//        return spots;
-//    }
-
     public List<Service> createServices(){
 
         String[] names = {"Diagnosis", "Check Engine", "Oil Change", "Tyre Change", "Spare Part Change"};

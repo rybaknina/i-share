@@ -1,5 +1,6 @@
 package eu.senla.course.action.garage;
 
+import eu.senla.course.action.constant.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.service.ManagerProvider;
@@ -11,7 +12,7 @@ public class AddGarageAction implements IAction {
     public void execute() {
         try (Scanner scanner = new Scanner(System.in)) {
 
-            Integer id = InputValidator.readInteger(scanner, "Input Garage id");
+            Integer id = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
 
             ManagerProvider.getInstance().getGarageManager().addGarage(new Garage(id));
         }
