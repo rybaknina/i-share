@@ -26,7 +26,7 @@ public class Navigator {
             System.out.println(currentMenu);
             List<MenuItem> items = currentMenu.getMenuItems();
             for (int i = 0; i< items.size(); i++){
-                System.out.println((i + 1) + ": " + items.get(i));
+                System.out.println((i + 1) + ". " + items.get(i));
             }
         } else {
             System.out.println("MainMenu is empty");

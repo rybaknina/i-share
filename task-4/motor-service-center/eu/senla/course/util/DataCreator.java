@@ -32,14 +32,14 @@ public class DataCreator {
         String[] names = {"Diagnosis", "Check Engine", "Oil Change", "Tyre Change", "Spare Part Change"};
         int[] hours = {1,2,2,1,4};
         BigDecimal[] prices = {new BigDecimal(10), new BigDecimal(35), new BigDecimal(55), new BigDecimal(40), new BigDecimal(70)};
-        List<Tool> services = new ArrayList<>();
+        List<Tool> tools = new ArrayList<>();
 
         int len = names.length;
         for (int i = 0; i < len; i++){
-            services.add(new Tool(i+1, names[i], hours[i], prices[i]));
+            tools.add(new Tool(i+1, names[i], hours[i], prices[i]));
         }
-        provider.getServiceManager().setServices(services);
-        return services;
+        provider.getServiceManager().setTools(tools);
+        return tools;
     }
 
     public List<Mechanic> createMechanics(){

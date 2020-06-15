@@ -43,9 +43,15 @@ public class OrderService implements IOrderService {
     }
 
     public void deleteOrder(Order order){
-        orders.removeIf(e -> e.equals(order));
+        if (order == null){
+            System.out.println("Order is not exist");
+        } else {
+            orders.removeIf(e -> e.equals(order));
+        }
     }
-
+    public void changeStatusOrder(Order order, OrderStatus status){
+        order.setStatus(status);
+    }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate){
         List<Order> ordersForPeriod = new ArrayList<>();
         for (Order order: orders){
@@ -68,13 +74,17 @@ public class OrderService implements IOrderService {
     }
     public void changeStartDateOrders(int hours){
         LocalDateTime date = LocalDateTime.now().plusHours(hours);
-        for(Order order: orders){
-            if (order != null && (order.getStartDate()!=null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
-                order.setStartDate(order.getStartDate().plusHours(hours));
-                if (order.getCompleteDate() != null) {
-                    order.setCompleteDate(order.getCompleteDate().plusHours(hours));
-                }
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+        } else {
+            for(Order order: orders){
+                if (order != null && (order.getStartDate()!=null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
+                    order.setStartDate(order.getStartDate().plusHours(hours));
+                    if (order.getCompleteDate() != null) {
+                        order.setCompleteDate(order.getCompleteDate().plusHours(hours));
+                    }
 
+                }
             }
         }
     }
@@ -89,6 +99,10 @@ public class OrderService implements IOrderService {
             System.out.println("Mechanic does not exist");
             return null;
         }
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+            return null;
+        }
         for (Order order: orders){
             if (order.getStatus() == OrderStatus.IN_PROGRESS){
                 return order;
@@ -98,9 +112,14 @@ public class OrderService implements IOrderService {
     }
 
     public Mechanic orderMechanic(Order order){
-        for (Order orderExist: orders){
-            if (orderExist!= null && orderExist.equals(order)){
-                return orderExist.getMechanic();
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+
+        } else {
+            for (Order orderExist : orders) {
+                if (orderExist != null && orderExist.equals(order)) {
+                    return orderExist.getMechanic();
+                }
             }
         }
         return null;

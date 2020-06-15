@@ -36,11 +36,15 @@ public class GarageService implements IGarageService {
         }
     }
     public void deleteGarage(Garage garage){
+        if (garage == null){
+            System.out.println("Garage not found");
+            return;
+        }
         garages.removeIf(e -> e.equals(garage));
     }
 
     public Garage getGarageById(int id){
-        if (garages == null){
+        if (garages == null || garages.size() == 0){
             System.out.println("Garages are not exist");
             return null;
         }
@@ -80,7 +84,10 @@ public class GarageService implements IGarageService {
 
     public List<Spot> listAvailableSpots(LocalDateTime date, List<Order> orders){
         List<Spot> freeSpots = new ArrayList<>();
-
+        if (garages == null || garages.size() == 0){
+            System.out.println("Garages are not exist");
+            return null;
+        }
         for (Garage garage: garages){
             List<Spot> busySpots = spotsOnDate(date, orders);
 

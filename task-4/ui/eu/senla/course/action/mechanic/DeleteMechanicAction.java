@@ -9,16 +9,16 @@ import eu.senla.course.util.InputValidator;
 
 import java.util.Scanner;
 
-public class AddMechanicAction implements IAction {
+public class DeleteMechanicAction implements IAction {
     private MechanicController controller = new MechanicController(new MechanicService());
     @Override
     public void execute() {
         try (Scanner scanner = new Scanner(System.in)) {
 
             Integer id = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
-            String name = InputValidator.readString(scanner, ActionHelper.IN_STRING.getName());
+            Mechanic mechanic = controller.gerMechanicById(id);
 
-            controller.addMechanic(new Mechanic(id, name));
+            controller.deleteMechanic(mechanic);
         }
     }
 }

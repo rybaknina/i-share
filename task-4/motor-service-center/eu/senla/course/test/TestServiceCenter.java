@@ -25,7 +25,7 @@ public class TestServiceCenter {
         DataCreator creator = new DataCreator();
 
         List<Garage> garages = creator.createGarages();
-        List<Tool> services = creator.createServices();
+        List<Tool> tools = creator.createServices();
         List<Mechanic> mechanics = creator.createMechanics();
         List<Order> ordersForPeriod;
 
@@ -33,9 +33,9 @@ public class TestServiceCenter {
         garages.forEach(System.out:: println);
 
         // Мастерская оказывает услуги
-        System.out.println("List of Services: ");
-        for (Tool service: services){
-            System.out.print(service.getName() + "; ");
+        System.out.println("List of Tools: ");
+        for (Tool tool: tools){
+            System.out.print(tool.getName() + "; ");
         }
 
         // В автомастерской есть мастера
@@ -44,11 +44,11 @@ public class TestServiceCenter {
         // Далее действия по услугам и заказу - безличное
 
         // выбор услуг
-        System.out.println("Your choice of services: ");
+        System.out.println("Your choice of tools: ");
 
         List<Tool> servicesForOrder = new ArrayList<>();
-        servicesForOrder.add(services.get(0));
-        servicesForOrder.add(services.get(2));
+        servicesForOrder.add(tools.get(0));
+        servicesForOrder.add(tools.get(2));
 
         servicesForOrder.forEach(System.out::println);
 
@@ -89,8 +89,8 @@ public class TestServiceCenter {
         order2.setStartDate(plannedDate.plusHours(4));
 
         List<Tool> servicesListO2 = new ArrayList<>();
-        servicesListO2.add(services.get(1));
-        servicesListO2.add(services.get(3));
+        servicesListO2.add(tools.get(1));
+        servicesListO2.add(tools.get(3));
         order2.setServices(servicesListO2);
 
         // заказ сделан

@@ -14,6 +14,6 @@ public interface IGarageService {
     Garage getGarageById(int id);
     void deleteGarage(Garage garage);
     int lengthAllSpots();
-    List<Spot> listAvailableSpots(LocalDateTime date, List<Order> orders);
+    List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders);
     int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders);
 }

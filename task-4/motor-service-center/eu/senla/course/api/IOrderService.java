@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface IOrderService {
     void addOrder(Order order);
+    void deleteOrder(Order order);
+    Order getOrderById(int id);
+    void changeStatusOrder(Order order, OrderStatus status);
     List<Order> getOrders();
     List<Order> listOrders(Comparator<Order> comparator);
     void changeStartDateOrders(int hours);

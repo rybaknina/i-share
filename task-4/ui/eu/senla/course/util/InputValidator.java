@@ -6,17 +6,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class InputValidator {
     private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-            .toFormatter();
+            .toFormatter().localizedBy(Locale.ENGLISH);
     private static DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            .toFormatter();
+            .toFormatter().localizedBy(Locale.ENGLISH);
 
     public static String readString(Scanner scanner, String message) {
         System.out.println(message);

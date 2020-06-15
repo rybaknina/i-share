@@ -7,40 +7,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolService implements IToolService {
-    private List<Tool> services;
+    private List<Tool> tools;
 
     public ToolService() {
-        this.services = new ArrayList<>();
+        this.tools = new ArrayList<>();
     }
 
-    public List<Tool> getServices() {
-        return services;
+    public List<Tool> getTools() {
+        return tools;
     }
 
-    public void setServices(List<Tool> services) {
-        this.services = services;
+    public void setTools(List<Tool> tools) {
+        this.tools = tools;
     }
 
-    public void addService(Tool service){
-        services.add(service);
+    public void addTool(Tool tool){
+        tools.add(tool);
     }
 
-    public Tool getSerbiceBiId(int id){
-        if (services == null){
-            System.out.println("Services is not exist");
+    public Tool getToolBiId(int id){
+        if (tools == null){
+            System.out.println("Tools are not exist");
             return null;
         }
-        return services.get(id);
+        return tools.get(id);
     }
 
-    public void deleteService(Tool service){
-        services.removeIf(e -> e.equals(service));
+    public void deleteTool(Tool tool){
+        tools.removeIf(e -> e.equals(tool));
     }
 
-    public Tool getServiceByName(String name){
-        for (Tool service: services){
-            if (service.getName() == name){
-                return service;
+    public Tool getToolByName(String name){
+        for (Tool tool: tools){
+            if (tool.getName() == name){
+                return tool;
             }
         }
         System.out.println("Tool is not found");

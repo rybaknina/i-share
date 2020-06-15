@@ -1,12 +1,14 @@
 package eu.senla.course.menu.constant;
 
-public enum ServiceMenu {
-    SERVICE("Tool menu"),
-    ADD("Add service");
+public enum ToolMenu {
+    TOOL("Tool menu"),
+    ADD("Add tool"),
+    DELETE("Delete tool"),
+    GET_ALL("List of tools");
 
     private String name;
 
-    ServiceMenu(String name) {
+    ToolMenu(String name) {
         this.name = name;
     }
 
