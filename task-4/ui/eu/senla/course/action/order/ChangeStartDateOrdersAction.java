@@ -3,20 +3,21 @@ package eu.senla.course.action.order;
 import eu.senla.course.action.constant.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
-import eu.senla.course.service.OrderService;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ChangeStartDateOrdersAction implements IAction {
-    private OrderController controller = new OrderController(new OrderService());
+    private OrderController controller = new OrderController(ServiceProvider.getInstance().getOrderService());
     @Override
-    public void execute() {
-        try (Scanner scanner = new Scanner(System.in)) {
+    public void execute() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            Integer hours = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
+        Integer hours = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
 
-            controller.changeStartDateOrders(hours);
-        }
+        controller.changeStartDateOrders(hours);
     }
 }

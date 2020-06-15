@@ -5,22 +5,23 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.comparator.order.ByPrice;
-import eu.senla.course.service.OrderService;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.Scanner;
 
 public class DeletedOrdersForPeriodByPrice implements IAction {
-    private OrderController controller = new OrderController(new OrderService());
+    private OrderController controller = new OrderController(ServiceProvider.getInstance().getOrderService());
 
     @Override
-    public void execute() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            LocalDateTime startDate = InputValidator.readDateTime(scanner, ActionHelper.IN_LOCAL_DATE_TIME.getName());
-            LocalDateTime endDate = InputValidator.readDateTime(scanner, ActionHelper.IN_LOCAL_DATE_TIME.getName());
+    public void execute() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        LocalDateTime startDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
+        LocalDateTime endDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
 
-            controller.ordersForPeriod(new ByPrice(), OrderStatus.DELETE, startDate, endDate).forEach(System.out::println);
-        }
+        controller.ordersForPeriod(new ByPrice(), OrderStatus.DELETE, startDate, endDate).forEach(System.out::println);
     }
 }

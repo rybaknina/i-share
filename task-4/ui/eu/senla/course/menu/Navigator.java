@@ -1,5 +1,6 @@
 package eu.senla.course.menu;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Navigator {
@@ -33,7 +34,7 @@ public class Navigator {
         }
     }
 
-    public void navigate(Integer index){
+    public void navigate(Integer index) throws IOException {
         MenuItem item = currentMenu.getMenuItems().get(index);
         if (item != null && item.getAction() != null) {
             item.doAction();

@@ -21,9 +21,9 @@ public class DataCreator {
         for (int i = 0; i < len; i++){
             Garage garage = new Garage(i+1);
             garages.add(garage);
-            provider.getGarageManager().addGarage(garage);
+            provider.getGarageService().addGarage(garage);
         }
-        provider.getGarageManager().setGarages(garages);
+        provider.getGarageService().setGarages(garages);
         return garages;
     }
 
@@ -38,7 +38,7 @@ public class DataCreator {
         for (int i = 0; i < len; i++){
             tools.add(new Tool(i+1, names[i], hours[i], prices[i]));
         }
-        provider.getServiceManager().setTools(tools);
+        provider.getToolService().setTools(tools);
         return tools;
     }
 
@@ -52,7 +52,7 @@ public class DataCreator {
             mechanics.add(new Mechanic(count, i + "_Mechanic"));
             i--;
         } while (count < len);
-        provider.getMechanicManager().setMechanics(mechanics);
+        provider.getMechanicService().setMechanics(mechanics);
         return mechanics;
     }
 }

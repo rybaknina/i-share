@@ -5,30 +5,30 @@ import eu.senla.course.api.*;
 public class ServiceProvider {
 
     private final static ServiceProvider instance = new ServiceProvider();
-    private final IGarageService garageManager = new GarageService();
-    private final IMechanicService mechanicManager = new MechanicService();
-    private final IOrderService orderManager = new OrderService();
-    private final IToolService serviceManager = new ToolService();
-    private final ISpotService spotManager = new SpotService();
+    private final IGarageService garageService = new GarageService();
+    private final IMechanicService mechanicService = new MechanicService();
+    private final IOrderService orderService = new OrderService();
+    private final IToolService toolService = new ToolService();
+    private final ISpotService spotService = new SpotService();
 
     private ServiceProvider(){
     }
     public static ServiceProvider getInstance(){
         return instance;
     }
-    public IGarageService getGarageManager(){
-        return instance.garageManager;
+    public IGarageService getGarageService(){
+        return instance.garageService;
     }
-    public IMechanicService getMechanicManager(){
-        return instance.mechanicManager;
+    public IMechanicService getMechanicService(){
+        return instance.mechanicService;
     }
-    public IOrderService getOrderManager(){
-        return instance.orderManager;
+    public IOrderService getOrderService(){
+        return instance.orderService;
     }
-    public IToolService getServiceManager(){
-        return instance.serviceManager;
+    public IToolService getToolService(){
+        return instance.toolService;
     }
-    public ISpotService getSpotManager(){
-        return instance.spotManager;
+    public ISpotService getSpotService(){
+        return instance.spotService;
     }
 }

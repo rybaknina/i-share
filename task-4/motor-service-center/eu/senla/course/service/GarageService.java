@@ -44,8 +44,8 @@ public class GarageService implements IGarageService {
     }
 
     public Garage getGarageById(int id){
-        if (garages == null || garages.size() == 0){
-            System.out.println("Garages are not exist");
+        if (garages == null || garages.size() == 0 || garages.get(id) == null){
+            System.out.println("Garage is not found");
             return null;
         }
         return garages.get(id);

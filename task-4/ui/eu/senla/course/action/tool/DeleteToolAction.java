@@ -4,21 +4,22 @@ import eu.senla.course.action.constant.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.service.ToolService;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class DeleteToolAction implements IAction {
-    private ToolController controller = new ToolController(new ToolService());
+    private ToolController controller = new ToolController(ServiceProvider.getInstance().getToolService());
     @Override
-    public void execute() {
-        try (Scanner scanner = new Scanner(System.in)) {
+    public void execute() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            Integer id = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
-            Tool tool = controller.getToolBiId(id);
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Tool tool = controller.getToolBiId(id);
 
-            controller.deleteTool(tool);
-        }
+        controller.deleteTool(tool);
     }
 }

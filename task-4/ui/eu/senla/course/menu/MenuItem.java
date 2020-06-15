@@ -2,6 +2,8 @@ package eu.senla.course.menu;
 
 import eu.senla.course.api.IAction;
 
+import java.io.IOException;
+
 
 public class MenuItem {
     private String title;
@@ -48,7 +50,7 @@ public class MenuItem {
         this.nextMenu = nextMenu;
     }
 
-    public void doAction(){
+    public void doAction() throws IOException {
         action.execute();
     }
 

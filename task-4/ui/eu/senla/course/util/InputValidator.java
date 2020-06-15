@@ -1,5 +1,7 @@
 package eu.senla.course.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,9 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
-import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class InputValidator {
+    private static Pattern pattern = Pattern.compile("-?[0-9]+");
     private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
@@ -19,100 +22,97 @@ public class InputValidator {
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             .toFormatter().localizedBy(Locale.ENGLISH);
 
-    public static String readString(Scanner scanner, String message) {
+    public static String readString(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
-        return readString(scanner);
+        return readString(reader);
     }
-    public static String readString(Scanner scanner) {
-        return scanner.next();
+    private static String readString(BufferedReader reader) throws IOException {
+        return reader.readLine();
     }
 
-    public static Integer readInteger(Scanner scanner, String message){
+    public static Integer readInteger(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
-        return readInteger(scanner);
+        return readInteger(reader);
     }
-    public static Integer readInteger(Scanner scanner){
+    public static Integer readInteger(BufferedReader reader) throws IOException {
         Integer number = null;
+        String line = reader.readLine();
         boolean valid = false;
         while (!valid) {
-            if (scanner.hasNextInt()){
-                number = scanner.nextInt();
+            if (pattern.matcher(line).matches()){
+                number = Integer.parseInt(line);
                 valid = true;
             } else {
                 System.out.println("Not a Number entered! Try again...");
-                scanner.next();
+                line = reader.readLine();
                 continue;
             }
         }
         return number;
     }
 
-    public static LocalDate readDate(Scanner scanner, String message){
+    public static LocalDate readDate(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
-        return readDate(scanner);
+        return readDate(reader);
     }
 
-    public static LocalDate readDate(Scanner scanner){
+    private static LocalDate readDate(BufferedReader reader) throws IOException {
         LocalDate date = null;
         boolean valid = false;
-        String line;
+        String line = reader.readLine();
         while (!valid) {
-            if (scanner.hasNext()){
-                line = scanner.next();
-                try {
-                    date = LocalDate.parse(line, dateFormatter);
-                    valid = true;
-                } catch (DateTimeParseException ex){
-                    System.out.println("Wrong date entered! Try again...");
-                    scanner.next();
-                    continue;
-                }
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(line, dateFormatter);
+                valid = true;
+            } catch (DateTimeParseException ex){
+                System.out.println("Wrong date entered! Try again...");
+                line = reader.readLine();
+                continue;
             }
         }
         return date;
     }
 
-    public static LocalDateTime readDateTime(Scanner scanner, String message){
+    public static LocalDateTime readDateTime(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
-        return readDateTime(scanner);
+        return readDateTime(reader);
     }
 
-    public static LocalDateTime readDateTime(Scanner scanner){
+    private static LocalDateTime readDateTime(BufferedReader reader) throws IOException {
         LocalDateTime dateTime = null;
         boolean valid = false;
-        String line;
+        String line = reader.readLine();
         while (!valid) {
-            if (scanner.hasNext()){
-                line = scanner.next();
-                try {
-                    //TODO: Check input. Something wrong - may be lccal
-                    dateTime = LocalDateTime.parse(line, dateTimeFormatter);
-                    valid = true;
-                } catch (DateTimeParseException ex){
-                    System.out.println("Wrong date-time entered! Try again...");
-                    scanner.next();
-                    continue;
-                }
+            try {
+                //TODO: Check input. Something wrong. Need more debug - formatter?
+                dateTime = LocalDateTime.parse(line, dateTimeFormatter);
+                valid = true;
+            } catch (DateTimeParseException ex){
+                System.out.println("Wrong date-time entered! Try again...");
+                line = reader.readLine();
+                continue;
             }
+
         }
         return dateTime;
     }
 
-    public static BigDecimal readDecimal(Scanner scanner, String message){
+    public static BigDecimal readDecimal(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
-        return readDecimal(scanner);
+        return readDecimal(reader);
     }
 
-    public static BigDecimal readDecimal(Scanner scanner){
+    private static BigDecimal readDecimal(BufferedReader reader) throws IOException {
         BigDecimal decimal = BigDecimal.ZERO;
         boolean valid = false;
+        String line = reader.readLine();
         while (!valid) {
-            if (scanner.hasNextBigDecimal()){
-                decimal = scanner.nextBigDecimal();
+            try {
+                decimal = new BigDecimal(line);
                 valid = true;
-            } else {
+            } catch (Exception e){
                 System.out.println("Not a BigDecimal entered! Try again...");
-                scanner.next();
+                line = reader.readLine();
                 continue;
             }
         }

@@ -31,11 +31,12 @@ public class OrderService implements IOrderService {
     }
 
     public Order getOrderById(int id){
-        if (orders == null){
-            System.out.println("Orders are not exist");
+        if (orders == null || orders.size() == 0 || orders.get(id) == null){
+            System.out.println("Order is not found");
             return null;
         }
         return orders.get(id);
+
     }
 
     public void addOrder(Order order){
@@ -50,7 +51,11 @@ public class OrderService implements IOrderService {
         }
     }
     public void changeStatusOrder(Order order, OrderStatus status){
-        order.setStatus(status);
+        if (order == null) {
+            System.out.println("Order is not found");
+        } else {
+            order.setStatus(status);
+        }
     }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate){
         List<Order> ordersForPeriod = new ArrayList<>();
@@ -141,11 +146,11 @@ public class OrderService implements IOrderService {
     public void bill(Order order){
         if (order == null){
             System.out.println("Order is not exist");
-        } else if (order.getServices() == null){
+        } else if (order.getTools() == null){
             System.out.println("Order has no services...");
         } else {
             BigDecimal amount = BigDecimal.ZERO;
-            for (Tool service : order.getServices()) {
+            for (Tool service : order.getTools()) {
                 amount = amount.add(service.getHourlyPrice().multiply(BigDecimal.valueOf(service.getHours())));
             }
             order.setPrice(amount);

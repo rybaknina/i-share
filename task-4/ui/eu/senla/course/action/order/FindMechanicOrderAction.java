@@ -5,23 +5,23 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.MechanicController;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Mechanic;
-import eu.senla.course.service.MechanicService;
-import eu.senla.course.service.OrderService;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class FindMechanicOrderAction implements IAction {
-    private OrderController orderController = new OrderController(new OrderService());
-    private MechanicController mechanicController = new MechanicController(new MechanicService());
+    private OrderController orderController = new OrderController(ServiceProvider.getInstance().getOrderService());
+    private MechanicController mechanicController = new MechanicController(ServiceProvider.getInstance().getMechanicService());
     @Override
-    public void execute() {
-        try (Scanner scanner = new Scanner(System.in)) {
+    public void execute() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            Integer id = InputValidator.readInteger(scanner, ActionHelper.IN_INTEGER.getName());
-            Mechanic mechanic = mechanicController.gerMechanicById(id);
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Mechanic mechanic = mechanicController.gerMechanicById(id);
 
-            System.out.println(orderController.mechanicOrder(mechanic));
-        }
+        System.out.println(orderController.mechanicOrder(mechanic));
     }
 }
