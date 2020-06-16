@@ -7,10 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToolService implements IToolService {
+
+    private final static IToolService instance = new ToolService();
+
     private List<Tool> tools;
 
-    public ToolService() {
+    private ToolService() {
         this.tools = new ArrayList<>();
+    }
+
+    public static IToolService getInstance(){
+        return instance;
     }
 
     public List<Tool> getTools() {

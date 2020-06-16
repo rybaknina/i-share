@@ -1,6 +1,7 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.IGarageService;
+import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
@@ -15,10 +16,15 @@ import java.util.Objects;
 
 public class GarageService implements IGarageService {
 
+    private final static IGarageService instance = new GarageService();
     private List<Garage> garages;
 
-    public GarageService() {
+    private GarageService() {
         this.garages = new ArrayList<>();
+    }
+
+    public static IGarageService getInstance(){
+        return instance;
     }
 
     public List<Garage> getGarages() {
@@ -52,11 +58,12 @@ public class GarageService implements IGarageService {
     }
 
     public List<Spot> createSpots(@NotNull Garage garage){
+        ISpotService spotService = SpotService.getInstance();
         int len = GeneratorUtil.generateNumber();
         for (int i = 0; i < len; i++){
-            ServiceProvider.getInstance().getSpotService().addSpot(new Spot(i+1, garage));
+            spotService.addSpot(new Spot(i+1, garage));
         }
-        return ServiceProvider.getInstance().getSpotService().getSpots();
+        return spotService.getSpots();
     }
 
     public int lengthAllSpots(){

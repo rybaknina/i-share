@@ -2,16 +2,22 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.IMechanicService;
 import eu.senla.course.entity.Mechanic;
+import eu.senla.course.service.MechanicService;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class MechanicController {
-    private final IMechanicService service;
+    private final IMechanicService service = MechanicService.getInstance();
+    private final static MechanicController instance = new MechanicController();
 
-    public MechanicController(IMechanicService service) {
-        this.service = service;
+    private MechanicController() {
     }
+
+    public static MechanicController getInstance(){
+        return instance;
+    }
+
     public void addMechanic(Mechanic mechanic){
         service.addMechanic(mechanic);
     }

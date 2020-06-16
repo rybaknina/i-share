@@ -4,16 +4,23 @@ import eu.senla.course.api.IGarageService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
+import eu.senla.course.service.GarageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class GarageController {
-    private final IGarageService service;
+    private final IGarageService service = GarageService.getInstance();
+    private final static GarageController instance = new GarageController();
 
-    public GarageController(IGarageService service) {
-        this.service = service;
+    private GarageController() {
+
     }
+
+    public static GarageController getInstance(){
+        return instance;
+    }
+
     public void addGarage(Garage garage){
         service.addGarage(garage);
     }

@@ -3,6 +3,7 @@ package eu.senla.course.api;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
+import eu.senla.course.entity.Tool;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public interface IOrderService {
     void addOrder(Order order);
     void deleteOrder(Order order);
     Order getOrderById(int id);
+    void addToolsToOrder(Order order, List<Tool> tools);
     void changeStatusOrder(Order order, OrderStatus status);
     List<Order> getOrders();
     List<Order> listOrders(Comparator<Order> comparator);

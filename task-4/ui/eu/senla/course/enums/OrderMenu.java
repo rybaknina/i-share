@@ -1,9 +1,10 @@
-package eu.senla.course.menu.constant;
+package eu.senla.course.enums;
 
 public enum OrderMenu {
     ORDER("Order menu"),
     ADD("Add order"),
     DELETE("Delete order"),
+    ADD_TOOLS("Add tools to order"),
     IN_PROGRESS_STATUS("Change status an order to in progress"),
     CANCEL_STATUS("Change status an order to cancel"),
     CLOSE_STATUS("Change status an order to close"),

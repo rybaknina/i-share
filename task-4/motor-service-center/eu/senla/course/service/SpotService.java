@@ -7,10 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpotService implements ISpotService {
+
+    private final static ISpotService instance = new SpotService();
+
     private List<Spot> spots;
 
-    public SpotService() {
+    private SpotService() {
         this.spots = new ArrayList<>();
+    }
+
+    public static ISpotService getInstance(){
+        return instance;
     }
 
     public List<Spot> getSpots() {

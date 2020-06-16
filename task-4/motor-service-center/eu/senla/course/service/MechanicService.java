@@ -8,11 +8,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MechanicService implements IMechanicService {
-
+    private final static IMechanicService instance = new MechanicService();
     private List<Mechanic> mechanics;
 
-    public MechanicService() {
+    private MechanicService() {
         this.mechanics = new ArrayList<>();
+    }
+
+    public static IMechanicService getInstance(){
+        return instance;
     }
 
     public void addMechanic(Mechanic mechanic) {

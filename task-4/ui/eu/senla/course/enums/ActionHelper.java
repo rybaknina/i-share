@@ -1,4 +1,4 @@
-package eu.senla.course.action.constant;
+package eu.senla.course.enums;
 
 public enum ActionHelper {
     IN_INTEGER("Input an Integer: "),

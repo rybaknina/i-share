@@ -1,4 +1,4 @@
-package eu.senla.course.menu.constant;
+package eu.senla.course.enums;
 
 public enum ToolMenu {
     TOOL("Tool menu"),

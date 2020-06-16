@@ -1,10 +1,9 @@
 package eu.senla.course.action.tool;
 
-import eu.senla.course.action.constant.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.service.ServiceProvider;
+import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -13,7 +12,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 public class AddToolAction implements IAction {
-    private ToolController controller = new ToolController(ServiceProvider.getInstance().getToolService());
+    private ToolController controller = ToolController.getInstance();
     @Override
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

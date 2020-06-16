@@ -1,11 +1,10 @@
 package eu.senla.course.action.order;
 
-import eu.senla.course.action.constant.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.comparator.order.ByPrice;
-import eu.senla.course.service.ServiceProvider;
+import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -14,7 +13,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 
 public class CanceledOrdersForPeriodByPrice implements IAction {
-    private OrderController controller = new OrderController(ServiceProvider.getInstance().getOrderService());
+    private OrderController controller = OrderController.getInstance();
 
     @Override
     public void execute() throws IOException {

@@ -5,11 +5,11 @@ import eu.senla.course.api.*;
 public class ServiceProvider {
 
     private final static ServiceProvider instance = new ServiceProvider();
-    private final IGarageService garageService = new GarageService();
-    private final IMechanicService mechanicService = new MechanicService();
-    private final IOrderService orderService = new OrderService();
-    private final IToolService toolService = new ToolService();
-    private final ISpotService spotService = new SpotService();
+    private final IGarageService garageService = GarageService.getInstance();
+    private final IMechanicService mechanicService = MechanicService.getInstance();
+    private final IOrderService orderService = OrderService.getInstance();
+    private final IToolService toolService = ToolService.getInstance();
+    private final ISpotService spotService = SpotService.getInstance();
 
     private ServiceProvider(){
     }

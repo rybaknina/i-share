@@ -16,10 +16,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class OrderService implements IOrderService {
+
+    private final static IOrderService instance = new OrderService();
+
     private List<Order> orders;
 
-    public OrderService() {
+    private OrderService() {
         this.orders = new ArrayList<>();
+    }
+
+    public static IOrderService getInstance(){
+        return instance;
     }
 
     public List<Order> getOrders() {
@@ -50,6 +57,19 @@ public class OrderService implements IOrderService {
             orders.removeIf(e -> e.equals(order));
         }
     }
+
+    public void addToolsToOrder(Order order, List<Tool> tools){
+        if (order == null) {
+            System.out.println("Order is not exist");
+            return;
+        }
+        if (tools == null || tools.size() == 0){
+            System.out.println("Tools are not exist");
+        } else {
+            order.setTools(tools);
+        }
+    }
+
     public void changeStatusOrder(Order order, OrderStatus status){
         if (order == null) {
             System.out.println("Order is not found");

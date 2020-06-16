@@ -1,6 +1,6 @@
 package eu.senla.course.menu;
 
-import eu.senla.course.menu.constant.MainMenu;
+import eu.senla.course.enums.MainMenu;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -17,12 +17,10 @@ public class MenuController {
         navigator.printMenu();
 
         boolean exit = false;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        try (Scanner in = new Scanner(System.in)) {
-  //      try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))){
             while (!exit) {
-                // TODO: Fix bug after add reader menu - fall - can't fix yet
+
                 int input = InputValidator.readInteger(reader) - 1;
 
                 if (input < 0 || input >= navigator.getCurrentMenu().getMenuItems().size()) {
@@ -40,8 +38,7 @@ public class MenuController {
                 navigator.setCurrentMenu(navigator.getCurrentMenu().getMenuItems().get(input).getNextMenu());
                 navigator.printMenu();
             }
-   //     }
-        reader.close();
+        }
         System.out.println("I'll be back ... soon");
     }
 }

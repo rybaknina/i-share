@@ -2,15 +2,23 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.IToolService;
 import eu.senla.course.entity.Tool;
+import eu.senla.course.service.ToolService;
 
 import java.util.List;
 
 public class ToolController {
-    private final IToolService service;
 
-    public ToolController(IToolService service) {
-        this.service = service;
+    private final static ToolController instance = new ToolController();
+    private final IToolService service = ToolService.getInstance();
+
+    private ToolController() {
+
     }
+
+    public static ToolController getInstance(){
+        return instance;
+    }
+
     public void addTool(Tool tool){
         service.addTool(tool);
     }

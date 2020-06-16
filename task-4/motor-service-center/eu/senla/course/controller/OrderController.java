@@ -5,6 +5,8 @@ import eu.senla.course.api.IOrderService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
+import eu.senla.course.entity.Tool;
+import eu.senla.course.service.OrderService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,11 +14,16 @@ import java.util.Comparator;
 import java.util.List;
 
 public class OrderController {
-    private final IOrderService service;
+    private final IOrderService service = OrderService.getInstance();
+    private final static OrderController instance = new OrderController();
 
-    public OrderController(IOrderService service) {
-        this.service = service;
+    private OrderController() {
     }
+
+    public static OrderController getInstance(){
+        return instance;
+    }
+
     public void addOrder(Order order){
         service.addOrder(order);
     }
@@ -25,6 +32,9 @@ public class OrderController {
     }
     public void deleteOrder(Order order){
         service.deleteOrder(order);
+    }
+    public void addToolsToOrder(Order order, List<Tool> tools){
+        service.addToolsToOrder(order, tools);
     }
     public Order getOrderById(int id){
         return service.getOrderById(id);

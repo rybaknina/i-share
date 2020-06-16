@@ -2,15 +2,23 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Spot;
+import eu.senla.course.service.SpotService;
 
 import java.util.List;
 
 public class SpotController {
-    private final ISpotService service;
 
-    public SpotController(ISpotService service) {
-        this.service = service;
+    private final static SpotController instance = new SpotController();
+    private final ISpotService service = SpotService.getInstance();
+
+    private SpotController() {
+
     }
+
+    public static SpotController getInstance(){
+        return instance;
+    }
+
     public List<Spot> getSpots(){
         return service.getSpots();
     }

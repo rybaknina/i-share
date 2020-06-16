@@ -1,6 +1,6 @@
 package eu.senla.course.action.order;
 
-import eu.senla.course.action.constant.ActionHelper;
+import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.service.ServiceProvider;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class NextAvailableDateAction implements IAction {
-    private OrderController orderController = new OrderController(ServiceProvider.getInstance().getOrderService());
+    private OrderController orderController = OrderController.getInstance();
     @Override
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
