@@ -9,6 +9,6 @@ public class GetSpotsAction implements IAction {
 
     @Override
     public void execute() {
-        controller.getSpots();
+        controller.getSpots().forEach(System.out::println);
     }
 }

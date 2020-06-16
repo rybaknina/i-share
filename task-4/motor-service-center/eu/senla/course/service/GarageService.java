@@ -53,15 +53,17 @@ public class GarageService implements IGarageService {
 
     public List<Spot> createSpots(@NotNull Garage garage){
         int len = GeneratorUtil.generateNumber();
-        List<Spot> spots = new ArrayList<>();
         for (int i = 0; i < len; i++){
-            spots.add(new Spot(i+1, garage));
+            ServiceProvider.getInstance().getSpotService().addSpot(new Spot(i+1, garage));
         }
-        return spots;
+        return ServiceProvider.getInstance().getSpotService().getSpots();
     }
 
     public int lengthAllSpots(){
         int len = 0;
+        if (garages == null || garages.size() == 0){
+            return len;
+        }
         for (Garage garage: garages){
             len += garage.getSpots().size();
         }
@@ -70,7 +72,7 @@ public class GarageService implements IGarageService {
 
     private List<Spot> spotsOnDate(LocalDateTime date, List<Order> orders){
         List<Spot> spots = new ArrayList<>();
-        if (orders != null) {
+        if (orders != null && orders.size() != 0) {
             for (Order order : orders) {
                 if (order != null && order.getSpot() != null && (order.getCompleteDate() != null &&
                         (order.getCompleteDate().isAfter(date) && order.getStatus() != OrderStatus.CLOSE) ||
@@ -103,6 +105,10 @@ public class GarageService implements IGarageService {
     }
 
     public int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders){
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+            return 0;
+        }
         return (int) listAvailableSpots(futureDate, orders).stream().filter(Objects::nonNull).count();
     }
 

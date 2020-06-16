@@ -26,7 +26,7 @@ public class ToolService implements IToolService {
     }
 
     public Tool getToolBiId(int id){
-        if (tools == null){
+        if (tools == null || tools.size() == 0){
             System.out.println("Tools are not exist");
             return null;
         }
@@ -34,12 +34,16 @@ public class ToolService implements IToolService {
     }
 
     public void deleteTool(Tool tool){
-        tools.removeIf(e -> e.equals(tool));
+        if (tools == null || tools.size() == 0){
+            System.out.println("Tools are not exist");
+        } else {
+            tools.removeIf(e -> e.equals(tool));
+        }
     }
 
     public Tool getToolByName(String name){
         for (Tool tool: tools){
-            if (tool.getName() == name){
+            if (tool.getName().equals(name)){
                 return tool;
             }
         }

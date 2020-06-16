@@ -5,8 +5,8 @@ public enum GarageMenu {
     ADD("Add garage"),
     DELETE("Delete garage"),
     GET_ALL("Get list of garages"),
-    LIST_FREE_SPOTS("List Available Spots"),
-    NUMBER_FREE_SPOTS("Number Available Spots");
+    LIST_FREE_SPOTS("List Available Spots on future date"),
+    NUMBER_FREE_SPOTS("Number Available Spots on future date");
 
     private String name;
 

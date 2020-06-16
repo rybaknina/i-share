@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpotService implements ISpotService {
-    List<Spot> spots;
+    private List<Spot> spots;
 
     public SpotService() {
         this.spots = new ArrayList<>();
@@ -26,7 +26,7 @@ public class SpotService implements ISpotService {
     }
 
     public Spot getSpotById(int id){
-        if (spots == null){
+        if (spots == null || spots.size() == 0){
             System.out.println("Spots are not exist");
             return null;
         }
@@ -34,6 +34,10 @@ public class SpotService implements ISpotService {
     }
 
     public void deleteSpot(Spot spot){
-        spots.removeIf(e -> e.equals(spot));
+        if (spots == null || spots.size() == 0){
+            System.out.println("Spots are not exist");
+        } else {
+            spots.removeIf(e -> e.equals(spot));
+        }
     }
 }

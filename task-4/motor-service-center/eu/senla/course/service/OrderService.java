@@ -44,7 +44,7 @@ public class OrderService implements IOrderService {
     }
 
     public void deleteOrder(Order order){
-        if (order == null){
+        if (order == null || orders.size() == 0){
             System.out.println("Order is not exist");
         } else {
             orders.removeIf(e -> e.equals(order));
@@ -58,6 +58,10 @@ public class OrderService implements IOrderService {
         }
     }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate){
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+            return null;
+        }
         List<Order> ordersForPeriod = new ArrayList<>();
         for (Order order: orders){
             if (order!= null && order.getStartDate()!=null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0 ){
@@ -68,6 +72,10 @@ public class OrderService implements IOrderService {
         return ordersForPeriod;
     }
     public List<Order> listCurrentOrders(Comparator<Order> comparator){
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+            return null;
+        }
         List<Order> currentOrders = new ArrayList<>();
         for (Order order: orders){
             if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS){
@@ -95,6 +103,10 @@ public class OrderService implements IOrderService {
     }
 
     public List<Order> listOrders(Comparator<Order> comparator){
+        if (orders == null || orders.size() == 0){
+            System.out.println("Orders are not exist");
+            return null;
+        }
         orders.sort(comparator);
         return orders;
     }
@@ -146,7 +158,7 @@ public class OrderService implements IOrderService {
     public void bill(Order order){
         if (order == null){
             System.out.println("Order is not exist");
-        } else if (order.getTools() == null){
+        } else if (order.getTools() == null || order.getTools().size() == 0){
             System.out.println("Order has no services...");
         } else {
             BigDecimal amount = BigDecimal.ZERO;

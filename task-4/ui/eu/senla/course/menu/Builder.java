@@ -81,6 +81,9 @@ public class Builder {
     private void createOrderMenu(MenuItem exitItem) {
         orderMenu.add(new MenuItem(OrderMenu.ADD.getName(), orderMenu, new AddOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.DELETE.getName(), orderMenu, new DeleteOrderAction()));
+
+        //TODO: create action for add tools to order
+
         orderMenu.add(new MenuItem(OrderMenu.CANCEL_STATUS.getName(), orderMenu, new SetCancelStatusOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.CLOSE_STATUS.getName(), orderMenu, new SetCloseStatusOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.DELETE_STATUS.getName(), orderMenu, new SetDeleteStatusOrderAction()));

@@ -16,11 +16,11 @@ public class InputValidator {
     private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-            .toFormatter().localizedBy(Locale.ENGLISH);
+            .toFormatter().withLocale(Locale.US);
     private static DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            .toFormatter().localizedBy(Locale.ENGLISH);
+            .toFormatter().withLocale(Locale.US);
 
     public static String readString(BufferedReader reader, String message) throws IOException {
         System.out.println(message);
@@ -62,7 +62,7 @@ public class InputValidator {
         String line = reader.readLine();
         while (!valid) {
             try {
-                LocalDateTime dateTime = LocalDateTime.parse(line, dateFormatter);
+                date = LocalDate.parse(line, dateFormatter);
                 valid = true;
             } catch (DateTimeParseException ex){
                 System.out.println("Wrong date entered! Try again...");

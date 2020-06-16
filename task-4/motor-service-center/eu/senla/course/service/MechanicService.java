@@ -28,17 +28,25 @@ public class MechanicService implements IMechanicService {
     }
 
     public void deleteMechanic(Mechanic mechanic){
-        mechanics.removeIf(e -> e.equals(mechanic));
+        if (mechanics == null || mechanics.size() == 0){
+            System.out.println("Auto mechanics are not exist");
+        } else {
+            mechanics.removeIf(e -> e.equals(mechanic));
+        }
     }
 
     public Mechanic gerMechanicById(int id){
-        if (mechanics == null){
+        if (mechanics == null || mechanics.size() == 0){
             System.out.println("Auto mechanics are not exist");
             return null;
         }
         return mechanics.get(id);
     }
     public Mechanic firstFreeMechanic(){
+        if (mechanics == null || mechanics.size() == 0){
+            System.out.println("Auto mechanics are not exist");
+            return null;
+        }
         for (Mechanic mechanic: mechanics){
             if (mechanic.isMechanicFree()){
                 return mechanic;
@@ -49,6 +57,10 @@ public class MechanicService implements IMechanicService {
     }
 
     public void sortMechanicsBy(Comparator<Mechanic> comparator){
+        if (mechanics == null || mechanics.size() == 0){
+            System.out.println("Auto mechanics are not exist");
+            return;
+        }
         mechanics.sort(comparator);
         for (Mechanic mechanic: mechanics){
             System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());

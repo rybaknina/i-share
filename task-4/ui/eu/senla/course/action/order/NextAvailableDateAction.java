@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class NextAvailableDateAction implements IAction {
     private OrderController orderController = new OrderController(ServiceProvider.getInstance().getOrderService());
@@ -19,6 +21,9 @@ public class NextAvailableDateAction implements IAction {
 
         LocalDate endDate = InputValidator.readDate(reader, ActionHelper.IN_LOCAL_DATE.getName());
 
-        System.out.println(orderController.nextAvailableDate(ServiceProvider.getInstance().getGarageService(), endDate));
+        LocalDateTime nextDate = orderController.nextAvailableDate(ServiceProvider.getInstance().getGarageService(), endDate);
+        if (nextDate != null) {
+            System.out.println(nextDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")));
+        }
     }
 }
