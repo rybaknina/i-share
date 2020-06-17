@@ -39,12 +39,6 @@ public class Navigator {
         MenuItem item = currentMenu.getMenuItems().get(index);
         if (item != null && item.getAction() != null) {
             item.doAction();
-//            this.setCurrentMenu(item.getNextMenu());
-//            this.printMenu();
-        } else {
-            item.getNextMenu();
-//            this.setCurrentMenu(item.getNextMenu());
-//            this.printMenu();
         }
     }
 }

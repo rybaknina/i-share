@@ -8,7 +8,7 @@ public interface IToolService {
     void addTool(Tool tool);
     List<Tool> getTools();
     void setTools(List<Tool> tools);
-    Tool getToolBiId(int id);
+    Tool getToolById(int id);
     void deleteTool(Tool tool);
     Tool getToolByName(String name);
 }

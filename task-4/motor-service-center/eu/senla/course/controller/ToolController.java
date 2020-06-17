@@ -28,8 +28,8 @@ public class ToolController {
     public void setTools(List<Tool> tools){
         service.setTools(tools);
     }
-    public Tool getToolBiId(int id){
-        return service.getToolBiId(id);
+    public Tool getToolById(int id){
+        return service.getToolById(id);
     }
 
     public void deleteTool(Tool tool){

@@ -13,18 +13,11 @@ import eu.senla.course.action.tool.AddToolAction;
 
 public class Builder {
 
-    private static final String SUB_MENU = MainMenu.SUB.getName();
-    private static final String ROOT_MENU = MainMenu.ROOT.getName();
-
     private final static Builder instance = new Builder();
 
-    private Menu garageMenu = new Menu(SUB_MENU);
-    private Menu toolMenu = new Menu(SUB_MENU);
-    private Menu mechanicMenu = new Menu(SUB_MENU);
-    private Menu orderMenu = new Menu(SUB_MENU);
-    private Menu spotMenu = new Menu(SUB_MENU);
 
-    private Menu rootMenu = new Menu(ROOT_MENU);
+
+    private Menu rootMenu = new Menu(MainMenu.ROOT.getName());
 
 
     private Builder() {
@@ -34,42 +27,44 @@ public class Builder {
         return instance;
     }
 
-    private Menu buildMenu(){
+    public Menu buildMenu(){
+
+        Menu garageMenu = new Menu(MainMenu.SUB.getName());
+        Menu toolMenu = new Menu(MainMenu.SUB.getName());
+        Menu mechanicMenu = new Menu(MainMenu.SUB.getName());
+        Menu orderMenu = new Menu(MainMenu.SUB.getName());
+        Menu spotMenu = new Menu(MainMenu.SUB.getName());
 
         MenuItem mainItem = new MenuItem(MainMenu.ROOT.getName(), rootMenu);
         MenuItem exitItem = new MenuItem(MainMenu.EXIT.getName());
 
-        createGarageMenu(exitItem);
+        createGarageMenu(garageMenu, exitItem);
         mainItem.setNextMenu(garageMenu);
 
-        createToolMenu(exitItem);
+        createToolMenu(toolMenu, exitItem);
         mainItem.setNextMenu(toolMenu);
 
-        createMechanicMenu(exitItem);
+        createMechanicMenu(mechanicMenu, exitItem);
         mainItem.setNextMenu(mechanicMenu);
 
-        createOrderMenu(exitItem);
+        createOrderMenu(orderMenu, exitItem);
         mainItem.setNextMenu(orderMenu);
 
-        createSpotMenu(exitItem);
+        createSpotMenu(spotMenu, exitItem);
         mainItem.setNextMenu(spotMenu);
 
-        // TODO: All actions and other menu items
-        createRootMenu(exitItem);
 
-        return rootMenu;
-    }
-
-    private void createRootMenu(MenuItem exitItem) {
         rootMenu.add(new MenuItem(GarageMenu.GARAGE.getName(), garageMenu));
         rootMenu.add(new MenuItem(ToolMenu.TOOL.getName(), toolMenu));
         rootMenu.add(new MenuItem(MechanicMenu.MECHANIC.getName(), mechanicMenu));
         rootMenu.add(new MenuItem(OrderMenu.ORDER.getName(), orderMenu));
         rootMenu.add(new MenuItem(SpotMenu.SPOT.getName(), spotMenu));
         rootMenu.add(exitItem);
+
+        return rootMenu;
     }
 
-    private void createSpotMenu(MenuItem exitItem) {
+    private void createSpotMenu(Menu spotMenu, MenuItem exitItem) {
         spotMenu.add(new MenuItem(SpotMenu.ADD.getName(), spotMenu, new AddSpotAction()));
         spotMenu.add(new MenuItem(SpotMenu.DELETE.getName(), spotMenu, new DeleteSpotAction()));
         spotMenu.add(new MenuItem(SpotMenu.GET_ALL.getName(), spotMenu, new GetSpotsAction()));
@@ -78,7 +73,7 @@ public class Builder {
         spotMenu.add(exitItem);
     }
 
-    private void createOrderMenu(MenuItem exitItem) {
+    private void createOrderMenu(Menu orderMenu, MenuItem exitItem) {
         orderMenu.add(new MenuItem(OrderMenu.ADD.getName(), orderMenu, new AddOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.DELETE.getName(), orderMenu, new DeleteOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.ADD_TOOLS.getName(), orderMenu, new AddToolsToOrderAction()));
@@ -124,7 +119,7 @@ public class Builder {
         orderMenu.add(exitItem);
     }
 
-    private void createMechanicMenu(MenuItem exitItem) {
+    private void createMechanicMenu(Menu mechanicMenu, MenuItem exitItem) {
         mechanicMenu.add(new MenuItem(MechanicMenu.ADD.getName(), mechanicMenu, new AddMechanicAction()));
         mechanicMenu.add(new MenuItem(MechanicMenu.DELETE.getName(), mechanicMenu, new DeleteMechanicAction()));
         mechanicMenu.add(new MenuItem(MechanicMenu.GET_ALL.getName(), mechanicMenu, new GetMechanicsAction()));
@@ -135,7 +130,7 @@ public class Builder {
         mechanicMenu.add(exitItem);
     }
 
-    private void createToolMenu(MenuItem exitItem) {
+    private void createToolMenu(Menu toolMenu, MenuItem exitItem) {
         toolMenu.add(new MenuItem(ToolMenu.ADD.getName(), toolMenu, new AddToolAction()));
         toolMenu.add(new MenuItem(ToolMenu.DELETE.getName(), toolMenu, new DeleteToolAction()));
         toolMenu.add(new MenuItem(ToolMenu.GET_ALL.getName(), toolMenu, new GetToolsAction()));
@@ -144,7 +139,7 @@ public class Builder {
         toolMenu.add(exitItem);
     }
 
-    private void createGarageMenu(MenuItem exitItem){
+    private void createGarageMenu(Menu garageMenu, MenuItem exitItem){
         garageMenu.add(new MenuItem(GarageMenu.ADD.getName(), garageMenu, new AddGarageAction()));
         garageMenu.add(new MenuItem(GarageMenu.DELETE.getName(), garageMenu, new DeleteGarageAction()));
         garageMenu.add(new MenuItem(GarageMenu.GET_ALL.getName(), garageMenu, new GetGaragesAction()));
@@ -155,7 +150,7 @@ public class Builder {
         garageMenu.add(exitItem);
     }
 
-    public Menu getRootMenu(){
-        return this.buildMenu();
+    public Menu getRootMenu() {
+        return rootMenu;
     }
 }

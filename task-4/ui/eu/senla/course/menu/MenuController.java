@@ -13,6 +13,8 @@ public class MenuController {
     private Navigator navigator = Navigator.getInstance();
 
     public void run() throws IOException {
+
+        builder.buildMenu();
         navigator.setCurrentMenu(builder.getRootMenu());
         navigator.printMenu();
 

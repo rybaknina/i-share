@@ -55,6 +55,8 @@ public class Tool {
         return "Tool{" +
                 "id = " + id +
                 ", name = '" + name + '\'' +
+                ", hours = " + hours +
+                ", hourlyPrice = " + hourlyPrice +
                 '}';
     }
 }

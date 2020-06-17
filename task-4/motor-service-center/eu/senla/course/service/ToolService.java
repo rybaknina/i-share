@@ -32,7 +32,7 @@ public class ToolService implements IToolService {
         tools.add(tool);
     }
 
-    public Tool getToolBiId(int id){
+    public Tool getToolById(int id){
         if (tools == null || tools.size() == 0){
             System.out.println("Tools are not exist");
             return null;

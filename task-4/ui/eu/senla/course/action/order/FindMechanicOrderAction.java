@@ -18,7 +18,7 @@ public class FindMechanicOrderAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         Mechanic mechanic = mechanicController.gerMechanicById(id);
 
         System.out.println(orderController.mechanicOrder(mechanic));

@@ -16,7 +16,7 @@ public class FindOrderMechanicAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         Order order = controller.getOrderById(id);
 
         System.out.println(controller.orderMechanic(order));
