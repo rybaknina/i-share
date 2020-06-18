@@ -1,63 +1,58 @@
 package eu.senla.course.util;
 
-import eu.senla.course.controller.MechanicManager;
-import eu.senla.course.controller.Workshop;
+import eu.senla.course.entity.Tool;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Service;
-import eu.senla.course.entity.Spot;
-import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DataCreator {
+    private final static int MAX_GARAGES = 4;
+    private final static int MAX_MECHANICS = 5;
 
-    public Garage[] createGarages(Workshop workshop){
-        int len = workshop.lengthGarages();
-        int count = 0;
-        do {
-            Garage garage = new Garage(count+1, GeneratorUtil.generateNumber());
-            workshop.addGarage(garage);
-            // при создании гаража создаются места. Количество мест = capacity Гаража - рандом от 1 до 6
-            garage.setSpots(createSpots(garage));
-            count++;
-        } while (count < len);
-        return workshop.listGarages();
+    private ServiceProvider provider = ServiceProvider.getInstance();
+    public List<Garage> createGarages(){
+        int len = MAX_GARAGES;
+        List<Garage> garages = new ArrayList<>();
+        for (int i = 0; i < len; i++){
+            Garage garage = new Garage(i+1);
+            garages.add(garage);
+            provider.getGarageService().addGarage(garage);
+        }
+        provider.getGarageService().setGarages(garages);
+        return garages;
     }
 
-    public Spot[] createSpots(@NotNull Garage garage){
-        int len = garage.getSpots().length;
-        int count = 0;
-        do {
-            Spot spot = new Spot(count+1, garage);
-            garage.addSpot(spot);
-            count++;
-        } while (count < len);
-        return garage.getSpots();
-    }
+    public List<Tool> createServices(){
 
-    public Service[] createServices(Workshop workshop){
-        int len = workshop.lengthServices();
-        String [] names = {"Diagnosis", "Check Engine", "Oil Change", "Tyre Change", "Spare Part Change"};
+        String[] names = {"Diagnosis", "Check Engine", "Oil Change", "Tyre Change", "Spare Part Change"};
         int[] hours = {1,2,2,1,4};
-        double[] prices = {10, 35, 55, 40, 70};
-        int count = 0;
-        do {
-            workshop.addService(new Service(count+1, names[count], hours[count], prices[count]));
-            count ++;
-        } while (count < len);
-        return workshop.listServices();
+        BigDecimal[] prices = {new BigDecimal(10), new BigDecimal(35), new BigDecimal(55), new BigDecimal(40), new BigDecimal(70)};
+        List<Tool> tools = new ArrayList<>();
+
+        int len = names.length;
+        for (int i = 0; i < len; i++){
+            tools.add(new Tool(i+1, names[i], hours[i], prices[i]));
+        }
+        provider.getToolService().setTools(tools);
+        return tools;
     }
 
-    public Mechanic[] createMechanics(MechanicManager mechanicManager){
-        int len = mechanicManager.lengthMechanics();
+    public List<Mechanic> createMechanics(){
+        List<Mechanic> mechanics = new ArrayList<>();
+        int len = MAX_MECHANICS;
         int count = 0;
         char i = 'Z';
         do {
             count++;
-            mechanicManager.addMechanic(new Mechanic(count, i + "_Mechanic"));
+            mechanics.add(new Mechanic(count, i + "_Mechanic"));
             i--;
         } while (count < len);
-
-        return mechanicManager.listMechanics();
+        provider.getMechanicService().setMechanics(mechanics);
+        return mechanics;
     }
 }

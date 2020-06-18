@@ -1,7 +1,10 @@
 package eu.senla.course.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Order {
     private int id;
@@ -11,8 +14,8 @@ public class Order {
     private LocalDateTime completeDate;
     private Mechanic mechanic;
     private Spot spot;
-    private Service[] services;
-    private double price;
+    private List<Tool> tools = new ArrayList<>();
+    private BigDecimal price;
     private OrderStatus status;
 
     public Order(int id, LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
@@ -56,17 +59,17 @@ public class Order {
         this.completeDate = completeDate;
     }
 
-    public Service[] getServices() {
-        return services;
+    public List<Tool> getTools() {
+        return tools;
     }
 
-    public void setServices(Service[] services) {
-        this.services = services;
-        if (services != null){
-            int hours = 0;
-            for (Service service: services){
-                if (service!= null) {
-                    hours += service.getHours();
+    public void setTools(List<Tool> tools) {
+        this.tools = tools;
+        int hours = 0;
+        if (tools != null){
+            for (int i = 0; i< tools.size(); i++){
+                if (tools.get(i) != null){
+                    hours += tools.get(i).getHours();
                 }
             }
             if (startDate != null) {
@@ -91,11 +94,11 @@ public class Order {
         this.spot = spot;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

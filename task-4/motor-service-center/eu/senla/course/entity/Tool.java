@@ -1,19 +1,21 @@
 package eu.senla.course.entity;
 
-public class Service {
+import java.math.BigDecimal;
+
+public class Tool {
     private int id;
     private String name;
     private int hours;
-    private double hourlyPrice;
+    private BigDecimal hourlyPrice;
 
-    public Service(int id, String name) {
+    public Tool(int id, String name) {
         this.id = id;
         this.name = name;
         this.hours = 1;
-        this.hourlyPrice = 5;
+        this.hourlyPrice = new BigDecimal(5);
     }
 
-    public Service(int id, String name, int hours, double hourlyPrice) {
+    public Tool(int id, String name, int hours, BigDecimal hourlyPrice) {
         this.id = id;
         this.name = name;
         this.hours = hours;
@@ -40,19 +42,21 @@ public class Service {
         this.hours = hours;
     }
 
-    public double getHourlyPrice() {
+    public BigDecimal getHourlyPrice() {
         return hourlyPrice;
     }
 
-    public void setHourlyPrice(double hourlyPrice) {
+    public void setHourlyPrice(BigDecimal hourlyPrice) {
         this.hourlyPrice = hourlyPrice;
     }
 
     @Override
     public String toString() {
-        return "Service{" +
+        return "Tool{" +
                 "id = " + id +
                 ", name = '" + name + '\'' +
+                ", hours = " + hours +
+                ", hourlyPrice = " + hourlyPrice +
                 '}';
     }
 }

@@ -1,8 +1,6 @@
 package eu.senla.course.test;
 
-import eu.senla.course.controller.BillService;
-import eu.senla.course.controller.MechanicManager;
-import eu.senla.course.controller.Workshop;
+import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.entity.*;
 import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
 import eu.senla.course.entity.comparator.mechanic.ByBusy;
@@ -12,83 +10,88 @@ import eu.senla.course.entity.comparator.order.ByPrice;
 import eu.senla.course.entity.comparator.order.ByRequestDate;
 import eu.senla.course.util.DataCreator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestServiceCenter {
-    private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm");
+    private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" dd.mm.yyyy HH:mm");
     public static void main(String[] args) {
 
+        ServiceProvider provider  = ServiceProvider.getInstance();
 
-
-        Workshop workshop = new Workshop();
-        MechanicManager mechanicManager = new MechanicManager();
         DataCreator creator = new DataCreator();
 
-        Garage[] garages = creator.createGarages(workshop);
-        Service[] services = creator.createServices(workshop);
-        Mechanic[] mechanics = creator.createMechanics(mechanicManager);
-        Order[] ordersForPeriod;
+        List<Garage> garages = creator.createGarages();
+        List<Tool> tools = creator.createServices();
+        List<Mechanic> mechanics = creator.createMechanics();
+        List<Order> ordersForPeriod;
 
         // В автомастерской есть гаражи с местами
-        for (Garage garage: garages){
-            System.out.print(garage + "; ");
-        }
+        garages.forEach(System.out:: println);
 
         // Мастерская оказывает услуги
-        System.out.println("\nList of Services: ");
-        for (Service service: services){
-            System.out.print(service.getName() + "; ");
+        System.out.println("List of Tools: ");
+        for (Tool tool: tools){
+            System.out.print(tool.getName() + "; ");
         }
 
         // В автомастерской есть мастера
-        System.out.println(mechanicManager.toString());
+        System.out.println("\n"+provider.getMechanicService().getMechanics().toString());
 
         // Далее действия по услугам и заказу - безличное
 
         // выбор услуг
-        System.out.println("Your choice of services: ");
-        int hours = 0;
-        Service[] servicesForOrder = new Service[]{services[0], services[2]};
-        for (Service service: servicesForOrder){
-            System.out.println(service.toString());
-        }
+        System.out.println("Your choice of tools: ");
+
+        List<Tool> servicesForOrder = new ArrayList<>();
+        servicesForOrder.add(tools.get(0));
+        servicesForOrder.add(tools.get(2));
+
+        servicesForOrder.forEach(System.out::println);
+
         // Выбор даты
         LocalDateTime plannedDate = LocalDateTime.now().plusHours(1);
         System.out.println("Planned date: " + plannedDate.format(timeFormatter));
 
         // места на определенную дату workshop.listAvailableSpots
-        Spot[] freeSpots = workshop.listAvailableSpots(plannedDate);
+        List<Spot> freeSpots = provider.getGarageService().listAvailableSpots(plannedDate, provider.getOrderService().getOrders());
         printSpot(freeSpots);
         // Количество свободных мест на сервисе на любую дату в будущем
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        System.out.println("Number Available Spots on Date: " + provider.getGarageService().numberAvailableSpots(plannedDate, provider.getOrderService().getOrders()));
 
         // выбор свободного места в гараже, например, первое доступное
-        Spot spot = freeSpots[0];
+        Spot spot = freeSpots.get(0);
         // Создание заказа
-        Order order = new Order(1, LocalDateTime.now(), plannedDate, mechanics[0], spot);
-        Order order2 = new Order(2, LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics[0], freeSpots[1]);
+        Order order = new Order(1, LocalDateTime.now(), plannedDate, mechanics.get(0), spot);
+        Order order2 = new Order(2, LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.get(1));
 
-        Order[] ordersMechanic = new Order[2];
-        ordersMechanic[0] = order;
-        ordersMechanic[1] = order2;
-        mechanics[0].setOrders(ordersMechanic);
+        List<Order> ordersMechanic = new ArrayList<>();
+        ordersMechanic.add(order);
+        ordersMechanic.add(order2);
+        mechanics.get(0).setOrders(ordersMechanic);
 
-        workshop.addOrder(order);
-        workshop.addOrder(order2);
+        provider.getOrderService().addOrder(order);
+        provider.getOrderService().addOrder(order2);
 
-        System.out.println("Your mechanic " + mechanics[0].getName());
+        System.out.println("Your mechanic " + mechanics.get(0).getName());
 
         // добавили сервисы, но их может не быть
         order.setStartDate(plannedDate.plusHours(1));
-        order.setServices(servicesForOrder);
+        order.setTools(servicesForOrder);
         System.out.println("Request date " + order.getRequestDate().format(timeFormatter));
         System.out.println("Start at " + order.getStartDate().format(timeFormatter));
         System.out.println("Your car will be ready by the date " + order.getCompleteDate().format(timeFormatter));
 
         // order 2
         order2.setStartDate(plannedDate.plusHours(4));
-        order2.setServices(new Service[]{services[1], services[3]});
+
+        List<Tool> servicesListO2 = new ArrayList<>();
+        servicesListO2.add(tools.get(1));
+        servicesListO2.add(tools.get(3));
+        order2.setTools(servicesListO2);
 
         // заказ сделан
         System.out.println(order.toString());
@@ -96,12 +99,12 @@ public class TestServiceCenter {
 
         // Сместить время выполнения заказов/for example on 2 hours
         int moveHours = 2;
-        workshop.changeStartDateOrders(moveHours);
+        provider.getOrderService().changeStartDateOrders(moveHours);
         System.out.println("The estimate for the order has been revised by " + moveHours + " hours");
 
         // Список заказов по дате подачи
         System.out.println("All Orders by Request Date");
-        Order[] orders = workshop.listOrders(new ByRequestDate());
+        List<Order> orders = provider.getOrderService().listOrders(new ByRequestDate());
         printOrders(orders);
 
         // заказ сделан
@@ -109,31 +112,31 @@ public class TestServiceCenter {
         System.out.println("Complete date 2" + order2.getCompleteDate().format(timeFormatter));
 
         // Выставление счета
-        new BillService().bill(order);
+        provider.getOrderService().bill(order);
         // Выставление счета 2
-        new BillService().bill(order2);
+        provider.getOrderService().bill(order2);
 
         // Заказ, выполняемый конкретным мастером
-        System.out.println("Mechanic's exact order: " + workshop.mechanicOrder(mechanics[0]).toString());
+        System.out.println("Mechanic's exact order: " + provider.getOrderService().mechanicOrder(mechanics.get(0)).toString());
 
         // Мастера, выполняющего конкретный заказ
-        System.out.println("Order's mechanic: " + workshop.orderMechanic(order));
+        System.out.println("Order's mechanic: " + provider.getOrderService().orderMechanic(order));
 
         // переопределяем доступные места
-        printSpot(workshop.listAvailableSpots(plannedDate));
+        printSpot(provider.getGarageService().listAvailableSpots(plannedDate, provider.getOrderService().getOrders()));
 
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        System.out.println("Number Available Spots on Date: " + provider.getGarageService().numberAvailableSpots(plannedDate, provider.getOrderService().getOrders()));
 
         // Ближайшая свободная дата
-        System.out.println("Next available date " + workshop.nextAvailableDate().format(timeFormatter));
+        System.out.println("Next available date " + provider.getOrderService().nextAvailableDate(provider.getGarageService(), LocalDate.now().plusDays(7)).format(timeFormatter));
 
         // сортировка по занятости
         System.out.println("Sorting Mechanics by busy ");
-        mechanicManager.sortMechanicsBy(new ByBusy());
+        provider.getMechanicService().sortMechanicsBy(new ByBusy());
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders in progress for the period");
-        ordersForPeriod = workshop.ordersForPeriod(new ByCompleteDate(), OrderStatus.IN_PROGRESS,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = provider.getOrderService().ordersForPeriod(new ByCompleteDate(), OrderStatus.IN_PROGRESS,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         // после выставления счета - закрываем заказ
@@ -143,47 +146,46 @@ public class TestServiceCenter {
 
         //Список текущих выполняемых заказов
         System.out.println("List of current orders in progress");
-        Order[] currentOrders = workshop.listCurrentOrders(new ByRequestDate());
+        List<Order> currentOrders = provider.getOrderService().listCurrentOrders(new ByRequestDate());
         printOrders(currentOrders);
 
         System.out.println("Closing second order");
         order2.setStatus(OrderStatus.CLOSE);
         System.out.println(order2.toString());
         // место сново доступно
-        printSpot(workshop.listAvailableSpots(plannedDate));
-        System.out.println("Number Available Spots on Date: " + workshop.numberAvailableSpots(plannedDate));
+        printSpot(provider.getGarageService().listAvailableSpots(plannedDate, provider.getOrderService().getOrders()));
+        System.out.println("Number Available Spots on Date: " + provider.getGarageService().numberAvailableSpots(plannedDate, provider.getOrderService().getOrders()));
 
         System.out.println("Sorting Mechanics by alphabet ");
-        mechanicManager.sortMechanicsBy(new ByAlphabet());
+        provider.getMechanicService().sortMechanicsBy(new ByAlphabet());
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders by Complete Date");
-        ordersForPeriod = workshop.ordersForPeriod(new ByCompleteDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = provider.getOrderService().ordersForPeriod(new ByCompleteDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Price");
-        ordersForPeriod = workshop.ordersForPeriod(new ByPrice(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = provider.getOrderService().ordersForPeriod(new ByPrice(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Request Date");
-        ordersForPeriod = workshop.ordersForPeriod(new ByRequestDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = provider.getOrderService().ordersForPeriod(new ByRequestDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Planned Date");
-        ordersForPeriod = workshop.ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = provider.getOrderService().ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
 
     }
-    private static void printOrders(Order[] orders){
+    private static void printOrders(List<Order> orders){
         for (Order order: orders){
             if (order != null){
                 System.out.println(order.toString());
-                //System.out.println(order.toString() + " " + order.getCompleteDate().format(timeFormatter) + " " + order.getPrice());
             }
         }
     }
-    private static void printSpot(Spot[] freeSpots){
+    private static void printSpot(List<Spot> freeSpots){
         for (Spot freeSpot: freeSpots){
             if (freeSpot != null) {
                 System.out.println("Available spot: " + freeSpot.toString());
