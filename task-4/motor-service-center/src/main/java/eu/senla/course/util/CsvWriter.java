@@ -1,0 +1,26 @@
+package eu.senla.course.util;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+public class CsvWriter {
+    private static final String SEPARATOR = ";";
+    public void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException{
+        try(FileWriter csvWriter = new FileWriter(file)){
+
+            // TODO: Write header and list to file - just think to do something like this
+            for (String head: header){
+                csvWriter.append(head);
+                csvWriter.append(SEPARATOR);
+            }
+            for (List<String> row: data){
+                csvWriter.append(String.join(SEPARATOR,row));
+                csvWriter.append("\n");
+            }
+        } catch (IOException e) {
+          throw new CsvException("Error work with write to csv");
+        }
+    }
+}
