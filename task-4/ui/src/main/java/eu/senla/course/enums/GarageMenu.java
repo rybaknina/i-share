@@ -7,7 +7,8 @@ public enum GarageMenu {
     GET_ALL("Get list of garages"),
     LIST_FREE_SPOTS("List Available Spots on future date"),
     NUMBER_FREE_SPOTS("Number Available Spots on future date"),
-    IMPORT("Import Garages from csv");
+    IMPORT("Import garages from csv"),
+    EXPORT("Export garages to csv");
 
     private String name;
 

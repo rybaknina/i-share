@@ -18,4 +18,5 @@ public interface IGarageService {
     List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders);
     int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders);
     void garagesFromCsv() throws ServiceException;
+    void garagesToCsv() throws ServiceException;
 }

@@ -28,11 +28,17 @@ public class TestServiceCenter {
         List<Order> ordersForPeriod;
 
         //Just for test. But data should be in other folder. For Action data in the ui package
-//        try {
-//            GarageService.getInstance().garagesFromCsv();
-//        } catch (ServiceException e) {
-//            System.out.println("Error");
-//        }
+        try {
+            GarageService.getInstance().garagesFromCsv();
+        } catch (ServiceException e) {
+            System.out.println("Error");
+        }
+
+        try {
+            GarageService.getInstance().garagesToCsv();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
 
 
         // В автомастерской есть гаражи с местами

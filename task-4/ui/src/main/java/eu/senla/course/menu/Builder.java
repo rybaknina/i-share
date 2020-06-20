@@ -146,6 +146,7 @@ public class Builder {
         garageMenu.add(new MenuItem(GarageMenu.LIST_FREE_SPOTS.getName(), garageMenu, new ListAvailableSpotsAction()));
         garageMenu.add(new MenuItem(GarageMenu.NUMBER_FREE_SPOTS.getName(), garageMenu, new NumberAvailableSpotsAction()));
         garageMenu.add(new MenuItem(GarageMenu.IMPORT.getName(), garageMenu, new ImportGaragesAction()));
+        garageMenu.add(new MenuItem(GarageMenu.EXPORT.getName(), garageMenu, new ExportGaragesAction()));
 
         garageMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
         garageMenu.add(exitItem);

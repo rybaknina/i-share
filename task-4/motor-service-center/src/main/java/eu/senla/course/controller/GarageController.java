@@ -49,4 +49,7 @@ public class GarageController {
     public void garagesFromCsv() throws ServiceException{
         service.garagesFromCsv();
     }
+    public void garagesToCsv() throws ServiceException{
+        service.garagesToCsv();
+    }
 }

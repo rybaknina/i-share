@@ -6,20 +6,21 @@ import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.Spot;
-import eu.senla.course.util.CsvReader;
-import eu.senla.course.util.CsvException;
-import eu.senla.course.util.GeneratorUtil;
-import eu.senla.course.util.PathToFile;
+import eu.senla.course.util.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GarageService implements IGarageService {
 
@@ -132,15 +133,7 @@ public class GarageService implements IGarageService {
     public void garagesFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path;
-        try {
-            path = Paths.get(new PathToFile().getPath(GARAGE_PATH));
-            if (path == null){
-                throw new ServiceException("Settings for garage is not found");
-            }
-        } catch (NullPointerException e) {
-            throw new ServiceException("Error get property");
-        }
+        Path path = this.getPath();
         System.out.println(path.toAbsolutePath()); // just for test
         try {
             lists = new CsvReader().readRecords(Files.newBufferedReader(path));
@@ -154,14 +147,25 @@ public class GarageService implements IGarageService {
 
     }
 
+    private Path getPath() throws ServiceException {
+        Path path;
+        try {
+            path = Paths.get(new PathToFile().getPath(GARAGE_PATH));
+            if (path == null){
+                throw new ServiceException("Settings for garage is not found");
+            }
+        } catch (NullPointerException e) {
+            throw new ServiceException("Error get property");
+        }
+        return path;
+    }
+
     private void createGarages(List<List<String>> lists) throws ServiceException {
         List<Garage> loadedGarages = new ArrayList<>();
         for (List<String> list : lists) {
-            for (int j = 0; j < list.size(); j++) {
+            for (String name : list) {
                 try {
-                    Garage garage = new Garage();
-                    garage.setName(String.valueOf(list.get(j)));
-                    loadedGarages.add(garage);
+                    loadedGarages.add(new Garage(name));
                 } catch (Exception e) {
                     throw new ServiceException("Error work with data from csv");
                 }
@@ -170,5 +174,23 @@ public class GarageService implements IGarageService {
         loadedGarages.forEach(System.out::println);
 
         garages.addAll(loadedGarages);
+    }
+    public void garagesToCsv() throws ServiceException{
+        Field[] fields = Garage.class.getDeclaredFields();
+        List<String> headers = Arrays.stream(fields).skip(2).limit(1).map(Field::getName).collect(Collectors.toList());
+        List<List<String>> data = new ArrayList<>();
+        try {
+            for (Garage garage: garages){
+                if (garage != null) {
+                    List<String> dataIn = new ArrayList<>();
+                    dataIn.add(garage.getName());
+                    data.add(dataIn);
+                }
+            }
+            new CsvWriter().writeRecords(new File(String.valueOf(getPath())), headers, data);
+
+        } catch (CsvException e) {
+            throw new ServiceException("Csv write exception");
+        }
     }
 }
