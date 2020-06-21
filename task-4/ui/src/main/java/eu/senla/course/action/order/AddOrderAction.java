@@ -23,7 +23,7 @@ public class AddOrderAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        //Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         LocalDateTime requestDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
         LocalDateTime plannedDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
         Integer mechanicId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
@@ -33,6 +33,6 @@ public class AddOrderAction implements IAction {
 
         Spot spot = spotController.getSpotById(spotId);
 
-        orderController.addOrder(new Order(id, requestDate, plannedDate, mechanic, spot));
+        orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
     }
 }

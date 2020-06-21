@@ -77,8 +77,8 @@ public class TestServiceCenter {
         // выбор свободного места в гараже, например, первое доступное
         Spot spot = freeSpots.get(0);
         // Создание заказа
-        Order order = new Order(1, LocalDateTime.now(), plannedDate, mechanics.get(0), spot);
-        Order order2 = new Order(2, LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.get(1));
+        Order order = new Order(LocalDateTime.now(), plannedDate, mechanics.get(0), spot);
+        Order order2 = new Order(LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.get(1));
 
         List<Order> ordersMechanic = new ArrayList<>();
         ordersMechanic.add(order);

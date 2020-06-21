@@ -1,11 +1,14 @@
 package eu.senla.course.entity;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Spot {
+    private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private Garage garage;
 
-    public Spot(int id, Garage garage) {
-        this.id = id;
+    public Spot(Garage garage) {
+        this.id = count.incrementAndGet();
         this.garage = garage;
     }
 

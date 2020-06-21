@@ -3,17 +3,25 @@ package eu.senla.course.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Mechanic {
+    private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String name;
     private List<Order> orders = new ArrayList<>();
     private Garage garage;
 
-    public Mechanic(int id, String name) {
-        this.id = id;
+    public Mechanic(String name) {
+        this.id = count.incrementAndGet();
         this.name = name;
     }
+
+    public Mechanic(String name, Garage garage) {
+        this(name);
+        this.garage = garage;
+    }
+
     public int getId() {
         return id;
     }
@@ -61,6 +69,7 @@ public class Mechanic {
         return "Mechanic{" +
                 "id = " + id +
                 ", name = '" + name + '\'' +
+                ", garage = " + garage +
                 '}';
     }
 }

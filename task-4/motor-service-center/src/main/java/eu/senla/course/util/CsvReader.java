@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CsvReader {
     private static final String SEPARATOR = ";";
 
-    public List<String> readHeader(Reader source) throws CsvException {
+    public static List<String> readHeader(Reader source) throws CsvException {
         try (BufferedReader reader = new BufferedReader(source)) {
             return reader.lines()
                     .findFirst()
@@ -20,7 +20,7 @@ public class CsvReader {
             throw new CsvException("Error work with headers CSV");
         }
     }
-    public List<List<String>> readRecords(Reader source) throws CsvException {
+    public static List<List<String>> readRecords(Reader source) throws CsvException {
         try (BufferedReader reader = new BufferedReader(source)) {
             return reader.lines()
                     .skip(1)

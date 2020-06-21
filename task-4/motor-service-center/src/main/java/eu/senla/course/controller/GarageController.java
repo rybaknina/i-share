@@ -31,10 +31,10 @@ public class GarageController {
     public List<Garage> getGarages(){
         return service.getGarages();
     }
-    public Garage getGarageById(int id){
+    public Garage getGarageById(int id) {
         return service.getGarageById(id);
     }
-    public void deleteGarage(Garage garage){
+    public void deleteGarage(Garage garage) {
         service.deleteGarage(garage);
     }
     public int lengthAllSpots(){

@@ -18,8 +18,6 @@ public class DeleteGarageAction implements IAction {
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         Garage garage = controller.getGarageById(id);
-
         controller.deleteGarage(garage);
-
     }
 }

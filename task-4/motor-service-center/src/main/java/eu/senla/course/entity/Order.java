@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Order {
+    private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private LocalDateTime requestDate;
     private LocalDateTime plannedDate;
@@ -18,8 +20,8 @@ public class Order {
     private BigDecimal price;
     private OrderStatus status;
 
-    public Order(int id, LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
-        this.id = id;
+    public Order(LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
+        this.id = count.incrementAndGet();
         this.requestDate = requestDate;
         this.plannedDate = plannedDate;
         this.mechanic = mechanic;

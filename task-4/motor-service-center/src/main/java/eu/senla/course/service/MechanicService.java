@@ -39,7 +39,7 @@ public class MechanicService implements IMechanicService {
         }
     }
 
-    public Mechanic gerMechanicById(int id){
+    public Mechanic getMechanicById(int id){
         if (mechanics == null || mechanics.size() == 0){
             System.out.println("Auto mechanics are not exist");
             return null;
@@ -72,11 +72,21 @@ public class MechanicService implements IMechanicService {
     }
 
     @Override
+    public void mechanicsFromCsv() throws ServiceException {
+        // TODO: Need implementation
+    }
+
+    @Override
+    public void mechanicsToCsv() throws ServiceException {
+        // TODO: Need implementation
+    }
+
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("\nFull current staff: \n");
         for (Mechanic mechanic : mechanics) {
             if (mechanic != null) {
-                stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append("; ");
+                stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append(" ").append(mechanic.getGarage().getId()).append("; ");
             }
         }
         return stringBuilder.toString();

@@ -1,15 +1,17 @@
 package eu.senla.course.entity;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Tool {
+    private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String name;
     private int hours;
     private BigDecimal hourlyPrice;
 
-    public Tool(int id, String name) {
-        this.id = id;
+    public Tool(String name) {
+        this.id = count.incrementAndGet();
         this.name = name;
         this.hours = 1;
         this.hourlyPrice = new BigDecimal(5);

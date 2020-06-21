@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface IGarageService {
     void addGarage(Garage garage);
+    void updateGarage(int id, Garage garage) throws ServiceException;
     void setGarages(List<Garage> garages);
     List<Garage> getGarages();
     Garage getGarageById(int id);

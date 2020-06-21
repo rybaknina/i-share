@@ -7,7 +7,8 @@ import java.util.List;
 
 public class CsvWriter {
     private static final String SEPARATOR = ";";
-    public void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException{
+
+    public static void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException{
         try(FileWriter csvWriter = new FileWriter(file)){
 
             // TODO: Check more

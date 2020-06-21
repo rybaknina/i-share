@@ -3,6 +3,7 @@ package eu.senla.course.controller;
 import eu.senla.course.api.IMechanicService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.service.MechanicService;
+import eu.senla.course.service.ServiceException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -31,12 +32,18 @@ public class MechanicController {
         service.deleteMechanic(mechanic);
     }
     public Mechanic gerMechanicById(int id){
-        return service.gerMechanicById(id);
+        return service.getMechanicById(id);
     }
     public Mechanic firstFreeMechanic(){
         return service.firstFreeMechanic();
     }
     public void sortMechanicsBy(Comparator<Mechanic> comparator){
         service.sortMechanicsBy(comparator);
+    }
+    public void mechanicsFromCsv() throws ServiceException {
+        service.mechanicsFromCsv();
+    }
+    public void mechanicsToCsv() throws ServiceException {
+        service.mechanicsToCsv();
     }
 }

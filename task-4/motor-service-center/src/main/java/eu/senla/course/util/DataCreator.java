@@ -50,7 +50,7 @@ public class DataCreator {
         char i = 'Z';
         do {
             count++;
-            mechanics.add(new Mechanic(count, i + "_Mechanic"));
+            mechanics.add(new Mechanic(i + "_Mechanic"));
             i--;
         } while (count < len);
         MechanicService.getInstance().setMechanics(mechanics);
