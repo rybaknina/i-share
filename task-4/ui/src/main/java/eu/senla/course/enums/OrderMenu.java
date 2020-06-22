@@ -32,7 +32,9 @@ public enum OrderMenu {
     FIND_ORDER("Find order"),
     FIND_MECHANIC("Find mechanic"),
     NEXT_DATE("Next available date"),
-    BILL("Bill for order");
+    BILL("Bill for order"),
+    IMPORT("Import orders from csv"),
+    EXPORT("Export orders to csv");
 
     private String name;
 

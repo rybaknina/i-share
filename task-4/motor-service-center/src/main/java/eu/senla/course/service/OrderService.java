@@ -6,18 +6,23 @@ import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.Tool;
+import eu.senla.course.util.PathToFile;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderService implements IOrderService {
 
     private final static IOrderService instance = new OrderService();
+    private final static String ORDER_PATH = "order";
 
     private List<Order> orders;
 
@@ -56,6 +61,12 @@ public class OrderService implements IOrderService {
         } else {
             orders.removeIf(e -> e.equals(order));
         }
+    }
+
+    public void updateOrder(int id, Order order) throws ServiceException {
+        Optional.of(orders).orElseThrow(() -> new ServiceException("Orders are not found"));
+        Optional.of(orders.set(id, order)).orElseThrow(() -> new ServiceException("Order is not found"));;
+
     }
 
     public void addToolsToOrder(Order order, List<Tool> tools){
@@ -188,5 +199,20 @@ public class OrderService implements IOrderService {
             order.setPrice(amount);
             System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
         }
+    }
+
+    private Path getPath() throws ServiceException {
+        Path path = Optional.of(Paths.get(new PathToFile().getPath(ORDER_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        return path;
+    }
+
+    @Override
+    public void ordersFromCsv() throws ServiceException {
+        // TODO: implement
+    }
+
+    @Override
+    public void ordersToCsv() throws ServiceException {
+        // TODO: implement
     }
 }

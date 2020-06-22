@@ -4,7 +4,9 @@ public enum SpotMenu {
     SPOT("Spot menu"),
     ADD("Add spot"),
     DELETE("Delete spot"),
-    GET_ALL("List of spots");
+    GET_ALL("List of spots"),
+    IMPORT("Import spots from csv"),
+    EXPORT("Export spots to csv");
 
     private String name;
 

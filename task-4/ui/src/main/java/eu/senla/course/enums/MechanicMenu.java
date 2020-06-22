@@ -6,7 +6,10 @@ public enum MechanicMenu {
     DELETE("Delete mechanic"),
     GET_ALL("List of Mechanics"),
     SORT_BY_ALPHABET("Sort mechanics by alphabet"),
-    SORT_BY_BUSY("Sort mechanics by busy");
+    SORT_BY_BUSY("Sort mechanics by busy"),
+    IMPORT("Import mechanics from csv"),
+    EXPORT("Export mechanics to csv");
+
 
     private String name;
 

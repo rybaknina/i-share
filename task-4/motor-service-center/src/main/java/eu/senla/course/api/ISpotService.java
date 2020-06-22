@@ -12,4 +12,6 @@ public interface ISpotService {
     Spot getSpotById(int id);
     void deleteSpot(Spot spot);
     void updateSpot(int id, Spot spot) throws ServiceException;
+    void spotsFromCsv() throws ServiceException;
+    void spotsToCsv() throws ServiceException;
 }

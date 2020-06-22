@@ -4,6 +4,7 @@ import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.Tool;
+import eu.senla.course.service.ServiceException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,4 +26,7 @@ public interface IOrderService {
     List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate);
     List<Order> listCurrentOrders(Comparator<Order> comparator);
     void bill(Order order);
+    void updateOrder(int id, Order order) throws ServiceException;
+    void ordersFromCsv() throws ServiceException;
+    void ordersToCsv() throws ServiceException;
 }

@@ -3,13 +3,9 @@ package eu.senla.course.menu;
 import eu.senla.course.action.garage.*;
 import eu.senla.course.action.mechanic.*;
 import eu.senla.course.action.order.*;
-import eu.senla.course.action.spot.AddSpotAction;
-import eu.senla.course.action.spot.DeleteSpotAction;
-import eu.senla.course.action.spot.GetSpotsAction;
-import eu.senla.course.action.tool.DeleteToolAction;
-import eu.senla.course.action.tool.GetToolsAction;
+import eu.senla.course.action.spot.*;
+import eu.senla.course.action.tool.*;
 import eu.senla.course.enums.*;
-import eu.senla.course.action.tool.AddToolAction;
 
 public class Builder {
 
@@ -68,6 +64,8 @@ public class Builder {
         spotMenu.add(new MenuItem(SpotMenu.ADD.getName(), spotMenu, new AddSpotAction()));
         spotMenu.add(new MenuItem(SpotMenu.DELETE.getName(), spotMenu, new DeleteSpotAction()));
         spotMenu.add(new MenuItem(SpotMenu.GET_ALL.getName(), spotMenu, new GetSpotsAction()));
+        spotMenu.add(new MenuItem(SpotMenu.IMPORT.getName(), spotMenu, new ImportSpotsAction()));
+        spotMenu.add(new MenuItem(SpotMenu.EXPORT.getName(), spotMenu, new ExportSpotsAction()));
 
         spotMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
         spotMenu.add(exitItem);
@@ -110,10 +108,11 @@ public class Builder {
         orderMenu.add(new MenuItem(OrderMenu.DELETE_BY_REQUEST.getName(), orderMenu, new DeletedOrdersForPeriodByRequestDate()));
         orderMenu.add(new MenuItem(OrderMenu.DELETE_BY_PRICE.getName(), orderMenu, new DeletedOrdersForPeriodByPrice()));
 
-
         orderMenu.add(new MenuItem(OrderMenu.NEXT_DATE.getName(), orderMenu, new NextAvailableDateAction()));
         orderMenu.add(new MenuItem(OrderMenu.BILL.getName(), orderMenu, new BillAction()));
 
+        orderMenu.add(new MenuItem(OrderMenu.IMPORT.getName(), orderMenu, new ImportOrdersAction()));
+        orderMenu.add(new MenuItem(OrderMenu.EXPORT.getName(), orderMenu, new ExportOrdersAction()));
 
         orderMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
         orderMenu.add(exitItem);
@@ -126,6 +125,9 @@ public class Builder {
         mechanicMenu.add(new MenuItem(MechanicMenu.SORT_BY_ALPHABET.getName(), mechanicMenu, new SortMechanicsByAlphabetAction()));
         mechanicMenu.add(new MenuItem(MechanicMenu.SORT_BY_BUSY.getName(), mechanicMenu, new SortMechanicsByBusyAction()));
 
+        mechanicMenu.add(new MenuItem(MechanicMenu.IMPORT.getName(), mechanicMenu, new ImportMechanicsAction()));
+        mechanicMenu.add(new MenuItem(MechanicMenu.EXPORT.getName(), mechanicMenu, new ExportMechanicsAction()));
+
         mechanicMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
         mechanicMenu.add(exitItem);
     }
@@ -134,6 +136,8 @@ public class Builder {
         toolMenu.add(new MenuItem(ToolMenu.ADD.getName(), toolMenu, new AddToolAction()));
         toolMenu.add(new MenuItem(ToolMenu.DELETE.getName(), toolMenu, new DeleteToolAction()));
         toolMenu.add(new MenuItem(ToolMenu.GET_ALL.getName(), toolMenu, new GetToolsAction()));
+        toolMenu.add(new MenuItem(ToolMenu.IMPORT.getName(), toolMenu, new ImportToolsAction()));
+        toolMenu.add(new MenuItem(ToolMenu.EXPORT.getName(), toolMenu, new ExportToolsAction()));
 
         toolMenu.add(new MenuItem(MainMenu.RETURN.getName(), rootMenu));
         toolMenu.add(exitItem);

@@ -7,6 +7,7 @@ import eu.senla.course.entity.Order;
 import eu.senla.course.entity.OrderStatus;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.service.OrderService;
+import eu.senla.course.service.ServiceException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,5 +63,14 @@ public class OrderController {
     }
     public void bill(Order order){
         service.bill(order);
+    }
+    public void updateOrder(int id, Order order) throws ServiceException {
+        service.updateOrder(id, order);
+    }
+    public void ordersFromCsv() throws ServiceException{
+        service.ordersFromCsv();
+    }
+    public void ordersToCsv() throws ServiceException{
+        service.ordersToCsv();
     }
 }

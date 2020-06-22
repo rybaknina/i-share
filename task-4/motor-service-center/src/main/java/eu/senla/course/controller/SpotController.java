@@ -2,6 +2,7 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Spot;
+import eu.senla.course.service.ServiceException;
 import eu.senla.course.service.SpotService;
 
 import java.util.List;
@@ -33,5 +34,14 @@ public class SpotController {
     }
     public void deleteSpot(Spot spot){
         service.deleteSpot(spot);
+    }
+    public void updateSpot(int id, Spot spot) throws ServiceException {
+        service.updateSpot(id, spot);
+    }
+    public void spotsFromCsv() throws ServiceException{
+        service.spotsFromCsv();
+    }
+    public void spotsToCsv() throws ServiceException{
+        service.spotsToCsv();
     }
 }

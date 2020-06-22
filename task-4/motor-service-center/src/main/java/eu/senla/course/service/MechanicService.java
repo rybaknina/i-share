@@ -2,7 +2,10 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.IMechanicService;
 import eu.senla.course.entity.Mechanic;
+import eu.senla.course.util.PathToFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.Optional;
 
 public class MechanicService implements IMechanicService {
     private final static IMechanicService instance = new MechanicService();
+    private final static String MECHANIC_PATH = "mechanic";
     private List<Mechanic> mechanics;
 
     private MechanicService() {
@@ -80,6 +84,11 @@ public class MechanicService implements IMechanicService {
     @Override
     public void mechanicsToCsv() throws ServiceException {
         // TODO: Need implementation
+    }
+
+    private Path getPath() throws ServiceException {
+        Path path = Optional.of(Paths.get(new PathToFile().getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        return path;
     }
 
     public void updateMechanic(int id, Mechanic mechanic) throws ServiceException {
