@@ -11,6 +11,7 @@ public interface IMechanicService {
     List<Mechanic> getMechanics();
     void setMechanics(List<Mechanic> mechanics);
     void deleteMechanic(Mechanic mechanic);
+    void updateMechanic(int id, Mechanic mechanic) throws ServiceException;
     Mechanic getMechanicById(int id);
     Mechanic firstFreeMechanic();
     void sortMechanicsBy(Comparator<Mechanic> comparator);

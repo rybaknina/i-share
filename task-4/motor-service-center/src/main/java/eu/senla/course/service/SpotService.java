@@ -5,6 +5,7 @@ import eu.senla.course.entity.Spot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SpotService implements ISpotService {
 
@@ -46,5 +47,11 @@ public class SpotService implements ISpotService {
         } else {
             spots.removeIf(e -> e.equals(spot));
         }
+    }
+    public void updateSpot(int id, Spot spot) throws ServiceException {
+        // Is it OK?
+        Optional.of(spots).orElseThrow(() -> new ServiceException("Spots are not found"));
+        Optional.of(spots.set(id, spot)).orElseThrow(() -> new ServiceException("Spot is not found"));;
+
     }
 }

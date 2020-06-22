@@ -6,6 +6,7 @@ import eu.senla.course.entity.Mechanic;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class MechanicService implements IMechanicService {
     private final static IMechanicService instance = new MechanicService();
@@ -81,6 +82,13 @@ public class MechanicService implements IMechanicService {
         // TODO: Need implementation
     }
 
+    public void updateMechanic(int id, Mechanic mechanic) throws ServiceException {
+        // Is it OK?
+        Optional.of(mechanics).orElseThrow(() -> new ServiceException("Mechanics are not found"));
+        Optional.of(mechanics.set(id, mechanic)).orElseThrow(() -> new ServiceException("Mechanic is not found"));;
+
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("\nFull current staff: \n");
@@ -91,4 +99,5 @@ public class MechanicService implements IMechanicService {
         }
         return stringBuilder.toString();
     }
+
 }

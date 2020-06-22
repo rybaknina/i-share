@@ -1,6 +1,7 @@
 package eu.senla.course.api;
 
 import eu.senla.course.entity.Spot;
+import eu.senla.course.service.ServiceException;
 
 import java.util.List;
 
@@ -10,4 +11,5 @@ public interface ISpotService {
     void addSpot(Spot spot);
     Spot getSpotById(int id);
     void deleteSpot(Spot spot);
+    void updateSpot(int id, Spot spot) throws ServiceException;
 }

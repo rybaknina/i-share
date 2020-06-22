@@ -161,7 +161,7 @@ public class GarageService implements IGarageService {
             for (List<String> list : lists) {
 
                 String[] array = list.stream().toArray(String[]::new);
-                int id = Integer.parseInt(array[0]);
+                int id = Integer.parseInt(array[0]) - 1;
 
                 boolean exist = false;
                 Garage newGarage;
@@ -176,27 +176,40 @@ public class GarageService implements IGarageService {
                     String name = array[1];
                     newGarage.setName(name);
 
-                    List<String> idSpots = Arrays.asList(array[2].split("\\|"));
-                    List<Spot> spots = new ArrayList<>();
-                    for (String idSpotc: idSpots){
-                        int idSpot = Integer.parseInt(idSpotc) - 1;
-                        spots.add(SpotService.getInstance().getSpotById(idSpot));
+                    if (array.length >= 3) {
+                        List<String> idSpots = Arrays.asList(array[2].split("\\|"));
+                        List<Spot> spots = new ArrayList<>();
+                        for (String idSpotLine : idSpots) {
+                            if (!idSpotLine.isBlank()) {
+                                int idSpot = Integer.parseInt(idSpotLine) - 1;
+                                Spot spot = SpotService.getInstance().getSpotById(idSpot);
+                                if (spot != null) {
+                                    spot.setGarage(newGarage);
+                                    SpotService.getInstance().updateSpot(idSpot, spot);
+                                }
+                            }
+                        }
+                        if (spots.size() > 0) {
+                            newGarage.setSpots(spots);
+                        }
                     }
-                    if (spots.size() > 0){
-                        newGarage.setSpots(spots);
+                    if (array.length >= 4) {
+                        List<String> idMechanics = Arrays.asList(array[3].split("\\|"));
+                        List<Mechanic> mechanics = new ArrayList<>();
+                        for (String idMechanicLine : idMechanics) {
+                            if (!idMechanicLine.isBlank()) {
+                                int idMechanic = Integer.parseInt(idMechanicLine) - 1;
+                                Mechanic mechanic = MechanicService.getInstance().getMechanicById(idMechanic);
+                                if (mechanic != null) {
+                                    mechanic.setGarage(newGarage);
+                                    MechanicService.getInstance().updateMechanic(idMechanic, mechanic);
+                                }
+                            }
+                        }
+                        if (mechanics.size() > 0) {
+                            newGarage.setMechanics(mechanics);
+                        }
                     }
-
-                    List<String> idMechanics = Arrays.asList(array[3].split("\\|"));
-                    List<Mechanic> mechanics = new ArrayList<>();
-                    for (String idMechanicLine: idMechanics){
-                        int idMechanic = Integer.parseInt(idMechanicLine) - 1;
-                        mechanics.add(MechanicService.getInstance().getMechanicById(idMechanic));
-                    }
-                    if (mechanics.size() > 0){
-                        newGarage.setMechanics(mechanics);
-                    }
-
-
                     if (exist) {
                         updateGarage(id, newGarage);
                     } else {
