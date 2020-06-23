@@ -17,8 +17,8 @@ public class Tool {
         this.hourlyPrice = new BigDecimal(5);
     }
 
-    public Tool(int id, String name, int hours, BigDecimal hourlyPrice) {
-        this.id = id;
+    public Tool(String name, int hours, BigDecimal hourlyPrice) {
+        this.id = count.incrementAndGet();
         this.name = name;
         this.hours = hours;
         this.hourlyPrice = hourlyPrice;

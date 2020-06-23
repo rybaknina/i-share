@@ -1,15 +1,20 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.IMechanicService;
+import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Order;
+import eu.senla.course.util.CsvException;
+import eu.senla.course.util.CsvReader;
+import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.PathToFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MechanicService implements IMechanicService {
     private final static IMechanicService instance = new MechanicService();
@@ -78,12 +83,121 @@ public class MechanicService implements IMechanicService {
 
     @Override
     public void mechanicsFromCsv() throws ServiceException {
-        // TODO: Need implementation
+        // TODO: Need to test
+        List<List<String>> lists;
+        Path path = this.getPath();
+
+        try {
+            lists = CsvReader.readRecords(Files.newBufferedReader(path));
+            createMechanics(lists);
+
+        } catch (CsvException e) {
+            System.out.println("Csv Reader exception " + e.getMessage());
+        } catch (IOException e) {
+            throw new ServiceException("Error read file");
+        }
+    }
+
+    private void createMechanics(List<List<String>> lists) throws ServiceException {
+        List<Mechanic> loadedMechanics = new ArrayList<>();
+        try {
+            for (List<String> list : lists) {
+
+                String[] array = list.stream().toArray(String[]::new);
+                int id = Integer.parseInt(array[0]) - 1;
+                String name = array[1];
+
+                boolean exist = false;
+                Mechanic newMechanic;
+                if (mechanics.size() > 0 && Optional.of(mechanics.get(id)).isPresent()) {
+                    newMechanic = mechanics.get(id);
+                    exist = true;
+                } else {
+                    newMechanic = new Mechanic(name);
+                }
+                if (newMechanic != null){
+                    newMechanic.setName(name);
+
+                    if (array.length >= 3) {
+                        List<String> idOrders = Arrays.asList(array[2].split("\\|"));
+                        List<Order> orders = new ArrayList<>();
+                        for (String idOrderLine : idOrders) {
+                            if (!idOrderLine.isBlank()) {
+                                int idOrder = Integer.parseInt(idOrderLine) - 1;
+                                Order order = OrderService.getInstance().getOrderById(idOrder);
+                                if (order != null) {
+                                    orders.add(order);
+                                    order.setMechanic(newMechanic);
+                                    OrderService.getInstance().updateOrder(idOrder, order);
+                                }
+                            }
+                        }
+                        if (orders.size() > 0) {
+                            newMechanic.setOrders(orders);
+                        }
+                    }
+                    if (array.length >= 4) {
+                        int garageId = Integer.parseInt(array[3]) - 1;
+                        Garage garage = GarageService.getInstance().getGarageById(garageId);
+                        if (garage != null){
+                            newMechanic.setGarage(garage);
+                        }
+                    }
+                    if (exist) {
+                        updateMechanic(id, newMechanic);
+                    } else {
+                        loadedMechanics.add(newMechanic);
+                    }
+                }
+            }
+        } catch (Exception e){
+            throw new ServiceException("Error with create mechanics from csv");
+        }
+
+        loadedMechanics.forEach(System.out::println);
+        mechanics.addAll(loadedMechanics);
     }
 
     @Override
     public void mechanicsToCsv() throws ServiceException {
-        // TODO: Need implementation
+        // TODO: need more tests
+        List<List<String>> data = new ArrayList<>();
+
+        List<String> headers = new ArrayList<>();
+        headers.add("id");
+        headers.add("name");
+        headers.add("order_ids");
+        headers.add("garage_id");
+
+        try {
+            for (Mechanic mechanic: mechanics){
+                if (mechanic != null) {
+                    List<String> dataIn = new ArrayList<>();
+                    dataIn.add(String.valueOf(mechanic.getId()));
+                    dataIn.add(mechanic.getName());
+
+                    StringBuilder ordersString = new StringBuilder();
+                    List<Order> orders = OrderService.getInstance().getOrders();
+
+                    for (Order order: orders){
+                        if (order != null && order.getMechanic().equals(mechanic)){
+                            ordersString.append(order.getId());
+                            ordersString.append("|");
+                        }
+                    }
+
+                    dataIn.add(ordersString.toString());
+                    if (mechanic.getGarage() != null) {
+                        dataIn.add(String.valueOf(mechanic.getGarage().getId()));
+                    }
+                    data.add(dataIn);
+                }
+            }
+            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+
+        } catch (CsvException e) {
+            System.out.println("Csv write exception" + e.getMessage());
+        }
     }
 
     private Path getPath() throws ServiceException {

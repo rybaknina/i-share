@@ -17,11 +17,10 @@ public class AddToolAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
         Integer hours = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         BigDecimal price = InputValidator.readDecimal(reader, ActionHelper.IN_BIG_DECIMAL.getName());
 
-        controller.addTool(new Tool(id, name, hours, price));
+        controller.addTool(new Tool(name, hours, price));
     }
 }

@@ -37,7 +37,7 @@ public class DataCreator {
 
         int len = names.length;
         for (int i = 0; i < len; i++){
-            tools.add(new Tool(i+1, names[i], hours[i], prices[i]));
+            tools.add(new Tool(names[i], hours[i], prices[i]));
         }
         ToolService.getInstance().setTools(tools);
         return tools;

@@ -154,7 +154,7 @@ public class GarageService implements IGarageService {
 
     private void createGarages(List<List<String>> lists) throws ServiceException {
 
-        // TODO: Check and fix some bugs
+        // TODO: Need more tests
 
         List<Garage> loadedGarages = new ArrayList<>();
         try {
@@ -184,6 +184,7 @@ public class GarageService implements IGarageService {
                                 int idSpot = Integer.parseInt(idSpotLine) - 1;
                                 Spot spot = SpotService.getInstance().getSpotById(idSpot);
                                 if (spot != null) {
+                                    spots.add(spot);
                                     spot.setGarage(newGarage);
                                     SpotService.getInstance().updateSpot(idSpot, spot);
                                 }
@@ -201,6 +202,7 @@ public class GarageService implements IGarageService {
                                 int idMechanic = Integer.parseInt(idMechanicLine) - 1;
                                 Mechanic mechanic = MechanicService.getInstance().getMechanicById(idMechanic);
                                 if (mechanic != null) {
+                                    mechanics.add(mechanic);
                                     mechanic.setGarage(newGarage);
                                     MechanicService.getInstance().updateMechanic(idMechanic, mechanic);
                                 }

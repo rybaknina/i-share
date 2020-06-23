@@ -118,7 +118,7 @@ public class ToolService implements IToolService {
                     updateTool(id, newTool);
 
                 } else {
-                    newTool = new Tool(id, name, hours, hourlyPrice);
+                    newTool = new Tool(name, hours, hourlyPrice);
                     loadedTools.add(newTool);
                 }
             }

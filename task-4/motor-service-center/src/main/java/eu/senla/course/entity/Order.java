@@ -37,6 +37,10 @@ public class Order {
         return requestDate;
     }
 
+    public void setRequestDate(LocalDateTime requestDate) {
+        this.requestDate = requestDate;
+    }
+
     public LocalDateTime getPlannedDate() {
         return plannedDate;
     }

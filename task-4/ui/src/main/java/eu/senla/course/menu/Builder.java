@@ -75,6 +75,7 @@ public class Builder {
         orderMenu.add(new MenuItem(OrderMenu.ADD.getName(), orderMenu, new AddOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.DELETE.getName(), orderMenu, new DeleteOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.ADD_TOOLS.getName(), orderMenu, new AddToolsToOrderAction()));
+        orderMenu.add(new MenuItem(OrderMenu.GET_ALL.getName(), orderMenu, new GetAllOrdersAction()));
 
         orderMenu.add(new MenuItem(OrderMenu.CANCEL_STATUS.getName(), orderMenu, new SetCancelStatusOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.CLOSE_STATUS.getName(), orderMenu, new SetCloseStatusOrderAction()));

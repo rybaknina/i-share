@@ -2,13 +2,16 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.IGarageService;
 import eu.senla.course.api.IOrderService;
-import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.OrderStatus;
-import eu.senla.course.entity.Tool;
+import eu.senla.course.entity.*;
+import eu.senla.course.util.CsvException;
+import eu.senla.course.util.CsvReader;
+import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.PathToFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -208,11 +211,129 @@ public class OrderService implements IOrderService {
 
     @Override
     public void ordersFromCsv() throws ServiceException {
-        // TODO: implement
+        // TODO: need to test
+        List<List<String>> lists;
+        Path path = this.getPath();
+
+        try {
+            lists = CsvReader.readRecords(Files.newBufferedReader(path));
+            createOrders(lists);
+
+        } catch (CsvException e) {
+            System.out.println("Csv Reader exception " + e.getMessage());
+        } catch (IOException e) {
+            throw new ServiceException("Error read file");
+        }
+    }
+
+    private void createOrders(List<List<String>> lists) throws ServiceException {
+
+        List<Order> loadedOrders = new ArrayList<>();
+        try {
+            for (List<String> list : lists) {
+
+                String[] array = list.stream().toArray(String[]::new);
+                int id = Integer.parseInt(array[0]) - 1;
+                LocalDateTime requestDate = LocalDateTime.parse(array[1]);
+                LocalDateTime plannedDate = LocalDateTime.parse(array[2]);
+                int mechanicId = Integer.parseInt(array[3]) - 1;
+                int spotId = Integer.parseInt(array[4]) - 1;
+                String status = array[5];
+
+
+                Mechanic mechanic = MechanicService.getInstance().getMechanicById(mechanicId);
+                Spot spot = SpotService.getInstance().getSpotById(spotId);
+
+                boolean exist = false;
+
+
+                Order newOrder;
+                if (orders.size() > 0 && Optional.of(orders.get(id)).isPresent()) {
+                    newOrder = orders.get(id);
+                    exist = true;
+                } else {
+                    newOrder = new Order(requestDate, plannedDate, mechanic, spot);
+                }
+                if (newOrder != null) {
+                    if (!exist){
+                        newOrder.setRequestDate(LocalDateTime.now());
+                    } else {
+                        if (!status.isBlank()){
+
+                            switch (status) {
+                                case "CLOSE":
+                                    newOrder.setStatus(OrderStatus.CLOSE);
+                                    break;
+                                case "DELETE":
+                                    newOrder.setStatus(OrderStatus.DELETE);
+                                    break;
+                                case "CANCEL":
+                                    newOrder.setStatus(OrderStatus.CANCEL);
+                                    break;
+                                default:
+                                    newOrder.setStatus(OrderStatus.IN_PROGRESS);
+                                    break;
+                            }
+                        }
+                    }
+                    newOrder.setPlannedDate(plannedDate);
+
+                    if (mechanic != null) {
+                        newOrder.setMechanic(mechanic);
+                    }
+                    if (spot != null){
+                        newOrder.setSpot(spot);
+                    }
+
+                    if (exist) {
+                        updateOrder(id, newOrder);
+                    } else {
+                        loadedOrders.add(newOrder);
+                    }
+                }
+            }
+        } catch (Exception e){
+            throw new ServiceException("Error with create orders from csv");
+        }
+
+        loadedOrders.forEach(System.out::println);
+        orders.addAll(loadedOrders);
     }
 
     @Override
     public void ordersToCsv() throws ServiceException {
-        // TODO: implement
+        // TODO: need to test
+        List<List<String>> data = new ArrayList<>();
+
+        List<String> headers = new ArrayList<>();
+        headers.add("id");
+        headers.add("requestDate");
+        headers.add("plannedDate");
+        headers.add("mechanic_id");
+        headers.add("spot_id");
+        headers.add("status");
+        try {
+            for (Order order: orders){
+                if (order != null) {
+                    List<String> dataIn = new ArrayList<>();
+                    dataIn.add(String.valueOf(order.getId()));
+                    dataIn.add(String.valueOf(order.getRequestDate()));
+                    dataIn.add(String.valueOf(order.getPlannedDate()));
+                    if (order.getMechanic() != null) {
+                        dataIn.add(String.valueOf(order.getMechanic().getId()));
+                    }
+                    if (order.getSpot()!= null){
+                        dataIn.add(String.valueOf(order.getSpot().getId()));
+                    }
+                    dataIn.add(String.valueOf(order.getStatus()));
+
+                    data.add(dataIn);
+                }
+            }
+            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+
+        } catch (CsvException e) {
+            System.out.println("Csv write exception" + e.getMessage());
+        }
     }
 }
