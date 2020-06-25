@@ -3,7 +3,7 @@ package eu.senla.course.controller;
 import eu.senla.course.api.IMechanicService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.service.MechanicService;
-import eu.senla.course.service.ServiceException;
+import eu.senla.course.exception.ServiceException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +19,7 @@ public class MechanicController {
         return instance;
     }
 
-    public void addMechanic(Mechanic mechanic){
+    public void addMechanic(Mechanic mechanic) throws ServiceException {
         service.addMechanic(mechanic);
     }
     public List<Mechanic> getMechanics(){
@@ -28,16 +28,16 @@ public class MechanicController {
     public void setMechanics(List<Mechanic> mechanics){
         service.setMechanics(mechanics);
     }
-    public void deleteMechanic(Mechanic mechanic){
+    public void deleteMechanic(Mechanic mechanic) throws ServiceException {
         service.deleteMechanic(mechanic);
     }
-    public Mechanic gerMechanicById(int id){
+    public Mechanic gerMechanicById(int id) throws ServiceException {
         return service.getMechanicById(id);
     }
-    public Mechanic firstFreeMechanic(){
+    public Mechanic firstFreeMechanic() throws ServiceException {
         return service.firstFreeMechanic();
     }
-    public void sortMechanicsBy(Comparator<Mechanic> comparator){
+    public void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException {
         service.sortMechanicsBy(comparator);
     }
     public void mechanicsFromCsv() throws ServiceException {

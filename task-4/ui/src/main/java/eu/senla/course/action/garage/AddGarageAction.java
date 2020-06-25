@@ -4,6 +4,7 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -19,6 +20,10 @@ public class AddGarageAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
 
-        controller.addGarage(new Garage(name));
+        try {
+            controller.addGarage(new Garage(name));
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
     }
 }

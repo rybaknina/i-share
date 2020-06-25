@@ -1,13 +1,14 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.IMechanicService;
-import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
-import eu.senla.course.util.CsvException;
+import eu.senla.course.enums.CsvMechanicHeader;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.PathToFile;
+import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,10 @@ public class MechanicService implements IMechanicService {
         return instance;
     }
 
-    public void addMechanic(Mechanic mechanic) {
+    public void addMechanic(Mechanic mechanic) throws ServiceException {
+        if (mechanic == null){
+            throw new ServiceException("Mechanic is not exist");
+        }
         mechanics.add(mechanic);
     }
 
@@ -41,39 +45,35 @@ public class MechanicService implements IMechanicService {
         this.mechanics = mechanics;
     }
 
-    public void deleteMechanic(Mechanic mechanic){
-        if (mechanics == null || mechanics.size() == 0){
-            System.out.println("Auto mechanics are not exist");
-        } else {
-            mechanics.removeIf(e -> e.equals(mechanic));
+    public void deleteMechanic(Mechanic mechanic) throws ServiceException {
+        if (mechanics.size() == 0 || mechanic == null){
+            throw new ServiceException("Auto mechanic is not found");
         }
+        mechanics.removeIf(e -> e.equals(mechanic));
     }
 
-    public Mechanic getMechanicById(int id){
-        if (mechanics == null || mechanics.size() == 0){
-            System.out.println("Auto mechanics are not exist");
-            return null;
+    public Mechanic getMechanicById(int id) throws ServiceException {
+        if (mechanics.size() == 0 || mechanics.get(id) == null){
+            throw new ServiceException("Auto mechanic is not found");
         }
         return mechanics.get(id);
     }
-    public Mechanic firstFreeMechanic(){
-        if (mechanics == null || mechanics.size() == 0){
-            System.out.println("Auto mechanics are not exist");
-            return null;
+    public Mechanic firstFreeMechanic() throws ServiceException {
+        if (mechanics.size() == 0){
+            throw new ServiceException("Auto mechanics are not exist");
         }
         for (Mechanic mechanic: mechanics){
             if (mechanic.isMechanicFree()){
                 return mechanic;
             }
         }
-        System.out.println("Free mechanic is not exist");
+        System.out.println("Free mechanic is not found");
         return null;
     }
 
-    public void sortMechanicsBy(Comparator<Mechanic> comparator){
-        if (mechanics == null || mechanics.size() == 0){
-            System.out.println("Auto mechanics are not exist");
-            return;
+    public void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException {
+        if (mechanics.size() == 0){
+            throw new ServiceException("Auto mechanics are not exist");
         }
         mechanics.sort(comparator);
         for (Mechanic mechanic: mechanics){
@@ -83,7 +83,7 @@ public class MechanicService implements IMechanicService {
 
     @Override
     public void mechanicsFromCsv() throws ServiceException {
-        // TODO: Need to test
+
         List<List<String>> lists;
         Path path = this.getPath();
 
@@ -103,52 +103,52 @@ public class MechanicService implements IMechanicService {
         try {
             for (List<String> list : lists) {
 
-                String[] array = list.stream().toArray(String[]::new);
-                int id = Integer.parseInt(array[0]) - 1;
-                String name = array[1];
+                int n = 0;
+                int id = Integer.parseInt(list.get(n++)) - 1;
+                String name = list.get(n++);
 
                 boolean exist = false;
                 Mechanic newMechanic;
-                if (mechanics.size() > 0 && Optional.of(mechanics.get(id)).isPresent()) {
+                if (mechanics.size() >= (id + 1) && mechanics.get(id) != null) {
                     newMechanic = mechanics.get(id);
                     exist = true;
                 } else {
                     newMechanic = new Mechanic(name);
                 }
-                if (newMechanic != null){
-                    newMechanic.setName(name);
 
-                    if (array.length >= 3) {
-                        List<String> idOrders = Arrays.asList(array[2].split("\\|"));
-                        List<Order> orders = new ArrayList<>();
-                        for (String idOrderLine : idOrders) {
-                            if (!idOrderLine.isBlank()) {
-                                int idOrder = Integer.parseInt(idOrderLine) - 1;
+                newMechanic.setName(name);
+
+                if (list.size() >= (n + 1)) {
+                    List<String> idOrders = Arrays.asList(list.get(n++).split("\\|"));
+                    List<Order> orders = new ArrayList<>();
+                    for (String idOrderLine : idOrders) {
+                        if (!idOrderLine.isBlank()) {
+                            int idOrder = Integer.parseInt(idOrderLine) - 1;
+
+                            if (OrderService.getInstance().getOrders().size() >= (idOrder + 1)) {
                                 Order order = OrderService.getInstance().getOrderById(idOrder);
-                                if (order != null) {
-                                    orders.add(order);
-                                    order.setMechanic(newMechanic);
-                                    OrderService.getInstance().updateOrder(idOrder, order);
-                                }
+                                orders.add(order);
+                                order.setMechanic(newMechanic);
+                                OrderService.getInstance().updateOrder(order);
                             }
                         }
-                        if (orders.size() > 0) {
-                            newMechanic.setOrders(orders);
-                        }
                     }
-                    if (array.length >= 4) {
-                        int garageId = Integer.parseInt(array[3]) - 1;
-                        Garage garage = GarageService.getInstance().getGarageById(garageId);
-                        if (garage != null){
-                            newMechanic.setGarage(garage);
-                        }
-                    }
-                    if (exist) {
-                        updateMechanic(id, newMechanic);
-                    } else {
-                        loadedMechanics.add(newMechanic);
+                    if (orders.size() > 0) {
+                        newMechanic.setOrders(orders);
                     }
                 }
+                if (list.size() >= (n+1)) {
+                    int garageId = Integer.parseInt(list.get(n)) - 1;
+                    if (GarageService.getInstance().getGarages().size() >= (garageId + 1)){
+                        newMechanic.setGarage(GarageService.getInstance().getGarageById(garageId));
+                    }
+                }
+                if (exist) {
+                    updateMechanic(newMechanic);
+                } else {
+                    loadedMechanics.add(newMechanic);
+                }
+
             }
         } catch (Exception e){
             throw new ServiceException("Error with create mechanics from csv");
@@ -164,10 +164,10 @@ public class MechanicService implements IMechanicService {
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
-        headers.add("id");
-        headers.add("name");
-        headers.add("order_ids");
-        headers.add("garage_id");
+        headers.add(CsvMechanicHeader.ID.getName());
+        headers.add(CsvMechanicHeader.NAME.getName());
+        headers.add(CsvMechanicHeader.ORDER_IDS.getName());
+        headers.add(CsvMechanicHeader.GARAGE_ID.getName());
 
         try {
             for (Mechanic mechanic: mechanics){
@@ -177,9 +177,7 @@ public class MechanicService implements IMechanicService {
                     dataIn.add(mechanic.getName());
 
                     StringBuilder ordersString = new StringBuilder();
-                    List<Order> orders = OrderService.getInstance().getOrders();
-
-                    for (Order order: orders){
+                    for (Order order: OrderService.getInstance().getOrders()){
                         if (order != null && order.getMechanic().equals(mechanic)){
                             ordersString.append(order.getId());
                             ordersString.append("|");
@@ -201,15 +199,12 @@ public class MechanicService implements IMechanicService {
     }
 
     private Path getPath() throws ServiceException {
-        Path path = Optional.of(Paths.get(new PathToFile().getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-        return path;
+        return Optional.of(Paths.get(new PathToFile().getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
-    public void updateMechanic(int id, Mechanic mechanic) throws ServiceException {
-        // Is it OK?
-        Optional.of(mechanics).orElseThrow(() -> new ServiceException("Mechanics are not found"));
-        Optional.of(mechanics.set(id, mechanic)).orElseThrow(() -> new ServiceException("Mechanic is not found"));;
-
+    public void updateMechanic(Mechanic mechanic) throws ServiceException {
+        Optional.ofNullable(mechanics.get(mechanic.getId()-1)).orElseThrow(() -> new ServiceException("Mechanic is not found"));
+        mechanics.set(mechanic.getId()-1, mechanic);
     }
 
     @Override

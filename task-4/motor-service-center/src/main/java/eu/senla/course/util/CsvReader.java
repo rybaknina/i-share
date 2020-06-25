@@ -1,5 +1,7 @@
 package eu.senla.course.util;
 
+import eu.senla.course.util.exception.CsvException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;

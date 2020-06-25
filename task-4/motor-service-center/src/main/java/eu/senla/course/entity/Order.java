@@ -1,5 +1,7 @@
 package eu.senla.course.entity;
 
+import eu.senla.course.enums.OrderStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

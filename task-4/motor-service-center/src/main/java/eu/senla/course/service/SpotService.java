@@ -3,7 +3,9 @@ package eu.senla.course.service;
 import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
-import eu.senla.course.util.CsvException;
+import eu.senla.course.enums.CsvSpotHeader;
+import eu.senla.course.exception.ServiceException;
+import eu.senla.course.util.exception.CsvException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.PathToFile;
@@ -40,43 +42,41 @@ public class SpotService implements ISpotService {
         this.spots = spots;
     }
 
-    public void addSpot(Spot spot){
+    public void addSpot(Spot spot) throws ServiceException {
+        if (spot == null){
+            throw new ServiceException("Spot is not exist");
+        }
         spots.add(spot);
     }
 
-    public Spot getSpotById(int id){
-        if (spots == null || spots.size() == 0){
-            System.out.println("Spots are not exist");
-            return null;
+    public Spot getSpotById(int id) throws ServiceException {
+        if (spots.size() == 0 || spots.get(id) == null){
+            throw new ServiceException("Spots are not exist");
         }
         return spots.get(id);
     }
 
-    public void deleteSpot(Spot spot){
-        if (spots == null || spots.size() == 0){
-            System.out.println("Spots are not exist");
-        } else {
-            spots.removeIf(e -> e.equals(spot));
+    public void deleteSpot(Spot spot) throws ServiceException {
+        if (spots.size() == 0 || spot == null){
+            throw new ServiceException("Spot is not found");
         }
+        spots.removeIf(e -> e.equals(spot));
     }
-    public void updateSpot(int id, Spot spot) throws ServiceException {
-        // Is it OK?
-        Optional.of(spots).orElseThrow(() -> new ServiceException("Spots are not found"));
-        Optional.of(spots.set(id, spot)).orElseThrow(() -> new ServiceException("Spot is not found"));;
-
+    public void updateSpot(Spot spot) throws ServiceException {
+        Optional.ofNullable(spots.get(spot.getId()-1)).orElseThrow(() -> new ServiceException("Spot is not found"));
+        spots.set(spot.getId()-1, spot);
     }
 
     private Path getPath() throws ServiceException {
-        Path path = Optional.of(Paths.get(new PathToFile().getPath(SPOT_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-        return path;
+        return Optional.of(Paths.get(new PathToFile().getPath(SPOT_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     @Override
     public void spotsFromCsv() throws ServiceException {
-        // TODO: need more tests
+
         List<List<String>> lists;
         Path path = this.getPath();
-        System.out.println(path.toAbsolutePath()); // just for test
+
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
             createSpots(lists);
@@ -93,21 +93,20 @@ public class SpotService implements ISpotService {
         try {
             for (List<String> list : lists) {
 
-                String[] array = list.stream().toArray(String[]::new);
-                int id = Integer.parseInt(array[0]) - 1;
-                int garageId = Integer.parseInt(array[1]) - 1;
+                int n = 0;
+                int id = Integer.parseInt(list.get(n++)) - 1;
+                int garageId = Integer.parseInt(list.get(n)) - 1;
 
-                Garage garage = GarageService.getInstance().getGarageById(garageId);
-
-                if (garage == null){
+                if (GarageService.getInstance().getGarages().size() < (garageId + 1)){
                     throw new ServiceException("Garage is not found");
                 }
+                Garage garage = GarageService.getInstance().getGarageById(garageId);
 
                 Spot newSpot;
-                if (spots.size() > 0 && Optional.of(spots.get(id)).isPresent()) {
+                if (spots.size() >= (id + 1) && spots.get(id)!= null) {
                     newSpot = spots.get(id);
                     newSpot.setGarage(garage);
-                    updateSpot(id, newSpot);
+                    updateSpot(newSpot);
 
                 } else {
                     newSpot = new Spot(garage);
@@ -124,12 +123,12 @@ public class SpotService implements ISpotService {
 
     @Override
     public void spotsToCsv() throws ServiceException {
-        // TODO: need more tests
+
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
-        headers.add("id");
-        headers.add("garage_id");
+        headers.add(CsvSpotHeader.ID.getName());
+        headers.add(CsvSpotHeader.GARAGE_ID.getName());
 
         try {
             for (Spot spot: spots){

@@ -1,4 +1,4 @@
-package eu.senla.course.util;
+package eu.senla.course.util.exception;
 
 public class CsvException extends Exception {
     public CsvException(String message, Exception e) {

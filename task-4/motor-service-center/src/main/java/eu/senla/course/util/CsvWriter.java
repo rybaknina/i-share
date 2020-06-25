@@ -1,5 +1,7 @@
 package eu.senla.course.util;
 
+import eu.senla.course.util.exception.CsvException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,7 +10,7 @@ import java.util.List;
 public class CsvWriter {
     private static final String SEPARATOR = ";";
 
-    public static void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException{
+    public static void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException {
         try(FileWriter csvWriter = new FileWriter(file)){
 
             // TODO: Check more

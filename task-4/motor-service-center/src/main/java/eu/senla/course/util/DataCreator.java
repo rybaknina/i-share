@@ -3,6 +3,7 @@ package eu.senla.course.util;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Tool;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.service.GarageService;
 import eu.senla.course.service.MechanicService;
 import eu.senla.course.service.ToolService;
@@ -16,7 +17,7 @@ public class DataCreator {
     private final static int MAX_GARAGES = 4;
     private final static int MAX_MECHANICS = 5;
 
-    public List<Garage> createGarages(){
+    public List<Garage> createGarages() throws ServiceException {
         int len = MAX_GARAGES;
         List<Garage> garages = new ArrayList<>();
         for (int i = 0; i < len; i++){

@@ -1,4 +1,4 @@
-package eu.senla.course.entity;
+package eu.senla.course.enums;
 
 public enum OrderStatus {
     CLOSE,

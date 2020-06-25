@@ -3,12 +3,17 @@ package eu.senla.course.action.order;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.comparator.order.ByPrice;
+import eu.senla.course.exception.ServiceException;
 
 public class CurrentOrdersByPrice implements IAction {
     private OrderController controller = OrderController.getInstance();
 
     @Override
     public void execute() {
-        controller.listCurrentOrders(new ByPrice()).forEach(System.out::println);
+        try {
+            controller.listCurrentOrders(new ByPrice()).forEach(System.out::println);
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
     }
 }

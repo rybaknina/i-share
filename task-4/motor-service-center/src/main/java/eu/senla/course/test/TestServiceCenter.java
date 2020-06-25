@@ -7,6 +7,8 @@ import eu.senla.course.entity.comparator.order.ByCompleteDate;
 import eu.senla.course.entity.comparator.order.ByPlannedDate;
 import eu.senla.course.entity.comparator.order.ByPrice;
 import eu.senla.course.entity.comparator.order.ByRequestDate;
+import eu.senla.course.enums.OrderStatus;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.service.*;
 import eu.senla.course.util.DataCreator;
 
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class TestServiceCenter {
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" dd.mm.yyyy HH:mm");
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ServiceException {
 
         DataCreator creator = new DataCreator();
 

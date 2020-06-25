@@ -8,6 +8,7 @@ import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -23,16 +24,19 @@ public class AddOrderAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        //Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         LocalDateTime requestDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
         LocalDateTime plannedDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
         Integer mechanicId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         Integer spotId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
 
-        Mechanic mechanic = mechanicController.gerMechanicById(mechanicId);
+        try {
+            Mechanic mechanic = mechanicController.gerMechanicById(mechanicId);
+            Spot spot = spotController.getSpotById(spotId);
+            orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
 
-        Spot spot = spotController.getSpotById(spotId);
 
-        orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
     }
 }

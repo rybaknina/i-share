@@ -4,6 +4,7 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -21,6 +22,10 @@ public class AddToolAction implements IAction {
         Integer hours = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         BigDecimal price = InputValidator.readDecimal(reader, ActionHelper.IN_BIG_DECIMAL.getName());
 
-        controller.addTool(new Tool(name, hours, price));
+        try {
+            controller.addTool(new Tool(name, hours, price));
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
     }
 }

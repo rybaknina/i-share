@@ -5,6 +5,7 @@ import eu.senla.course.controller.GarageController;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Order;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -23,7 +24,11 @@ public class ListAvailableSpotsAction implements IAction {
         List<Order> orders = orderController.getOrders();
         LocalDateTime futureDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
 
-        garageController.listAvailableSpots(futureDate, orders);
+        try {
+            garageController.listAvailableSpots(futureDate, orders);
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
 
     }
 }

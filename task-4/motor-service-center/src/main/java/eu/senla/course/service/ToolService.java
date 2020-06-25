@@ -2,7 +2,9 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.IToolService;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.util.CsvException;
+import eu.senla.course.enums.CsvToolHeader;
+import eu.senla.course.exception.ServiceException;
+import eu.senla.course.util.exception.CsvException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.PathToFile;
@@ -40,27 +42,31 @@ public class ToolService implements IToolService {
         this.tools = tools;
     }
 
-    public void addTool(Tool tool){
+    public void addTool(Tool tool) throws ServiceException {
+        if (tool == null){
+            throw new ServiceException("Tool is not exist");
+        }
         tools.add(tool);
     }
 
-    public Tool getToolById(int id){
-        if (tools == null || tools.size() == 0){
-            System.out.println("Tools are not exist");
-            return null;
+    public Tool getToolById(int id) throws ServiceException {
+        if (tools.size() == 0 || tools.get(id) == null){
+            throw new ServiceException("Tool is not found");
         }
         return tools.get(id);
     }
 
-    public void deleteTool(Tool tool){
-        if (tools == null || tools.size() == 0){
-            System.out.println("Tools are not exist");
-        } else {
-            tools.removeIf(e -> e.equals(tool));
+    public void deleteTool(Tool tool) throws ServiceException {
+        if (tools.size() == 0 || tool == null){
+            throw new ServiceException("Tool is not found");
         }
+        tools.removeIf(e -> e.equals(tool));
     }
 
-    public Tool getToolByName(String name){
+    public Tool getToolByName(String name) throws ServiceException {
+        if (tools.size() == 0 || name == null){
+            throw new ServiceException("Tool is not found");
+        }
         for (Tool tool: tools){
             if (tool.getName().equals(name)){
                 return tool;
@@ -70,15 +76,13 @@ public class ToolService implements IToolService {
         return null;
     }
 
-    public void updateTool(int id, Tool tool) throws ServiceException {
-        Optional.of(tools).orElseThrow(() -> new ServiceException("Orders are not found"));
-        Optional.of(tools.set(id, tool)).orElseThrow(() -> new ServiceException("Order is not found"));;
-
+    public void updateTool(Tool tool) throws ServiceException {
+        Optional.ofNullable(tools.get(tool.getId()-1)).orElseThrow(() -> new ServiceException("Tool is not found"));
+        tools.set(tool.getId()-1, tool);
     }
 
     private Path getPath() throws ServiceException {
-        Path path = Optional.of(Paths.get(new PathToFile().getPath(TOOL_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-        return path;
+        return Optional.of(Paths.get(new PathToFile().getPath(TOOL_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     @Override
@@ -97,25 +101,23 @@ public class ToolService implements IToolService {
     }
 
     private void createTools(List<List<String>> lists) throws ServiceException {
-        // TODO: need more tests
+
         List<Tool> loadedTools = new ArrayList<>();
         try {
             for (List<String> list : lists) {
-
-                String[] array = list.stream().toArray(String[]::new);
-                int id = Integer.parseInt(array[0]) - 1;
-                String name = array[1];
-                int hours = Integer.parseInt(array[2]) - 1;
-                BigDecimal hourlyPrice = new BigDecimal(array[3]);
-
+                int n = 0;
+                int id = Integer.parseInt(list.get(n++)) - 1;
+                String name = list.get(n++);
+                int hours = Integer.parseInt(list.get(n++));
+                BigDecimal hourlyPrice = new BigDecimal(list.get(n));
 
                 Tool newTool;
-                if (tools.size() > 0 && Optional.of(tools.get(id)).isPresent()) {
+                if (tools.size() >= (id + 1) && tools.get(id) != null) {
                     newTool = tools.get(id);
                     newTool.setName(name);
                     newTool.setHours(hours);
                     newTool.setHourlyPrice(hourlyPrice);
-                    updateTool(id, newTool);
+                    updateTool(newTool);
 
                 } else {
                     newTool = new Tool(name, hours, hourlyPrice);
@@ -132,14 +134,14 @@ public class ToolService implements IToolService {
 
     @Override
     public void toolsToCsv() throws ServiceException {
-        // TODO: need more tests
+
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
-        headers.add("id");
-        headers.add("name");
-        headers.add("hours");
-        headers.add("hourly_price");
+        headers.add(CsvToolHeader.ID.getName());
+        headers.add(CsvToolHeader.NAME.getName());
+        headers.add(CsvToolHeader.HOURS.getName());
+        headers.add(CsvToolHeader.HOURLY_PRICE.getName());
 
         try {
             for (Tool tool: tools){

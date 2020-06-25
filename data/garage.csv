@@ -1,3 +1,4 @@
 id;name;spot_ids;mechanic_ids;
-1;garage t1;2|;
-2;garage t2;3|1|;
+1;garage 1;;
+2;garage 2;;
+3;garage 3;1|;

@@ -3,6 +3,7 @@ package eu.senla.course.action.order;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.service.ServiceProvider;
 import eu.senla.course.util.InputValidator;
 
@@ -21,7 +22,12 @@ public class NextAvailableDateAction implements IAction {
 
         LocalDate endDate = InputValidator.readDate(reader, ActionHelper.IN_LOCAL_DATE.getName());
 
-        LocalDateTime nextDate = orderController.nextAvailableDate(ServiceProvider.getInstance().getGarageService(), endDate);
+        LocalDateTime nextDate = null;
+        try {
+            nextDate = orderController.nextAvailableDate(ServiceProvider.getInstance().getGarageService(), endDate);
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
         if (nextDate != null) {
             System.out.println(nextDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")));
         }

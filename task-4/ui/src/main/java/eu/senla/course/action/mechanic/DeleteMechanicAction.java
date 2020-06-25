@@ -4,6 +4,7 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.MechanicController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -17,8 +18,13 @@ public class DeleteMechanicAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
-        Mechanic mechanic = controller.gerMechanicById(id);
+        try {
+            Mechanic mechanic = controller.gerMechanicById(id);
+            controller.deleteMechanic(mechanic);
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
 
-        controller.deleteMechanic(mechanic);
+
     }
 }

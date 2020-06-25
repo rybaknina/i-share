@@ -6,6 +6,7 @@ import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -19,10 +20,14 @@ public class AddSpotAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-     //   Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         Integer garageId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        Garage garage = garageController.getGarageById(garageId);
-        spotController.addSpot(new Spot(garage));
+        try {
+            Garage garage = garageController.getGarageById(garageId);
+            spotController.addSpot(new Spot(garage));
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
+
 
     }
 }

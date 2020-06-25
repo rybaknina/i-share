@@ -2,7 +2,7 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.IToolService;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.service.ServiceException;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.service.ToolService;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class ToolController {
         return instance;
     }
 
-    public void addTool(Tool tool){
+    public void addTool(Tool tool) throws ServiceException {
         service.addTool(tool);
     }
     public List<Tool> getTools(){
@@ -29,18 +29,18 @@ public class ToolController {
     public void setTools(List<Tool> tools){
         service.setTools(tools);
     }
-    public Tool getToolById(int id){
+    public Tool getToolById(int id) throws ServiceException {
         return service.getToolById(id);
     }
 
-    public void deleteTool(Tool tool){
+    public void deleteTool(Tool tool) throws ServiceException {
         service.deleteTool(tool);
     }
-    public Tool getToolByName(String name){
+    public Tool getToolByName(String name) throws ServiceException {
         return service.getToolByName(name);
     }
-    public void updateTool(int id, Tool tool) throws ServiceException{
-        service.updateTool(id, tool);
+    public void updateTool(Tool tool) throws ServiceException{
+        service.updateTool(tool);
     }
     public void toolsFromCsv() throws ServiceException{
         service.toolsFromCsv();

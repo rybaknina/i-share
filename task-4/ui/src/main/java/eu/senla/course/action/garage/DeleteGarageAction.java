@@ -4,6 +4,7 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -17,7 +18,12 @@ public class DeleteGarageAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
-        Garage garage = controller.getGarageById(id);
-        controller.deleteGarage(garage);
+        try {
+            Garage garage = controller.getGarageById(id);
+            controller.deleteGarage(garage);
+        } catch (ServiceException e) {
+            System.err.println("Service exception " + e.getMessage());
+        }
+
     }
 }

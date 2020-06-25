@@ -1,4 +1,4 @@
-package eu.senla.course.service;
+package eu.senla.course.exception;
 
 public class ServiceException extends Exception {
 
