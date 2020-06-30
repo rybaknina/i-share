@@ -34,6 +34,13 @@ public class OrderController {
     public void deleteOrder(Order order) throws ServiceException {
         service.deleteOrder(order);
     }
+    public boolean isDeleteOrder(){
+        try {
+            return service.isDeleteOrder();
+        } catch (ServiceException e) {
+            return false;
+        }
+    }
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
         service.addToolsToOrder(order, tools);
     }
@@ -42,6 +49,13 @@ public class OrderController {
     }
     public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
         service.changeStatusOrder(order, status);
+    }
+    public boolean isShiftTime(){
+        try {
+            return service.isShiftTime();
+        } catch (ServiceException e) {
+            return false;
+        }
     }
     public void changeStartDateOrders(int hours) throws ServiceException {
         service.changeStartDateOrders(hours);

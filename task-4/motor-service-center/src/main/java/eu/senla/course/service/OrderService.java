@@ -2,14 +2,18 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.IGarageService;
 import eu.senla.course.api.IOrderService;
-import eu.senla.course.entity.*;
+import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Order;
+import eu.senla.course.entity.Spot;
+import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.exception.CsvException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
+import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
+import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +33,8 @@ public class OrderService implements IOrderService {
 
     private final static IOrderService instance = new OrderService();
     private final static String ORDER_PATH = "order";
+    private final static String IS_SHIFT_TIME = "shift.order.time";
+    private final static String IS_DELETE_ORDER = "delete.order";
 
     private List<Order> orders;
 
@@ -68,12 +74,22 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Order is not found");
         }
         orders.removeIf(e -> e.equals(order));
+        ListUtil.shiftIndex(orders);
+        Order.getCount().getAndDecrement();
+    }
 
+    @Override
+    public boolean isDeleteOrder() throws ServiceException {
+        boolean delete = Boolean.parseBoolean(String.valueOf(this.getPath(IS_DELETE_ORDER)));
+        return delete;
     }
 
     public void updateOrder(Order order) throws ServiceException {
-        Optional.ofNullable(orders.get(order.getId()-1)).orElseThrow(() -> new ServiceException("Order is not found"));
-        orders.set(order.getId()-1, order);
+        int id = orders.indexOf(order);
+        if (id < 0){
+            throw new ServiceException("Order is not found");
+        }
+        orders.set(id, order);
     }
 
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
@@ -134,6 +150,12 @@ public class OrderService implements IOrderService {
 
             }
         }
+    }
+
+    @Override
+    public boolean isShiftTime() throws ServiceException {
+        boolean shift = Boolean.parseBoolean(String.valueOf(this.getPath(IS_SHIFT_TIME)));
+        return shift;
     }
 
     public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
@@ -201,16 +223,15 @@ public class OrderService implements IOrderService {
         }
     }
 
-    private Path getPath() throws ServiceException {
-        Path path = Optional.of(Paths.get(new PathToFile().getPath(ORDER_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-        return path;
+    private Path getPath(String path) throws ServiceException {
+        return Optional.of(Paths.get(PathToFile.getPath(path))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     @Override
     public void ordersFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath();
+        Path path = this.getPath(ORDER_PATH);
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -331,7 +352,7 @@ public class OrderService implements IOrderService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+            CsvWriter.writeRecords(new File(String.valueOf(getPath(ORDER_PATH))), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());

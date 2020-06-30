@@ -1,5 +1,6 @@
 package eu.senla.course.entity;
 
+import eu.senla.course.api.IEntity;
 import eu.senla.course.enums.OrderStatus;
 
 import java.math.BigDecimal;
@@ -9,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Order {
+public class Order implements IEntity {
+    private static final long serialVersionUID = 385639052892076759L;
+
     private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private LocalDateTime requestDate;
@@ -33,6 +36,14 @@ public class Order {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static AtomicInteger getCount() {
+        return count;
     }
 
     public LocalDateTime getRequestDate() {

@@ -6,6 +6,7 @@ public enum OrderMenu {
     DELETE("Delete order"),
     ADD_TOOLS("Add tools to order"),
     GET_ALL("Get list of all orders"),
+    SHIFT_TIME("Change start date order"),
     IN_PROGRESS_STATUS("Change status an order to in progress"),
     CANCEL_STATUS("Change status an order to cancel"),
     CLOSE_STATUS("Change status an order to close"),

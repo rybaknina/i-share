@@ -2,7 +2,10 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.IGarageService;
 import eu.senla.course.api.ISpotService;
-import eu.senla.course.entity.*;
+import eu.senla.course.entity.Garage;
+import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Order;
+import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.CsvGarageHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
@@ -50,9 +53,11 @@ public class GarageService implements IGarageService {
     }
 
     public void updateGarage(Garage garage) throws ServiceException {
-        Optional.ofNullable(garages.get(garage.getId()-1)).orElseThrow(() -> new ServiceException("Garage is not found"));
-        garages.set(garage.getId()-1, garage);
-
+        int id = garages.indexOf(garage);
+        if (id < 0){
+            throw new ServiceException("Garage is not found");
+        }
+        garages.set(id, garage);
     }
 
     public void deleteGarage(Garage garage) throws ServiceException {
@@ -60,6 +65,8 @@ public class GarageService implements IGarageService {
             throw new ServiceException("Garage is not found");
         }
         garages.removeIf(e -> e.equals(garage));
+        ListUtil.shiftIndex(garages);
+        Garage.getCount().getAndDecrement();
     }
 
     public Garage getGarageById(int id) throws ServiceException {
@@ -133,7 +140,7 @@ public class GarageService implements IGarageService {
     public void garagesFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath();
+        Path path = Optional.of(Paths.get(PathToFile.getPath(GARAGE_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -148,7 +155,7 @@ public class GarageService implements IGarageService {
     }
 
     private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(new PathToFile().getPath(GARAGE_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        return Optional.of(Paths.get(PathToFile.getPath(GARAGE_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     private void createGarages(List<List<String>> lists) throws ServiceException {

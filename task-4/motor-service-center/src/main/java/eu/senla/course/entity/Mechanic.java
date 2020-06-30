@@ -1,5 +1,6 @@
 package eu.senla.course.entity;
 
+import eu.senla.course.api.IEntity;
 import eu.senla.course.enums.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -7,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Mechanic {
+public class Mechanic implements IEntity {
+    private static final long serialVersionUID = -625749130457859021L;
+
     private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String name;
@@ -26,6 +29,14 @@ public class Mechanic {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static AtomicInteger getCount() {
+        return count;
     }
 
     public void setName(String name) {

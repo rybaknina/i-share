@@ -5,16 +5,15 @@ import eu.senla.course.action.mechanic.*;
 import eu.senla.course.action.order.*;
 import eu.senla.course.action.spot.*;
 import eu.senla.course.action.tool.*;
+import eu.senla.course.controller.OrderController;
+import eu.senla.course.controller.SpotController;
 import eu.senla.course.enums.*;
 
 public class Builder {
 
     private final static Builder instance = new Builder();
 
-
-
     private Menu rootMenu = new Menu(MainMenu.ROOT.getName());
-
 
     private Builder() {
     }
@@ -61,8 +60,10 @@ public class Builder {
     }
 
     private void createSpotMenu(Menu spotMenu, MenuItem exitItem) {
-        spotMenu.add(new MenuItem(SpotMenu.ADD.getName(), spotMenu, new AddSpotAction()));
-        spotMenu.add(new MenuItem(SpotMenu.DELETE.getName(), spotMenu, new DeleteSpotAction()));
+        if (SpotController.getInstance().isModifySpot()) {
+            spotMenu.add(new MenuItem(SpotMenu.ADD.getName(), spotMenu, new AddSpotAction()));
+            spotMenu.add(new MenuItem(SpotMenu.DELETE.getName(), spotMenu, new DeleteSpotAction()));
+        }
         spotMenu.add(new MenuItem(SpotMenu.GET_ALL.getName(), spotMenu, new GetSpotsAction()));
         spotMenu.add(new MenuItem(SpotMenu.IMPORT.getName(), spotMenu, new ImportSpotsAction()));
         spotMenu.add(new MenuItem(SpotMenu.EXPORT.getName(), spotMenu, new ExportSpotsAction()));
@@ -73,9 +74,14 @@ public class Builder {
 
     private void createOrderMenu(Menu orderMenu, MenuItem exitItem) {
         orderMenu.add(new MenuItem(OrderMenu.ADD.getName(), orderMenu, new AddOrderAction()));
-        orderMenu.add(new MenuItem(OrderMenu.DELETE.getName(), orderMenu, new DeleteOrderAction()));
+        if (OrderController.getInstance().isDeleteOrder()) {
+            orderMenu.add(new MenuItem(OrderMenu.DELETE.getName(), orderMenu, new DeleteOrderAction()));
+        }
         orderMenu.add(new MenuItem(OrderMenu.ADD_TOOLS.getName(), orderMenu, new AddToolsToOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.GET_ALL.getName(), orderMenu, new GetAllOrdersAction()));
+        if (OrderController.getInstance().isShiftTime()) {
+            orderMenu.add(new MenuItem(OrderMenu.SHIFT_TIME.getName(), orderMenu, new ChangeStartDateOrdersAction()));
+        }
 
         orderMenu.add(new MenuItem(OrderMenu.CANCEL_STATUS.getName(), orderMenu, new SetCancelStatusOrderAction()));
         orderMenu.add(new MenuItem(OrderMenu.CLOSE_STATUS.getName(), orderMenu, new SetCloseStatusOrderAction()));

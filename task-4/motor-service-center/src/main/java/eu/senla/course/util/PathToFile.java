@@ -8,9 +8,17 @@ public class PathToFile {
     private static final String PROPERTY_FILE = "config.properties";
 
     private static Properties properties = new Properties();
+    private final static PathToFile instance = new PathToFile();
 
-    public PathToFile() {
+    private PathToFile() {
+        this.loadProperty();
+    }
 
+    public PathToFile getInstance(){
+        return instance;
+    }
+
+    private void loadProperty(){
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE)){
             if (inputStream != null) {
                 properties.load(inputStream);
@@ -20,10 +28,9 @@ public class PathToFile {
         } catch (Exception e){
             System.out.println("Exception " + e.getMessage());
         }
-
     }
 
-    public String getPath(String key){
+    public static String getPath(String key){
         return properties.getProperty(key);
     }
 }

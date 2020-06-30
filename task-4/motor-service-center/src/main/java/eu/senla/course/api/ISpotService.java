@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ISpotService {
     List<Spot> getSpots();
+    boolean isModifySpot() throws ServiceException;
     void setSpots(List<Spot> spots);
     void addSpot(Spot spot) throws ServiceException;
     Spot getSpotById(int id) throws ServiceException;

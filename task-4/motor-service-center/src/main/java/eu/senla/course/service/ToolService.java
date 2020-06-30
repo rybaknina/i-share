@@ -4,10 +4,11 @@ import eu.senla.course.api.IToolService;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvToolHeader;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.exception.CsvException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
+import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
+import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +62,8 @@ public class ToolService implements IToolService {
             throw new ServiceException("Tool is not found");
         }
         tools.removeIf(e -> e.equals(tool));
+        ListUtil.shiftIndex(tools);
+        Tool.getCount().getAndDecrement();
     }
 
     public Tool getToolByName(String name) throws ServiceException {
@@ -77,12 +80,15 @@ public class ToolService implements IToolService {
     }
 
     public void updateTool(Tool tool) throws ServiceException {
-        Optional.ofNullable(tools.get(tool.getId()-1)).orElseThrow(() -> new ServiceException("Tool is not found"));
-        tools.set(tool.getId()-1, tool);
+        int id = tools.indexOf(tool);
+        if (id < 0){
+            throw new ServiceException("Tool is not found");
+        }
+        tools.set(id, tool);
     }
 
     private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(new PathToFile().getPath(TOOL_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        return Optional.of(Paths.get(PathToFile.getPath(TOOL_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     @Override

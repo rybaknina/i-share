@@ -7,6 +7,7 @@ import eu.senla.course.enums.CsvMechanicHeader;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
+import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
@@ -50,6 +51,8 @@ public class MechanicService implements IMechanicService {
             throw new ServiceException("Auto mechanic is not found");
         }
         mechanics.removeIf(e -> e.equals(mechanic));
+        ListUtil.shiftIndex(mechanics);
+        Mechanic.getCount().getAndDecrement();
     }
 
     public Mechanic getMechanicById(int id) throws ServiceException {
@@ -199,12 +202,15 @@ public class MechanicService implements IMechanicService {
     }
 
     private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(new PathToFile().getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        return Optional.of(Paths.get(PathToFile.getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     public void updateMechanic(Mechanic mechanic) throws ServiceException {
-        Optional.ofNullable(mechanics.get(mechanic.getId()-1)).orElseThrow(() -> new ServiceException("Mechanic is not found"));
-        mechanics.set(mechanic.getId()-1, mechanic);
+        int id = mechanics.indexOf(mechanic);
+        if (id < 0){
+            throw new ServiceException("Mechanic is not found");
+        }
+        mechanics.set(id, mechanic);
     }
 
     @Override
