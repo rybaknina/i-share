@@ -30,7 +30,7 @@ public class AddOrderAction implements IAction {
         Integer spotId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
 
         try {
-            Mechanic mechanic = mechanicController.gerMechanicById(mechanicId);
+            Mechanic mechanic = mechanicController.getMechanicById(mechanicId);
             Spot spot = spotController.getSpotById(spotId);
             orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
         } catch (ServiceException e) {

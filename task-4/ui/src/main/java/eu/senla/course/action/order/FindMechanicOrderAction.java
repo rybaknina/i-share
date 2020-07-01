@@ -21,7 +21,7 @@ public class FindMechanicOrderAction implements IAction {
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         try {
-            Mechanic mechanic = mechanicController.gerMechanicById(id);
+            Mechanic mechanic = mechanicController.getMechanicById(id);
             System.out.println(orderController.mechanicOrder(mechanic));
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());

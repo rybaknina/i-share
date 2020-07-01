@@ -8,7 +8,11 @@ import eu.senla.course.entity.Spot;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
+import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
+import eu.senla.course.repository.MechanicRepository;
+import eu.senla.course.repository.OrderRepository;
+import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.ListUtil;
@@ -39,7 +43,7 @@ public class OrderService implements IOrderService {
     private List<Order> orders;
 
     private OrderService() {
-        this.orders = new ArrayList<>();
+        this.orders = OrderRepository.getInstance().getAll();
     }
 
     public static IOrderService getInstance(){
@@ -51,29 +55,31 @@ public class OrderService implements IOrderService {
     }
 
     public void setOrders(List<Order> orders) {
-        this.orders = orders;
+        OrderRepository.getInstance().setAll(orders);
     }
 
     public Order getOrderById(int id) throws ServiceException {
-        if (orders.size() == 0 || orders.get(id) == null){
-            throw new ServiceException("Order is not found");
+        try {
+            return OrderRepository.getInstance().getById(id);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        return orders.get(id);
-
     }
 
     public void addOrder(Order order) throws ServiceException {
-        if (order == null){
-            throw new ServiceException("Order is not exist");
+        try {
+            OrderRepository.getInstance().add(order);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        orders.add(order);
     }
 
     public void deleteOrder(Order order) throws ServiceException {
-        if (order == null || orders.size() == 0) {
-            throw new ServiceException("Order is not found");
+        try {
+            OrderRepository.getInstance().delete(order);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        orders.removeIf(e -> e.equals(order));
         ListUtil.shiftIndex(orders);
         Order.getCount().getAndDecrement();
     }
@@ -85,11 +91,11 @@ public class OrderService implements IOrderService {
     }
 
     public void updateOrder(Order order) throws ServiceException {
-        int id = orders.indexOf(order);
-        if (id < 0){
-            throw new ServiceException("Order is not found");
+        try {
+            OrderRepository.getInstance().update(order);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        orders.set(id, order);
     }
 
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
@@ -259,12 +265,12 @@ public class OrderService implements IOrderService {
                 String status = list.get(n);
 
                 Mechanic mechanic = null;
-                if (MechanicService.getInstance().getMechanics().size() >= (mechanicId + 1)) {
-                    mechanic = MechanicService.getInstance().getMechanicById(mechanicId);
+                if (MechanicRepository.getInstance().getAll().size() >= (mechanicId + 1)) {
+                    mechanic = MechanicRepository.getInstance().getById(mechanicId);
                 }
                 Spot spot = null;
-                if (SpotService.getInstance().getSpots().size() >= (spotId + 1)) {
-                    spot = SpotService.getInstance().getSpotById(spotId);
+                if (SpotRepository.getInstance().getAll().size() >= (spotId + 1)) {
+                    spot = SpotRepository.getInstance().getById(spotId);
                 }
 
                 boolean exist = false;
@@ -272,7 +278,7 @@ public class OrderService implements IOrderService {
 
                 Order newOrder;
                 if (orders.size() >= (id + 1) && orders.get(id) != null) {
-                    newOrder = orders.get(id);
+                    newOrder = OrderRepository.getInstance().getById(id);
                     exist = true;
                 } else {
                     newOrder = new Order(requestDate, plannedDate, mechanic, spot);
@@ -319,7 +325,7 @@ public class OrderService implements IOrderService {
         }
 
         loadedOrders.forEach(System.out::println);
-        orders.addAll(loadedOrders);
+        OrderRepository.getInstance().addAll(loadedOrders);
     }
 
     @Override

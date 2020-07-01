@@ -19,7 +19,7 @@ public class DeleteMechanicAction implements IAction {
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
         try {
-            Mechanic mechanic = controller.gerMechanicById(id);
+            Mechanic mechanic = controller.getMechanicById(id);
             controller.deleteMechanic(mechanic);
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());

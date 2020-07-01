@@ -1,14 +1,17 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.IGarageService;
-import eu.senla.course.api.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.CsvGarageHeader;
 import eu.senla.course.enums.OrderStatus;
+import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
+import eu.senla.course.repository.GarageRepository;
+import eu.senla.course.repository.MechanicRepository;
+import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.*;
 import eu.senla.course.util.exception.CsvException;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +32,7 @@ public class GarageService implements IGarageService {
     private List<Garage> garages;
 
     private GarageService() {
-        this.garages = new ArrayList<>();
+        this.garages = GarageRepository.getInstance().getAll();
     }
 
     public static IGarageService getInstance(){
@@ -41,48 +44,60 @@ public class GarageService implements IGarageService {
     }
 
     public void setGarages(List<Garage> garages) {
-        this.garages = garages;
+        GarageRepository.getInstance().setAll(garages);
     }
 
     public void addGarage(Garage garage) throws ServiceException {
-        if (garage == null){
-            throw new ServiceException("Garage is not exist");
+        try {
+            GarageRepository.getInstance().add(garage);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        garages.add(garage);
         garage.setSpots(createSpots(garage));
     }
 
     public void updateGarage(Garage garage) throws ServiceException {
-        int id = garages.indexOf(garage);
-        if (id < 0){
-            throw new ServiceException("Garage is not found");
+        try {
+            GarageRepository.getInstance().update(garage);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        garages.set(id, garage);
     }
 
     public void deleteGarage(Garage garage) throws ServiceException {
-        if (garages.size() == 0 || garage == null){
-            throw new ServiceException("Garage is not found");
+        try {
+            for (Spot spot: SpotRepository.getInstance().getAll()){
+                if (spot.getGarage().equals(garage)){
+                    SpotRepository.getInstance().delete(spot);
+                }
+            }
+            GarageRepository.getInstance().delete(garage);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        garages.removeIf(e -> e.equals(garage));
         ListUtil.shiftIndex(garages);
         Garage.getCount().getAndDecrement();
     }
 
     public Garage getGarageById(int id) throws ServiceException {
-        if (garages.size() == 0 || garages.get(id) == null){
-            throw new ServiceException("Garage is not found");
+        try {
+            return GarageRepository.getInstance().getById(id);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        return garages.get(id);
     }
 
     private List<Spot> createSpots(@NotNull Garage garage) throws ServiceException {
-        ISpotService spotService = SpotService.getInstance();
+        SpotRepository spotRepository = SpotRepository.getInstance();
         int len = GeneratorUtil.generateNumber();
         for (int i = 0; i < len; i++){
-            spotService.addSpot(new Spot(garage));
+            try {
+                spotRepository.add(new Spot(garage));
+            } catch (RepositoryException e) {
+                throw new ServiceException("RepositoryException " + e.getMessage());
+            }
         }
-        return spotService.getSpots();
+        return spotRepository.getAll();
     }
 
     public int lengthAllSpots(){
@@ -113,7 +128,7 @@ public class GarageService implements IGarageService {
     public List<Spot> listAvailableSpots(LocalDateTime date, List<Order> orders) throws ServiceException {
         List<Spot> freeSpots = new ArrayList<>();
         if (garages.size() == 0){
-            throw new ServiceException("Garages are not exist");
+            throw new ServiceException("Spots are not available");
         }
         for (Garage garage: garages){
             List<Spot> busySpots = spotsOnDate(date, orders);
@@ -140,7 +155,7 @@ public class GarageService implements IGarageService {
     public void garagesFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = Optional.of(Paths.get(PathToFile.getPath(GARAGE_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
+        Path path = this.getPath();
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -170,7 +185,7 @@ public class GarageService implements IGarageService {
                 boolean exist = false;
                 Garage newGarage;
                 if (garages.size() >= (id + 1) && garages.get(id) != null) {
-                    newGarage = garages.get(id);
+                    newGarage = GarageRepository.getInstance().getById(id);
                     exist = true;
                 } else {
                     newGarage = new Garage();
@@ -186,11 +201,11 @@ public class GarageService implements IGarageService {
                         if (!idSpotLine.isBlank()) {
                             int idSpot = Integer.parseInt(idSpotLine) - 1;
 
-                            if (SpotService.getInstance().getSpots().size() >= (idSpot + 1)) {
-                                Spot spot = SpotService.getInstance().getSpotById(idSpot);
+                            if (SpotRepository.getInstance().getAll().size() >= (idSpot + 1)) {
+                                Spot spot = SpotRepository.getInstance().getById(idSpot);
                                 spots.add(spot);
                                 spot.setGarage(newGarage);
-                                SpotService.getInstance().updateSpot(spot);
+                                SpotRepository.getInstance().update(spot);
                             }
                         }
                     }
@@ -205,11 +220,11 @@ public class GarageService implements IGarageService {
                         if (!idMechanicLine.isBlank()) {
                             int idMechanic = Integer.parseInt(idMechanicLine) - 1;
 
-                            if (MechanicService.getInstance().getMechanics().size() >= (idMechanic + 1)) {
-                                Mechanic mechanic = MechanicService.getInstance().getMechanicById(idMechanic);
+                            if (MechanicRepository.getInstance().getAll().size() >= (idMechanic + 1)) {
+                                Mechanic mechanic = MechanicRepository.getInstance().getById(idMechanic);
                                 mechanics.add(mechanic);
                                 mechanic.setGarage(newGarage);
-                                MechanicService.getInstance().updateMechanic(mechanic);
+                                MechanicRepository.getInstance().update(mechanic);
                             }
                         }
                     }
@@ -228,7 +243,7 @@ public class GarageService implements IGarageService {
         }
 
         loadedGarages.forEach(System.out::println);
-        garages.addAll(loadedGarages);
+        GarageRepository.getInstance().addAll(loadedGarages);
     }
     public void garagesToCsv() throws ServiceException{
         List<List<String>> data = new ArrayList<>();
@@ -247,7 +262,7 @@ public class GarageService implements IGarageService {
                     dataIn.add(garage.getName());
 
                     StringBuilder spotsString = new StringBuilder();
-                    List<Spot> spots = SpotService.getInstance().getSpots();
+                    List<Spot> spots = SpotRepository.getInstance().getAll();
 
                     for (Spot spot: spots){
                         if (spot != null && spot.getGarage().equals(garage)){
@@ -259,7 +274,7 @@ public class GarageService implements IGarageService {
                     dataIn.add(spotsString.toString());
 
                     StringBuilder mechanicsString = new StringBuilder();
-                    List<Mechanic> mechanics = MechanicService.getInstance().getMechanics();
+                    List<Mechanic> mechanics = MechanicRepository.getInstance().getAll();
                     for (Mechanic mechanic:mechanics){
                         if (mechanic != null && mechanic.getGarage().equals(garage)){
                             mechanicsString.append(mechanic.getId());

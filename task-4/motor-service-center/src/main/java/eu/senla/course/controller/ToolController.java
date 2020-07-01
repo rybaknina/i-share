@@ -36,9 +36,7 @@ public class ToolController {
     public void deleteTool(Tool tool) throws ServiceException {
         service.deleteTool(tool);
     }
-    public Tool getToolByName(String name) throws ServiceException {
-        return service.getToolByName(name);
-    }
+
     public void updateTool(Tool tool) throws ServiceException{
         service.updateTool(tool);
     }

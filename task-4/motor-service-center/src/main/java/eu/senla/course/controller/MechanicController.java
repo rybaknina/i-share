@@ -31,7 +31,7 @@ public class MechanicController {
     public void deleteMechanic(Mechanic mechanic) throws ServiceException {
         service.deleteMechanic(mechanic);
     }
-    public Mechanic gerMechanicById(int id) throws ServiceException {
+    public Mechanic getMechanicById(int id) throws ServiceException {
         return service.getMechanicById(id);
     }
     public Mechanic firstFreeMechanic() throws ServiceException {
