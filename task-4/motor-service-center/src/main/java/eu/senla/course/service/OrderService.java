@@ -15,7 +15,6 @@ import eu.senla.course.repository.OrderRepository;
 import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
@@ -59,11 +58,11 @@ public class OrderService implements IOrderService {
     }
 
     public Order getOrderById(int id) throws ServiceException {
-        try {
-            return OrderRepository.getInstance().getById(id);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
+        Order order = OrderRepository.getInstance().getById(id);
+        if (order == null){
+            throw new ServiceException("Order is not found");
         }
+        return order;
     }
 
     public void addOrder(Order order) throws ServiceException {
@@ -80,8 +79,6 @@ public class OrderService implements IOrderService {
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        ListUtil.shiftIndex(orders);
-        Order.getCount().getAndDecrement();
     }
 
     @Override
@@ -257,28 +254,20 @@ public class OrderService implements IOrderService {
             for (List<String> list : lists) {
                 int n = 0;
 
-                int id = Integer.parseInt(list.get(n++)) - 1;
+                int id = Integer.parseInt(list.get(n++));
                 LocalDateTime requestDate = LocalDateTime.parse(list.get(n++));
                 LocalDateTime plannedDate = LocalDateTime.parse(list.get(n++));
-                int mechanicId = Integer.parseInt(list.get(n++)) - 1;
-                int spotId = Integer.parseInt(list.get(n++)) - 1;
+                int mechanicId = Integer.parseInt(list.get(n++));
+                int spotId = Integer.parseInt(list.get(n++));
                 String status = list.get(n);
 
-                Mechanic mechanic = null;
-                if (MechanicRepository.getInstance().getAll().size() >= (mechanicId + 1)) {
-                    mechanic = MechanicRepository.getInstance().getById(mechanicId);
-                }
-                Spot spot = null;
-                if (SpotRepository.getInstance().getAll().size() >= (spotId + 1)) {
-                    spot = SpotRepository.getInstance().getById(spotId);
-                }
+                Mechanic mechanic = MechanicRepository.getInstance().getById(mechanicId);
+                Spot spot = SpotRepository.getInstance().getById(spotId);
 
                 boolean exist = false;
 
-
-                Order newOrder;
-                if (orders.size() >= (id + 1) && orders.get(id) != null) {
-                    newOrder = OrderRepository.getInstance().getById(id);
+                Order newOrder = OrderRepository.getInstance().getById(id);
+                if (newOrder != null) {
                     exist = true;
                 } else {
                     newOrder = new Order(requestDate, plannedDate, mechanic, spot);
@@ -305,13 +294,8 @@ public class OrderService implements IOrderService {
                     }
                 }
                 newOrder.setPlannedDate(plannedDate);
-
-                if (mechanic != null) {
-                    newOrder.setMechanic(mechanic);
-                }
-                if (spot != null){
-                    newOrder.setSpot(spot);
-                }
+                newOrder.setMechanic(mechanic);
+                newOrder.setSpot(spot);
 
                 if (exist) {
                     updateOrder(newOrder);

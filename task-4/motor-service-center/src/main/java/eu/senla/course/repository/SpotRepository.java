@@ -36,11 +36,13 @@ public class SpotRepository implements IRepository<Spot> {
     }
 
     @Override
-    public Spot getById(int id) throws RepositoryException {
-        if (spots.size() <= id || spots.get(id) == null){
-            throw new RepositoryException("Spot is not found");
+    public Spot getById(int id) {
+        for (Spot spot: spots){
+            if (spot.getId() == id){
+                return spot;
+            }
         }
-        return spots.get(id);
+        return null;
     }
 
     @Override

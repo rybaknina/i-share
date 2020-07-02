@@ -36,11 +36,13 @@ public class OrderRepository implements IRepository<Order> {
     }
 
     @Override
-    public Order getById(int id) throws RepositoryException {
-        if (orders.size() <= id || orders.get(id) == null){
-            throw new RepositoryException("Order is not found");
+    public Order getById(int id) {
+        for (Order order: orders){
+            if (order.getId() == id){
+                return order;
+            }
         }
-        return orders.get(id);
+        return null;
     }
 
     @Override

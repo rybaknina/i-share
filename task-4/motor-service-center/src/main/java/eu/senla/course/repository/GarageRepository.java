@@ -34,11 +34,13 @@ public class GarageRepository implements IRepository<Garage> {
     }
 
     @Override
-    public Garage getById(int id) throws RepositoryException {
-        if (garages.size() <= id || garages.get(id) == null){
-            throw new RepositoryException("Garage is not found");
+    public Garage getById(int id) {
+        for (Garage garage: garages){
+            if (garage.getId() == id){
+                return garage;
+            }
         }
-        return garages.get(id);
+        return null;
     }
 
     @Override

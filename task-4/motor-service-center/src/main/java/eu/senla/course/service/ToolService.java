@@ -8,7 +8,6 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.repository.ToolRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
@@ -54,11 +53,11 @@ public class ToolService implements IToolService {
     }
 
     public Tool getToolById(int id) throws ServiceException {
-        try {
-            return ToolRepository.getInstance().getById(id);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
+        Tool tool = ToolRepository.getInstance().getById(id);
+        if (tool == null){
+            throw new ServiceException("Tool is not found");
         }
+        return tool;
     }
 
     public void deleteTool(Tool tool) throws ServiceException {
@@ -67,8 +66,6 @@ public class ToolService implements IToolService {
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        ListUtil.shiftIndex(tools);
-        Tool.getCount().getAndDecrement();
     }
 
     public void updateTool(Tool tool) throws ServiceException {
@@ -104,14 +101,13 @@ public class ToolService implements IToolService {
         try {
             for (List<String> list : lists) {
                 int n = 0;
-                int id = Integer.parseInt(list.get(n++)) - 1;
+                int id = Integer.parseInt(list.get(n++));
                 String name = list.get(n++);
                 int hours = Integer.parseInt(list.get(n++));
                 BigDecimal hourlyPrice = new BigDecimal(list.get(n));
 
-                Tool newTool;
-                if (tools.size() >= (id + 1) && tools.get(id) != null) {
-                    newTool = ToolRepository.getInstance().getById(id);
+                Tool newTool = ToolRepository.getInstance().getById(id);
+                if (newTool != null) {
                     newTool.setName(name);
                     newTool.setHours(hours);
                     newTool.setHourlyPrice(hourlyPrice);

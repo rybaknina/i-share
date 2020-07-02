@@ -66,25 +66,19 @@ public class GarageService implements IGarageService {
 
     public void deleteGarage(Garage garage) throws ServiceException {
         try {
-            for (Spot spot: SpotRepository.getInstance().getAll()){
-                if (spot.getGarage().equals(garage)){
-                    SpotRepository.getInstance().delete(spot);
-                }
-            }
+            SpotRepository.getInstance().getAll().removeIf(spot -> spot.getGarage().equals(garage));
             GarageRepository.getInstance().delete(garage);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        ListUtil.shiftIndex(garages);
-        Garage.getCount().getAndDecrement();
     }
 
     public Garage getGarageById(int id) throws ServiceException {
-        try {
-            return GarageRepository.getInstance().getById(id);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
+        Garage garage = GarageRepository.getInstance().getById(id);
+        if (garage == null){
+            throw new ServiceException("Garage is not found");
         }
+        return garage;
     }
 
     private List<Spot> createSpots(@NotNull Garage garage) throws ServiceException {
@@ -180,12 +174,11 @@ public class GarageService implements IGarageService {
             for (List<String> list : lists) {
 
                 int n = 0;
-                int id = Integer.parseInt(list.get(n++)) - 1;
+                int id = Integer.parseInt(list.get(n++));
 
                 boolean exist = false;
-                Garage newGarage;
-                if (garages.size() >= (id + 1) && garages.get(id) != null) {
-                    newGarage = GarageRepository.getInstance().getById(id);
+                Garage newGarage = GarageRepository.getInstance().getById(id);
+                if (newGarage != null) {
                     exist = true;
                 } else {
                     newGarage = new Garage();
@@ -199,10 +192,9 @@ public class GarageService implements IGarageService {
                     List<Spot> spots = new ArrayList<>();
                     for (String idSpotLine : idSpots) {
                         if (!idSpotLine.isBlank()) {
-                            int idSpot = Integer.parseInt(idSpotLine) - 1;
-
-                            if (SpotRepository.getInstance().getAll().size() >= (idSpot + 1)) {
-                                Spot spot = SpotRepository.getInstance().getById(idSpot);
+                            int idSpot = Integer.parseInt(idSpotLine);
+                            Spot spot = SpotRepository.getInstance().getById(idSpot);
+                            if (spot != null) {
                                 spots.add(spot);
                                 spot.setGarage(newGarage);
                                 SpotRepository.getInstance().update(spot);
@@ -218,10 +210,9 @@ public class GarageService implements IGarageService {
                     List<Mechanic> mechanics = new ArrayList<>();
                     for (String idMechanicLine : idMechanics) {
                         if (!idMechanicLine.isBlank()) {
-                            int idMechanic = Integer.parseInt(idMechanicLine) - 1;
-
-                            if (MechanicRepository.getInstance().getAll().size() >= (idMechanic + 1)) {
-                                Mechanic mechanic = MechanicRepository.getInstance().getById(idMechanic);
+                            int idMechanic = Integer.parseInt(idMechanicLine);
+                            Mechanic mechanic = MechanicRepository.getInstance().getById(idMechanic);
+                            if (mechanic != null) {
                                 mechanics.add(mechanic);
                                 mechanic.setGarage(newGarage);
                                 MechanicRepository.getInstance().update(mechanic);

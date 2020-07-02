@@ -21,7 +21,7 @@ public class AddMechanicAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
 
         try {
             Garage garage = garageController.getGarageById(id);

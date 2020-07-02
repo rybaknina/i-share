@@ -18,7 +18,7 @@ public class SetDeleteStatusOrderAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         try {
             Order order = controller.getOrderById(id);
             controller.changeStatusOrder(order, OrderStatus.DELETE);

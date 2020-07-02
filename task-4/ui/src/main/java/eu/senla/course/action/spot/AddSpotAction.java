@@ -20,7 +20,7 @@ public class AddSpotAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer garageId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Integer garageId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         try {
             Garage garage = garageController.getGarageById(garageId);
             spotController.addSpot(new Spot(garage));

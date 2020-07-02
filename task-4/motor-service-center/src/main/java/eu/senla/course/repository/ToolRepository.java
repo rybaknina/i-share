@@ -36,11 +36,13 @@ public class ToolRepository implements IRepository<Tool> {
     }
 
     @Override
-    public Tool getById(int id) throws RepositoryException {
-        if (tools.size() <= id || tools.get(id) == null){
-            throw new RepositoryException("Tool is not found");
+    public Tool getById(int id) {
+        for (Tool tool: tools){
+            if (tool.getId() == id){
+                return tool;
+            }
         }
-        return tools.get(id);
+        return null;
     }
 
     @Override

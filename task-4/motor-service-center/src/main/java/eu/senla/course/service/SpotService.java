@@ -10,7 +10,6 @@ import eu.senla.course.repository.GarageRepository;
 import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.ListUtil;
 import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
@@ -62,11 +61,11 @@ public class SpotService implements ISpotService {
     }
 
     public Spot getSpotById(int id) throws ServiceException {
-        try {
-            return SpotRepository.getInstance().getById(id);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
+        Spot spot = SpotRepository.getInstance().getById(id);
+        if (spot == null){
+            throw new ServiceException("Spot is not found");
         }
+        return spot;
     }
 
     public void deleteSpot(Spot spot) throws ServiceException {
@@ -75,9 +74,8 @@ public class SpotService implements ISpotService {
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
-        ListUtil.shiftIndex(spots);
-        Spot.getCount().getAndDecrement();
     }
+
     public void updateSpot(Spot spot) throws ServiceException {
         try {
             SpotRepository.getInstance().update(spot);
@@ -113,17 +111,16 @@ public class SpotService implements ISpotService {
             for (List<String> list : lists) {
 
                 int n = 0;
-                int id = Integer.parseInt(list.get(n++)) - 1;
-                int garageId = Integer.parseInt(list.get(n)) - 1;
+                int id = Integer.parseInt(list.get(n++));
+                int garageId = Integer.parseInt(list.get(n));
 
-                if (GarageRepository.getInstance().getAll().size() < (garageId + 1)){
+                Garage garage = GarageRepository.getInstance().getById(garageId);
+                if (garage == null){
                     throw new ServiceException("Garage is not found");
                 }
-                Garage garage = GarageRepository.getInstance().getById(garageId);
 
-                Spot newSpot;
-                if (spots.size() >= (id + 1) && spots.get(id)!= null) {
-                    newSpot = SpotRepository.getInstance().getById(id);
+                Spot newSpot = SpotRepository.getInstance().getById(id);
+                if (newSpot != null) {
                     newSpot.setGarage(garage);
                     updateSpot(newSpot);
 

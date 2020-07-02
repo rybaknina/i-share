@@ -36,11 +36,13 @@ public class MechanicRepository implements IRepository<Mechanic> {
     }
 
     @Override
-    public Mechanic getById(int id) throws RepositoryException {
-        if (mechanics.size() <= id || mechanics.get(id) == null){
-            throw new RepositoryException("Auto mechanic is not found");
+    public Mechanic getById(int id) {
+        for (Mechanic mechanic: mechanics){
+            if (mechanic.getId() == id){
+                return mechanic;
+            }
         }
-        return mechanics.get(id);
+        return null;
     }
 
     @Override

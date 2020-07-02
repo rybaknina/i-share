@@ -37,29 +37,64 @@ public class SerializeUtil {
         try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(PathToFile.getPath(LOAD_PATH)))){
             List<List<? extends IEntity>> entityList = (List<List<? extends IEntity>>) is.readObject();
             int n = 0;
+            int max = 0;
             List<Garage> garages = (List<Garage>) entityList.get(n++);
             for (Garage garage: garages){
+                if (max < garage.getId()){
+                    max = garage.getId();
+                }
                 GarageRepository.getInstance().add(garage);
+            }
+
+            while (Garage.getCount().get() < max){
                 Garage.getCount().incrementAndGet();
             }
+
+            max = 0;
             List<Mechanic> mechanics = (List<Mechanic>) entityList.get(n++);
             for (Mechanic mechanic: mechanics){
+                if (max < mechanic.getId()){
+                    max = mechanic.getId();
+                }
                 MechanicRepository.getInstance().add(mechanic);
+            }
+            while (Mechanic.getCount().get() < max){
                 Mechanic.getCount().incrementAndGet();
             }
+
+            max = 0;
             List<Order> orders = (List<Order>) entityList.get(n++);
             for (Order order: orders){
+                if (max < order.getId()){
+                    max = order.getId();
+                }
                 OrderRepository.getInstance().add(order);
+            }
+            while (Order.getCount().get() < max){
                 Order.getCount().incrementAndGet();
             }
+
+            max = 0;
             List<Spot> spots = (List<Spot>) entityList.get(n++);
             for (Spot spot: spots){
+                if (max < spot.getId()){
+                    max = spot.getId();
+                }
                 SpotRepository.getInstance().add(spot);
+            }
+            while (Spot.getCount().get() < max){
                 Spot.getCount().incrementAndGet();
             }
+
+            max = 0;
             List<Tool> tools = (List<Tool>) entityList.get(n);
             for (Tool tool: tools){
+                if (max < tool.getId()){
+                    max = tool.getId();
+                }
                 ToolRepository.getInstance().add(tool);
+            }
+            while (Tool.getCount().get() < max){
                 Tool.getCount().incrementAndGet();
             }
 
