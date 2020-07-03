@@ -17,7 +17,7 @@ public class DeleteSpotAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         try {
             Spot spot = controller.getSpotById(id);
             controller.deleteSpot(spot);

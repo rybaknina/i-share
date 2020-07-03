@@ -1,8 +1,12 @@
 package eu.senla.course.entity;
 
+import eu.senla.course.api.IEntity;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Spot {
+public class Spot implements IEntity {
+    private static final long serialVersionUID = 5407284135064833379L;
+
     private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private Garage garage;
@@ -14,6 +18,14 @@ public class Spot {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static AtomicInteger getCount() {
+        return count;
     }
 
     public Garage getGarage() {

@@ -17,9 +17,9 @@ public class DeleteMechanicAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName()) - 1;
+        Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         try {
-            Mechanic mechanic = controller.gerMechanicById(id);
+            Mechanic mechanic = controller.getMechanicById(id);
             controller.deleteMechanic(mechanic);
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());

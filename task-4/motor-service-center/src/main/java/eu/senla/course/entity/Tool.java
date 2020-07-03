@@ -1,9 +1,13 @@
 package eu.senla.course.entity;
 
+import eu.senla.course.api.IEntity;
+
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Tool {
+public class Tool implements IEntity {
+    private static final long serialVersionUID = 547711684159410719L;
+
     private static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String name;
@@ -26,6 +30,14 @@ public class Tool {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static AtomicInteger getCount() {
+        return count;
     }
 
     public String getName() {

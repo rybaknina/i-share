@@ -29,6 +29,13 @@ public class SpotController {
     public void addSpot(Spot spot) throws ServiceException {
         service.addSpot(spot);
     }
+    public boolean isModifySpot(){
+        try {
+            return service.isModifySpot();
+        } catch (ServiceException e) {
+            return false;
+        }
+    }
     public Spot getSpotById(int id) throws ServiceException {
         return service.getSpotById(id);
     }

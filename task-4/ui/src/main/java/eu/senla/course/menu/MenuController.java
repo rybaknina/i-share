@@ -1,5 +1,7 @@
 package eu.senla.course.menu;
 
+import eu.senla.course.action.load.LoadFromFileAction;
+import eu.senla.course.action.load.LoadToFileAction;
 import eu.senla.course.enums.MainMenu;
 import eu.senla.course.util.InputValidator;
 
@@ -8,9 +10,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MenuController {
-
+    private final static MenuController instance = new MenuController();
     private Builder builder = Builder.getInstance();
     private Navigator navigator = Navigator.getInstance();
+
+    private MenuController(){
+        try {
+            new LoadFromFileAction().execute();
+        } catch (IOException e) {
+            System.out.println("File is broken");
+        }
+    }
+
+    public static MenuController getInstance(){
+        return instance;
+    }
 
     public void run() throws IOException {
 
@@ -33,6 +47,7 @@ public class MenuController {
                 }
 
                 if (navigator.getCurrentMenu().getMenuItems().get(input).getTitle().equals(MainMenu.EXIT.getName())) {
+                    new LoadToFileAction().execute();
                     exit = true;
                     continue;
                 }

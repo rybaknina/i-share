@@ -14,12 +14,15 @@ import java.util.List;
 public interface IOrderService {
     void addOrder(Order order) throws ServiceException;
     void deleteOrder(Order order) throws ServiceException;
+    boolean isDeleteOrder() throws ServiceException;
     Order getOrderById(int id) throws ServiceException;
     void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException;
     void changeStatusOrder(Order order, OrderStatus status) throws ServiceException;
     List<Order> getOrders();
+    void setOrders(List<Order> orders);
     List<Order> listOrders(Comparator<Order> comparator) throws ServiceException;
     void changeStartDateOrders(int hours) throws ServiceException;
+    boolean isShiftTime() throws ServiceException;
     LocalDateTime nextAvailableDate(IGarageService garage, LocalDate endDate) throws ServiceException;
     Order mechanicOrder(Mechanic mechanic) throws ServiceException;
     Mechanic orderMechanic(Order order) throws ServiceException;
