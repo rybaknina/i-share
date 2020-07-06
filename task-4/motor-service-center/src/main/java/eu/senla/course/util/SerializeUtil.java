@@ -1,6 +1,7 @@
 package eu.senla.course.util;
 
-import eu.senla.course.api.IEntity;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.entity.*;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.repository.*;
@@ -11,11 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SerializeUtil {
-    private final static String LOAD_PATH = "load.center";
+    @ConfigProperty(key = "load.center")
+    private static String loadPath;
 
     public static void serialize() throws SerializeException {
         List<List<? extends IEntity>> entityList = new ArrayList<>();
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathToFile.getPath(LOAD_PATH)))){
+        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(loadPath))){
 
             entityList.add(GarageRepository.getInstance().getAll());
             entityList.add(MechanicRepository.getInstance().getAll());
@@ -34,7 +36,7 @@ public class SerializeUtil {
 
     @SuppressWarnings("unchecked")
     public static void deserialize() throws SerializeException {
-        try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(PathToFile.getPath(LOAD_PATH)))){
+        try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(loadPath))){
             List<List<? extends IEntity>> entityList = (List<List<? extends IEntity>>) is.readObject();
             int n = 0;
             int max = 0;

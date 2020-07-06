@@ -1,6 +1,8 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IToolService;
+import eu.senla.course.annotation.di.Service;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.service.IToolService;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvToolHeader;
 import eu.senla.course.exception.RepositoryException;
@@ -8,7 +10,6 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.repository.ToolRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
@@ -19,21 +20,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Service
 public class ToolService implements IToolService {
 
-    private final static IToolService instance = new ToolService();
-    private final static String TOOL_PATH = "tool";
+    @ConfigProperty(key = "tool")
+    private static String toolPath;
 
     private List<Tool> tools;
 
-    private ToolService() {
+    public ToolService() {
         this.tools = ToolRepository.getInstance().getAll();
-    }
-
-    public static IToolService getInstance(){
-        return instance;
     }
 
     public List<Tool> getTools() {
@@ -76,14 +73,10 @@ public class ToolService implements IToolService {
         }
     }
 
-    private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(PathToFile.getPath(TOOL_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-    }
-
     @Override
     public void toolsFromCsv() throws ServiceException {
         List<List<String>> lists;
-        Path path = this.getPath();
+        Path path = Paths.get(toolPath);
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
             createTools(lists);
@@ -127,7 +120,7 @@ public class ToolService implements IToolService {
     }
 
     @Override
-    public void toolsToCsv() throws ServiceException {
+    public void toolsToCsv() {
 
         List<List<String>> data = new ArrayList<>();
 
@@ -148,7 +141,7 @@ public class ToolService implements IToolService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+            CsvWriter.writeRecords(new File(toolPath), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());

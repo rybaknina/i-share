@@ -1,6 +1,6 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.IRepository;
+import eu.senla.course.api.repository.IRepository;
 import eu.senla.course.entity.Order;
 import eu.senla.course.exception.RepositoryException;
 

@@ -1,6 +1,8 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IGarageService;
+import eu.senla.course.annotation.di.Service;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
@@ -12,7 +14,9 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.repository.GarageRepository;
 import eu.senla.course.repository.MechanicRepository;
 import eu.senla.course.repository.SpotRepository;
-import eu.senla.course.util.*;
+import eu.senla.course.util.CsvReader;
+import eu.senla.course.util.CsvWriter;
+import eu.senla.course.util.GeneratorUtil;
 import eu.senla.course.util.exception.CsvException;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,23 +24,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
+@Service
 public class GarageService implements IGarageService {
 
-    private final static IGarageService instance = new GarageService();
-    private final static String GARAGE_PATH = "garage";
+    @ConfigProperty(key = "garage")
+    private static String garagePath;
 
     private List<Garage> garages;
 
-    private GarageService() {
+    public GarageService() {
         this.garages = GarageRepository.getInstance().getAll();
-    }
-
-    public static IGarageService getInstance(){
-        return instance;
     }
 
     public List<Garage> getGarages() {
@@ -149,7 +152,7 @@ public class GarageService implements IGarageService {
     public void garagesFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath();
+        Path path = Path.of(garagePath);
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -161,10 +164,6 @@ public class GarageService implements IGarageService {
             throw new ServiceException("Error read file");
         }
 
-    }
-
-    private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(PathToFile.getPath(GARAGE_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     private void createGarages(List<List<String>> lists) throws ServiceException {
@@ -236,7 +235,7 @@ public class GarageService implements IGarageService {
         loadedGarages.forEach(System.out::println);
         GarageRepository.getInstance().addAll(loadedGarages);
     }
-    public void garagesToCsv() throws ServiceException{
+    public void garagesToCsv(){
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
@@ -277,7 +276,7 @@ public class GarageService implements IGarageService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+            CsvWriter.writeRecords(new File(garagePath), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());

@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.repository;
 
 import eu.senla.course.exception.RepositoryException;
 

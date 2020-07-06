@@ -1,6 +1,8 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IMechanicService;
+import eu.senla.course.annotation.di.Service;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.service.IMechanicService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
@@ -12,7 +14,6 @@ import eu.senla.course.repository.MechanicRepository;
 import eu.senla.course.repository.OrderRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
@@ -20,19 +21,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
+@Service
 public class MechanicService implements IMechanicService {
-    private final static IMechanicService instance = new MechanicService();
-    private final static String MECHANIC_PATH = "mechanic";
+
+    @ConfigProperty(key = "mechanic")
+    private static String mechanicPath;
     private List<Mechanic> mechanics;
 
-    private MechanicService() {
+    public MechanicService() {
         this.mechanics = MechanicRepository.getInstance().getAll();
-    }
-
-    public static IMechanicService getInstance(){
-        return instance;
     }
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
@@ -93,7 +95,7 @@ public class MechanicService implements IMechanicService {
     public void mechanicsFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath();
+        Path path = Paths.get(mechanicPath);
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -166,8 +168,8 @@ public class MechanicService implements IMechanicService {
     }
 
     @Override
-    public void mechanicsToCsv() throws ServiceException {
-        // TODO: need more tests
+    public void mechanicsToCsv() {
+
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
@@ -198,15 +200,11 @@ public class MechanicService implements IMechanicService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath())), headers, data);
+            CsvWriter.writeRecords(new File(mechanicPath), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
         }
-    }
-
-    private Path getPath() throws ServiceException {
-        return Optional.of(Paths.get(PathToFile.getPath(MECHANIC_PATH))).orElseThrow(() -> new ServiceException("Something wrong with path"));
     }
 
     public void updateMechanic(Mechanic mechanic) throws ServiceException {

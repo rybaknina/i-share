@@ -1,11 +1,14 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.IGarageService;
-import eu.senla.course.api.IOrderService;
+import eu.senla.course.annotation.di.Service;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.service.IOrderService;
+import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.entity.Tool;
+import eu.senla.course.enums.ConfigType;
 import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.RepositoryException;
@@ -15,7 +18,6 @@ import eu.senla.course.repository.OrderRepository;
 import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
@@ -23,30 +25,27 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
+@Service
 public class OrderService implements IOrderService {
 
-    private final static IOrderService instance = new OrderService();
-    private final static String ORDER_PATH = "order";
-    private final static String IS_SHIFT_TIME = "shift.order.time";
-    private final static String IS_DELETE_ORDER = "delete.order";
+    @ConfigProperty(key = "order")
+    private static String orderPath;
+    @ConfigProperty(key = "shift.order.time", type = ConfigType.BOOLEAN)
+    private static boolean isShiftTime;
+    @ConfigProperty(key = "delete.order", type = ConfigType.BOOLEAN)
+    private static boolean isDeleteOrder;
 
     private List<Order> orders;
 
-    private OrderService() {
+    public OrderService() {
         this.orders = OrderRepository.getInstance().getAll();
-    }
-
-    public static IOrderService getInstance(){
-        return instance;
     }
 
     public List<Order> getOrders() {
@@ -82,9 +81,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public boolean isDeleteOrder() throws ServiceException {
-        boolean delete = Boolean.parseBoolean(String.valueOf(this.getPath(IS_DELETE_ORDER)));
-        return delete;
+    public boolean isDeleteOrder() {
+        return isDeleteOrder;
     }
 
     public void updateOrder(Order order) throws ServiceException {
@@ -156,9 +154,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public boolean isShiftTime() throws ServiceException {
-        boolean shift = Boolean.parseBoolean(String.valueOf(this.getPath(IS_SHIFT_TIME)));
-        return shift;
+    public boolean isShiftTime() {
+        return isShiftTime;
     }
 
     public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
@@ -196,11 +193,11 @@ public class OrderService implements IOrderService {
         }
         return null;
     }
-    public LocalDateTime nextAvailableDate(IGarageService garage, LocalDate endDate) throws ServiceException {
+    public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
         for (int i=0; i < days; i++) {
-            if (garage.numberAvailableSpots(nextDate, orders) > 0) {
+            if (GarageController.getInstance().numberAvailableSpots(nextDate, orders) > 0) {
                 return nextDate;
             } else {
                 nextDate = nextDate.plusDays(1);
@@ -226,15 +223,12 @@ public class OrderService implements IOrderService {
         }
     }
 
-    private Path getPath(String path) throws ServiceException {
-        return Optional.of(Paths.get(PathToFile.getPath(path))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-    }
 
     @Override
     public void ordersFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath(ORDER_PATH);
+        Path path = Path.of(orderPath);
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -313,8 +307,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public void ordersToCsv() throws ServiceException {
-        // TODO: need to test
+    public void ordersToCsv() {
+
         List<List<String>> data = new ArrayList<>();
 
         List<String> headers = new ArrayList<>();
@@ -342,7 +336,7 @@ public class OrderService implements IOrderService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath(ORDER_PATH))), headers, data);
+            CsvWriter.writeRecords(new File(orderPath), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());

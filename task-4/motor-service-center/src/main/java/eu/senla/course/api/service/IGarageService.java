@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.service;
 
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
@@ -19,5 +19,5 @@ public interface IGarageService {
     List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;
     int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;
     void garagesFromCsv() throws ServiceException;
-    void garagesToCsv() throws ServiceException;
+    void garagesToCsv();
 }

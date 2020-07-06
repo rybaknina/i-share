@@ -1,6 +1,6 @@
 package eu.senla.course.entity;
 
-import eu.senla.course.api.IEntity;
+import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.enums.OrderStatus;
 
 import java.time.LocalDateTime;

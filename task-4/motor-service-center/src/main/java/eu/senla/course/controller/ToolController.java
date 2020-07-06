@@ -1,16 +1,16 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.api.IToolService;
+import eu.senla.course.annotation.di.Injection;
+import eu.senla.course.api.service.IToolService;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.service.ToolService;
 
 import java.util.List;
 
 public class ToolController {
-
+    @Injection
+    private static IToolService service;
     private final static ToolController instance = new ToolController();
-    private final IToolService service = ToolService.getInstance();
 
     private ToolController() {
 
@@ -43,7 +43,7 @@ public class ToolController {
     public void toolsFromCsv() throws ServiceException{
         service.toolsFromCsv();
     }
-    public void toolsToCsv() throws ServiceException{
+    public void toolsToCsv(){
         service.toolsToCsv();
     }
 }

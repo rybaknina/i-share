@@ -1,8 +1,11 @@
 package eu.senla.course.service;
 
-import eu.senla.course.api.ISpotService;
+import eu.senla.course.annotation.di.Service;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
+import eu.senla.course.enums.ConfigType;
 import eu.senla.course.enums.CsvSpotHeader;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
@@ -10,7 +13,6 @@ import eu.senla.course.repository.GarageRepository;
 import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
-import eu.senla.course.util.PathToFile;
 import eu.senla.course.util.exception.CsvException;
 
 import java.io.File;
@@ -20,22 +22,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Service
 public class SpotService implements ISpotService {
 
-    private final static ISpotService instance = new SpotService();
-    private final static String SPOT_PATH = "spot";
-    private final static String IS_MODIFY_SPOT = "modify.spot";
+    @ConfigProperty(key = "spot")
+    private static String spotPath;
+    @ConfigProperty(key = "modify.spot", type = ConfigType.BOOLEAN)
+    private static boolean isModifySpot;
 
     private List<Spot> spots;
 
-    private SpotService() {
+    public SpotService() {
         this.spots = SpotRepository.getInstance().getAll();
-    }
-
-    public static ISpotService getInstance(){
-        return instance;
     }
 
     public List<Spot> getSpots() {
@@ -55,9 +54,8 @@ public class SpotService implements ISpotService {
     }
 
     @Override
-    public boolean isModifySpot() throws ServiceException {
-        boolean modify = Boolean.parseBoolean(String.valueOf(this.getPath(IS_MODIFY_SPOT)));
-        return modify;
+    public boolean isModifySpot() {
+        return isModifySpot;
     }
 
     public Spot getSpotById(int id) throws ServiceException {
@@ -84,15 +82,12 @@ public class SpotService implements ISpotService {
         }
     }
 
-    private Path getPath(String path) throws ServiceException {
-        return Optional.of(Paths.get(PathToFile.getPath(path))).orElseThrow(() -> new ServiceException("Something wrong with path"));
-    }
 
     @Override
     public void spotsFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = this.getPath(SPOT_PATH);
+        Path path = Paths.get(spotPath);
 
         try {
             lists = CsvReader.readRecords(Files.newBufferedReader(path));
@@ -138,7 +133,7 @@ public class SpotService implements ISpotService {
     }
 
     @Override
-    public void spotsToCsv() throws ServiceException {
+    public void spotsToCsv() {
 
         List<List<String>> data = new ArrayList<>();
 
@@ -155,7 +150,7 @@ public class SpotService implements ISpotService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(getPath(SPOT_PATH))), headers, data);
+            CsvWriter.writeRecords(new File(String.valueOf(spotPath)), headers, data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
