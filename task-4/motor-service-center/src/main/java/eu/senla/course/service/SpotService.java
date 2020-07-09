@@ -1,16 +1,17 @@
 package eu.senla.course.service;
 
+import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.api.service.ISpotService;
+import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ConfigType;
 import eu.senla.course.enums.CsvSpotHeader;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.repository.GarageRepository;
-import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
@@ -30,24 +31,20 @@ public class SpotService implements ISpotService {
     private static String spotPath;
     @ConfigProperty(key = "modify.spot", type = ConfigType.BOOLEAN)
     private static boolean isModifySpot;
-
-    private List<Spot> spots;
-
-    public SpotService() {
-        this.spots = SpotRepository.getInstance().getAll();
-    }
+    @Injection
+    private static ISpotRepository spotRepository;
 
     public List<Spot> getSpots() {
-        return spots;
+        return spotRepository.getAll();
     }
 
     public void setSpots(List<Spot> spots) {
-        SpotRepository.getInstance().setAll(spots);
+        spotRepository.setAll(spots);
     }
 
     public void addSpot(Spot spot) throws ServiceException {
         try {
-            SpotRepository.getInstance().add(spot);
+            spotRepository.add(spot);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -59,7 +56,7 @@ public class SpotService implements ISpotService {
     }
 
     public Spot getSpotById(int id) throws ServiceException {
-        Spot spot = SpotRepository.getInstance().getById(id);
+        Spot spot = spotRepository.getById(id);
         if (spot == null){
             throw new ServiceException("Spot is not found");
         }
@@ -68,7 +65,7 @@ public class SpotService implements ISpotService {
 
     public void deleteSpot(Spot spot) throws ServiceException {
         try {
-            SpotRepository.getInstance().delete(spot);
+            spotRepository.delete(spot);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -76,12 +73,19 @@ public class SpotService implements ISpotService {
 
     public void updateSpot(Spot spot) throws ServiceException {
         try {
-            SpotRepository.getInstance().update(spot);
+            spotRepository.update(spot);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
+    public List<Spot> spotsInGarage(Garage garage){
+        List<Spot> spotList = new ArrayList<>();
+        if (garage != null){
+            spotList = garage.getSpots();
+        }
+        return spotList;
+    }
 
     @Override
     public void spotsFromCsv() throws ServiceException {
@@ -109,12 +113,12 @@ public class SpotService implements ISpotService {
                 int id = Integer.parseInt(list.get(n++));
                 int garageId = Integer.parseInt(list.get(n));
 
-                Garage garage = GarageRepository.getInstance().getById(garageId);
+                Garage garage = GarageController.getInstance().getGarageById(garageId);
                 if (garage == null){
                     throw new ServiceException("Garage is not found");
                 }
 
-                Spot newSpot = SpotRepository.getInstance().getById(id);
+                Spot newSpot = spotRepository.getById(id);
                 if (newSpot != null) {
                     newSpot.setGarage(garage);
                     updateSpot(newSpot);
@@ -129,7 +133,7 @@ public class SpotService implements ISpotService {
         }
 
         loadedSpots.forEach(System.out::println);
-        SpotRepository.getInstance().addAll(loadedSpots);
+        spotRepository.addAll(loadedSpots);
     }
 
     @Override
@@ -142,7 +146,7 @@ public class SpotService implements ISpotService {
         headers.add(CsvSpotHeader.GARAGE_ID.getName());
 
         try {
-            for (Spot spot: spots){
+            for (Spot spot: spotRepository.getAll()){
                 if (spot != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(spot.getId()));

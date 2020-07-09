@@ -1,5 +1,6 @@
 package eu.senla.course.api.service;
 
+import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.exception.ServiceException;
 
@@ -13,6 +14,7 @@ public interface ISpotService {
     Spot getSpotById(int id) throws ServiceException;
     void deleteSpot(Spot spot) throws ServiceException;
     void updateSpot(Spot spot) throws ServiceException;
+    List<Spot> spotsInGarage(Garage garage);
     void spotsFromCsv() throws ServiceException;
     void spotsToCsv();
 }

@@ -1,6 +1,5 @@
 package eu.senla.course.controller;
 
-import com.google.common.reflect.ClassPath;
 import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.enums.ConfigType;
 import eu.senla.course.exception.AnnotationException;
@@ -8,6 +7,8 @@ import eu.senla.course.util.PathToFile;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import static com.google.common.reflect.ClassPath.from;
 
 
 public class AnnotationController {
@@ -27,7 +28,7 @@ public class AnnotationController {
         try {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-            for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
+            for (final var info : from(loader).getTopLevelClasses()) {
                         if (info.getName().startsWith(START_WITH)) {
                             final Class<?> clazz = info.load();
                             setProperty(clazz);

@@ -1,9 +1,13 @@
 package eu.senla.course.service;
 
+import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.MechanicController;
+import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -13,9 +17,6 @@ import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.repository.MechanicRepository;
-import eu.senla.course.repository.OrderRepository;
-import eu.senla.course.repository.SpotRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
@@ -42,22 +43,19 @@ public class OrderService implements IOrderService {
     @ConfigProperty(key = "delete.order", type = ConfigType.BOOLEAN)
     private static boolean isDeleteOrder;
 
-    private List<Order> orders;
-
-    public OrderService() {
-        this.orders = OrderRepository.getInstance().getAll();
-    }
+    @Injection
+    private static IOrderRepository orderRepository;
 
     public List<Order> getOrders() {
-        return orders;
+        return orderRepository.getAll();
     }
 
     public void setOrders(List<Order> orders) {
-        OrderRepository.getInstance().setAll(orders);
+        orderRepository.setAll(orders);
     }
 
     public Order getOrderById(int id) throws ServiceException {
-        Order order = OrderRepository.getInstance().getById(id);
+        Order order = orderRepository.getById(id);
         if (order == null){
             throw new ServiceException("Order is not found");
         }
@@ -66,7 +64,7 @@ public class OrderService implements IOrderService {
 
     public void addOrder(Order order) throws ServiceException {
         try {
-            OrderRepository.getInstance().add(order);
+            orderRepository.add(order);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -74,7 +72,7 @@ public class OrderService implements IOrderService {
 
     public void deleteOrder(Order order) throws ServiceException {
         try {
-            OrderRepository.getInstance().delete(order);
+            orderRepository.delete(order);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -87,7 +85,7 @@ public class OrderService implements IOrderService {
 
     public void updateOrder(Order order) throws ServiceException {
         try {
-            OrderRepository.getInstance().update(order);
+            orderRepository.update(order);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -112,11 +110,11 @@ public class OrderService implements IOrderService {
 
     }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
         }
         List<Order> ordersForPeriod = new ArrayList<>();
-        for (Order order: orders){
+        for (Order order: orderRepository.getAll()){
             if (order!= null && order.getStartDate()!=null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0 ){
                 ordersForPeriod.add(order);
             }
@@ -125,11 +123,11 @@ public class OrderService implements IOrderService {
         return ordersForPeriod;
     }
     public List<Order> listCurrentOrders(Comparator<Order> comparator) throws ServiceException {
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
         }
         List<Order> currentOrders = new ArrayList<>();
-        for (Order order: orders){
+        for (Order order: orderRepository.getAll()){
             if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS){
                 currentOrders.add(order);
             }
@@ -139,10 +137,10 @@ public class OrderService implements IOrderService {
     }
     public void changeStartDateOrders(int hours) throws ServiceException {
         LocalDateTime date = LocalDateTime.now().plusHours(hours);
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
         }
-        for(Order order: orders){
+        for(Order order: orderRepository.getAll()){
             if (order != null && (order.getStartDate()!=null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
                 order.setStartDate(order.getStartDate().plusHours(hours));
                 if (order.getCompleteDate() != null) {
@@ -159,21 +157,21 @@ public class OrderService implements IOrderService {
     }
 
     public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
         }
-        orders.sort(comparator);
-        return orders;
+        orderRepository.getAll().sort(comparator);
+        return orderRepository.getAll();
     }
 
     public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
         if (mechanic == null){
             throw new ServiceException("Mechanic does not exist");
         }
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
         }
-        for (Order order: orders){
+        for (Order order: orderRepository.getAll()){
             if (order.getStatus() == OrderStatus.IN_PROGRESS){
                 return order;
             }
@@ -182,11 +180,11 @@ public class OrderService implements IOrderService {
     }
 
     public Mechanic orderMechanic(Order order) throws ServiceException {
-        if (orders.size() == 0){
+        if (orderRepository.getAll().size() == 0){
             throw new ServiceException("Orders are not exist");
 
         }
-        for (Order orderExist : orders) {
+        for (Order orderExist : orderRepository.getAll()) {
             if (orderExist != null && orderExist.equals(order)) {
                 return orderExist.getMechanic();
             }
@@ -197,7 +195,7 @@ public class OrderService implements IOrderService {
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
         for (int i=0; i < days; i++) {
-            if (GarageController.getInstance().numberAvailableSpots(nextDate, orders) > 0) {
+            if (GarageController.getInstance().numberAvailableSpots(nextDate, orderRepository.getAll()) > 0) {
                 return nextDate;
             } else {
                 nextDate = nextDate.plusDays(1);
@@ -255,12 +253,12 @@ public class OrderService implements IOrderService {
                 int spotId = Integer.parseInt(list.get(n++));
                 String status = list.get(n);
 
-                Mechanic mechanic = MechanicRepository.getInstance().getById(mechanicId);
-                Spot spot = SpotRepository.getInstance().getById(spotId);
+                Mechanic mechanic = MechanicController.getInstance().getMechanicById(mechanicId);
+                Spot spot = SpotController.getInstance().getSpotById(spotId);
 
                 boolean exist = false;
 
-                Order newOrder = OrderRepository.getInstance().getById(id);
+                Order newOrder = orderRepository.getById(id);
                 if (newOrder != null) {
                     exist = true;
                 } else {
@@ -303,7 +301,7 @@ public class OrderService implements IOrderService {
         }
 
         loadedOrders.forEach(System.out::println);
-        OrderRepository.getInstance().addAll(loadedOrders);
+        orderRepository.addAll(loadedOrders);
     }
 
     @Override
@@ -319,7 +317,7 @@ public class OrderService implements IOrderService {
         headers.add(CsvOrderHeader.SPOT_ID.getName());
         headers.add(CsvOrderHeader.STATUS.getName());
         try {
-            for (Order order: orders){
+            for (Order order: orderRepository.getAll()){
                 if (order != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(order.getId()));

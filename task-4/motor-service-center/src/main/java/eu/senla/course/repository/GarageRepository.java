@@ -1,21 +1,16 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.repository.IRepository;
+import eu.senla.course.annotation.di.Repository;
+import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.exception.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GarageRepository implements IRepository<Garage> {
-    private List<Garage> garages;
-    private static final GarageRepository instance = new GarageRepository();
-    private GarageRepository(){
-        garages = new ArrayList<>();
-    }
-    public static GarageRepository getInstance(){
-        return instance;
-    }
+@Repository
+public class GarageRepository implements IGarageRepository {
+    private List<Garage> garages = new ArrayList<>();
 
     @Override
     public void add(Garage garage) throws RepositoryException {
@@ -48,6 +43,7 @@ public class GarageRepository implements IRepository<Garage> {
         return garages;
     }
 
+    @Override
     public void update(Garage garage) throws RepositoryException {
         int id = garages.indexOf(garage);
         if (id < 0){
@@ -56,10 +52,12 @@ public class GarageRepository implements IRepository<Garage> {
         garages.set(id, garage);
     }
 
+    @Override
     public void setAll(List<Garage> garages) {
         this.garages = garages;
     }
 
+    @Override
     public void addAll(List<Garage> garages) {
         this.garages.addAll(garages);
     }

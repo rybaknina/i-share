@@ -1,23 +1,16 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.repository.IRepository;
+import eu.senla.course.annotation.di.Repository;
+import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.exception.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MechanicRepository implements IRepository<Mechanic> {
-    private List<Mechanic> mechanics;
-    private static final MechanicRepository instance = new MechanicRepository();
-
-    private MechanicRepository(){
-        mechanics = new ArrayList<>();
-    }
-
-    public static MechanicRepository getInstance(){
-        return instance;
-    }
+@Repository
+public class MechanicRepository implements IMechanicRepository {
+    private List<Mechanic> mechanics = new ArrayList<>();
 
     @Override
     public void add(Mechanic mechanic) throws RepositoryException {

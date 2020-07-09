@@ -1,17 +1,18 @@
 package eu.senla.course.service;
 
+import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.api.service.IMechanicService;
+import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.enums.CsvMechanicHeader;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.repository.GarageRepository;
-import eu.senla.course.repository.MechanicRepository;
-import eu.senla.course.repository.OrderRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
@@ -31,48 +32,45 @@ public class MechanicService implements IMechanicService {
 
     @ConfigProperty(key = "mechanic")
     private static String mechanicPath;
-    private List<Mechanic> mechanics;
-
-    public MechanicService() {
-        this.mechanics = MechanicRepository.getInstance().getAll();
-    }
+    @Injection
+    private static IMechanicRepository mechanicRepository;
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
         try {
-            MechanicRepository.getInstance().add(mechanic);
+            mechanicRepository.add(mechanic);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
     public List<Mechanic> getMechanics() {
-        return mechanics;
+        return mechanicRepository.getAll();
     }
 
     public void setMechanics(List<Mechanic> mechanics) {
-        MechanicRepository.getInstance().setAll(mechanics);
+        mechanicRepository.setAll(mechanics);
     }
 
     public void deleteMechanic(Mechanic mechanic) throws ServiceException {
         try {
-            MechanicRepository.getInstance().delete(mechanic);
+            mechanicRepository.delete(mechanic);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
     public Mechanic getMechanicById(int id) throws ServiceException {
-        Mechanic mechanic = MechanicRepository.getInstance().getById(id);
+        Mechanic mechanic = mechanicRepository.getById(id);
         if (mechanic == null){
             throw new ServiceException("Mechanic is not found");
         }
         return mechanic;
     }
     public Mechanic firstFreeMechanic() throws ServiceException {
-        if (mechanics.size() == 0){
+        if (mechanicRepository.getAll().size() == 0){
             throw new ServiceException("Auto mechanics are not exist");
         }
-        for (Mechanic mechanic: mechanics){
+        for (Mechanic mechanic: mechanicRepository.getAll()){
             if (mechanic.isMechanicFree()){
                 return mechanic;
             }
@@ -82,11 +80,11 @@ public class MechanicService implements IMechanicService {
     }
 
     public void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException {
-        if (mechanics.size() == 0){
+        if (mechanicRepository.getAll().size() == 0){
             throw new ServiceException("Auto mechanics are not exist");
         }
-        mechanics.sort(comparator);
-        for (Mechanic mechanic: mechanics){
+        mechanicRepository.getAll().sort(comparator);
+        for (Mechanic mechanic: mechanicRepository.getAll()){
             System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());
         }
     }
@@ -118,7 +116,7 @@ public class MechanicService implements IMechanicService {
                 String name = list.get(n++);
 
                 boolean exist = false;
-                Mechanic newMechanic = MechanicRepository.getInstance().getById(id);
+                Mechanic newMechanic = mechanicRepository.getById(id);
                 if (newMechanic != null) {
                     exist = true;
                 } else {
@@ -133,11 +131,11 @@ public class MechanicService implements IMechanicService {
                     for (String idOrderLine : idOrders) {
                         if (!idOrderLine.isBlank()) {
                             int idOrder = Integer.parseInt(idOrderLine);
-                            Order order = OrderRepository.getInstance().getById(idOrder);
+                            Order order = OrderController.getInstance().getOrderById(idOrder);
                             if (order != null) {
                                 orders.add(order);
                                 order.setMechanic(newMechanic);
-                                OrderRepository.getInstance().update(order);
+                                OrderController.getInstance().updateOrder(order);
                             }
                         }
                     }
@@ -147,7 +145,7 @@ public class MechanicService implements IMechanicService {
                 }
                 if (list.size() >= (n+1)) {
                     int garageId = Integer.parseInt(list.get(n));
-                    Garage garage = GarageRepository.getInstance().getById(garageId);
+                    Garage garage = GarageController.getInstance().getGarageById(garageId);
                     if (garage != null){
                         newMechanic.setGarage(garage);
                     }
@@ -164,7 +162,7 @@ public class MechanicService implements IMechanicService {
         }
 
         loadedMechanics.forEach(System.out::println);
-        MechanicRepository.getInstance().addAll(loadedMechanics);
+        mechanicRepository.addAll(loadedMechanics);
     }
 
     @Override
@@ -179,14 +177,14 @@ public class MechanicService implements IMechanicService {
         headers.add(CsvMechanicHeader.GARAGE_ID.getName());
 
         try {
-            for (Mechanic mechanic: mechanics){
+            for (Mechanic mechanic: mechanicRepository.getAll()){
                 if (mechanic != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(mechanic.getId()));
                     dataIn.add(mechanic.getName());
 
                     StringBuilder ordersString = new StringBuilder();
-                    for (Order order: OrderRepository.getInstance().getAll()){
+                    for (Order order: OrderController.getInstance().getOrders()){
                         if (order != null && order.getMechanic().equals(mechanic)){
                             ordersString.append(order.getId());
                             ordersString.append("|");
@@ -209,7 +207,7 @@ public class MechanicService implements IMechanicService {
 
     public void updateMechanic(Mechanic mechanic) throws ServiceException {
         try {
-            MechanicRepository.getInstance().update(mechanic);
+            mechanicRepository.update(mechanic);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -218,7 +216,7 @@ public class MechanicService implements IMechanicService {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("\nFull current staff: \n");
-        for (Mechanic mechanic : mechanics) {
+        for (Mechanic mechanic : mechanicRepository.getAll()) {
             if (mechanic != null) {
                 stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append(" ").append(mechanic.getGarage().getId()).append("; ");
             }

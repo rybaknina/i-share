@@ -32,6 +32,9 @@ public class MechanicController {
     public void deleteMechanic(Mechanic mechanic) throws ServiceException {
         service.deleteMechanic(mechanic);
     }
+    public void updateMechanic(Mechanic mechanic) throws ServiceException {
+        service.updateMechanic(mechanic);
+    }
     public Mechanic getMechanicById(int id) throws ServiceException {
         return service.getMechanicById(id);
     }

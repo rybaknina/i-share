@@ -1,13 +1,14 @@
 package eu.senla.course.service;
 
+import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.repository.IToolRepository;
 import eu.senla.course.api.service.IToolService;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvToolHeader;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.repository.ToolRepository;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
@@ -27,30 +28,27 @@ public class ToolService implements IToolService {
     @ConfigProperty(key = "tool")
     private static String toolPath;
 
-    private List<Tool> tools;
-
-    public ToolService() {
-        this.tools = ToolRepository.getInstance().getAll();
-    }
+    @Injection
+    private static IToolRepository toolRepository;
 
     public List<Tool> getTools() {
-        return tools;
+        return toolRepository.getAll();
     }
 
     public void setTools(List<Tool> tools) {
-        ToolRepository.getInstance().setAll(tools);
+        toolRepository.setAll(tools);
     }
 
     public void addTool(Tool tool) throws ServiceException {
         try {
-            ToolRepository.getInstance().add(tool);
+            toolRepository.add(tool);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
     public Tool getToolById(int id) throws ServiceException {
-        Tool tool = ToolRepository.getInstance().getById(id);
+        Tool tool = toolRepository.getById(id);
         if (tool == null){
             throw new ServiceException("Tool is not found");
         }
@@ -59,7 +57,7 @@ public class ToolService implements IToolService {
 
     public void deleteTool(Tool tool) throws ServiceException {
         try {
-            ToolRepository.getInstance().delete(tool);
+            toolRepository.delete(tool);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -67,7 +65,7 @@ public class ToolService implements IToolService {
 
     public void updateTool(Tool tool) throws ServiceException {
         try {
-            ToolRepository.getInstance().update(tool);
+            toolRepository.update(tool);
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
@@ -99,7 +97,7 @@ public class ToolService implements IToolService {
                 int hours = Integer.parseInt(list.get(n++));
                 BigDecimal hourlyPrice = new BigDecimal(list.get(n));
 
-                Tool newTool = ToolRepository.getInstance().getById(id);
+                Tool newTool = toolRepository.getById(id);
                 if (newTool != null) {
                     newTool.setName(name);
                     newTool.setHours(hours);
@@ -116,7 +114,7 @@ public class ToolService implements IToolService {
         }
 
         loadedTools.forEach(System.out::println);
-        ToolRepository.getInstance().addAll(loadedTools);
+        toolRepository.addAll(loadedTools);
     }
 
     @Override
@@ -131,7 +129,7 @@ public class ToolService implements IToolService {
         headers.add(CsvToolHeader.HOURLY_PRICE.getName());
 
         try {
-            for (Tool tool: tools){
+            for (Tool tool: toolRepository.getAll()){
                 if (tool != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(tool.getId()));
