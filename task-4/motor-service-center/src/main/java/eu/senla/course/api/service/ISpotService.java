@@ -11,7 +11,7 @@ public interface ISpotService {
     boolean isModifySpot();
     void setSpots(List<Spot> spots);
     void addSpot(Spot spot) throws ServiceException;
-    Spot getSpotById(int id) throws ServiceException;
+    Spot getSpotById(int id);
     void deleteSpot(Spot spot) throws ServiceException;
     void updateSpot(Spot spot) throws ServiceException;
     List<Spot> spotsInGarage(Garage garage);

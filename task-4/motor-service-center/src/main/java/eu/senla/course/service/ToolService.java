@@ -26,10 +26,10 @@ import java.util.List;
 public class ToolService implements IToolService {
 
     @ConfigProperty(key = "tool")
-    private static String toolPath;
+    private String toolPath;
 
     @Injection
-    private static IToolRepository toolRepository;
+    private IToolRepository toolRepository;
 
     public List<Tool> getTools() {
         return toolRepository.getAll();
@@ -47,12 +47,8 @@ public class ToolService implements IToolService {
         }
     }
 
-    public Tool getToolById(int id) throws ServiceException {
-        Tool tool = toolRepository.getById(id);
-        if (tool == null){
-            throw new ServiceException("Tool is not found");
-        }
-        return tool;
+    public Tool getToolById(int id) {
+        return toolRepository.getById(id);
     }
 
     public void deleteTool(Tool tool) throws ServiceException {
@@ -122,12 +118,6 @@ public class ToolService implements IToolService {
 
         List<List<String>> data = new ArrayList<>();
 
-        List<String> headers = new ArrayList<>();
-        headers.add(CsvToolHeader.ID.getName());
-        headers.add(CsvToolHeader.NAME.getName());
-        headers.add(CsvToolHeader.HOURS.getName());
-        headers.add(CsvToolHeader.HOURLY_PRICE.getName());
-
         try {
             for (Tool tool: toolRepository.getAll()){
                 if (tool != null) {
@@ -139,10 +129,19 @@ public class ToolService implements IToolService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(toolPath), headers, data);
+            CsvWriter.writeRecords(new File(toolPath), headerCsv(), data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
         }
+    }
+
+    private List<String> headerCsv() {
+        List<String> header = new ArrayList<>();
+        header.add(CsvToolHeader.ID.getName());
+        header.add(CsvToolHeader.NAME.getName());
+        header.add(CsvToolHeader.HOURS.getName());
+        header.add(CsvToolHeader.HOURLY_PRICE.getName());
+        return header;
     }
 }

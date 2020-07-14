@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MechanicController {
     @Injection
-    private static IMechanicService service;
+    private IMechanicService service;
     private final static MechanicController instance = new MechanicController();
 
     private MechanicController() {
@@ -35,7 +35,7 @@ public class MechanicController {
     public void updateMechanic(Mechanic mechanic) throws ServiceException {
         service.updateMechanic(mechanic);
     }
-    public Mechanic getMechanicById(int id) throws ServiceException {
+    public Mechanic getMechanicById(int id) {
         return service.getMechanicById(id);
     }
     public Mechanic firstFreeMechanic() throws ServiceException {

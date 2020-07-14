@@ -3,10 +3,13 @@ package eu.senla.course.controller;
 import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.enums.ConfigType;
 import eu.senla.course.exception.AnnotationException;
+import eu.senla.course.exception.InjectionException;
 import eu.senla.course.util.PathToFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static com.google.common.reflect.ClassPath.from;
 
@@ -29,21 +32,26 @@ public class AnnotationController {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
             for (final var info : from(loader).getTopLevelClasses()) {
-                        if (info.getName().startsWith(START_WITH)) {
-                            final Class<?> clazz = info.load();
-                            setProperty(clazz);
+                 if (info.getName().startsWith(START_WITH)) {
+                    final Class<?> clazz = info.load();
+                    setProperty(clazz);
                 }
             }
 
-        } catch (IllegalAccessException | IOException e) {
+        } catch (IllegalAccessException | IOException | InjectionException e) {
             throw new AnnotationException(e.getMessage());
         }
     }
 
-    private static void setProperty(Class<?> clazz) throws IllegalAccessException, AnnotationException {
+    private void setProperty(@NotNull Class<?> clazz) throws IllegalAccessException, AnnotationException, InjectionException {
         for (Field field :clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(ConfigProperty.class)){
                 field.setAccessible(true);
+
+                Object obj = Modifier.isStatic(field.getModifiers())? clazz: BeanController.getInstance().getObject(clazz);
+                if (obj == null){
+                    throw new InjectionException("Instance of class is not exist");
+                }
 
                 String file = field.getAnnotation(ConfigProperty.class).file();
                 String key = field.getAnnotation(ConfigProperty.class).key();
@@ -53,31 +61,30 @@ public class AnnotationController {
                     throw new AnnotationException("Config file is not found");
                 }
                 PathToFile path = new PathToFile(file);
+
                 if (!key.isBlank()) {
                     switch (type){
                         case INT:{
                             int intValue = Integer.parseInt(path.getPath(key));
-                            field.setInt(clazz, intValue);
+                            field.setInt(obj, intValue);
                             break;
                         }
                         case BOOLEAN:{
                             boolean boolValue = Boolean.parseBoolean(path.getPath(key));
-                            field.setBoolean(clazz, boolValue);
+                            field.setBoolean(obj, boolValue);
                             break;
                         }
                         default:{
-                            field.set(clazz, path.getPath(key));
+                            String value = path.getPath(key);
+                            field.set(obj, value);
                             break;
                         }
                     }
 
-                }
-                else {
+                } else {
                     throw new AnnotationException("Wrong key int the configuration");
                 }
-
             }
         }
     }
-
 }

@@ -1,7 +1,7 @@
 package eu.senla.course.util;
 
 import eu.senla.course.annotation.di.Injection;
-import eu.senla.course.api.repository.IRepository;
+import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.controller.MechanicController;
 import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Garage;
@@ -17,8 +17,9 @@ import java.util.List;
 public class DataCreator {
     private final static int MAX_GARAGES = 4;
     private final static int MAX_MECHANICS = 5;
+
     @Injection
-    private static IRepository<Garage> repository;
+    private IGarageRepository repository;
     public List<Garage> createGarages() throws RepositoryException {
         int len = MAX_GARAGES;
         List<Garage> garages = new ArrayList<>();

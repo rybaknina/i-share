@@ -15,7 +15,7 @@ public interface IOrderService {
     void addOrder(Order order) throws ServiceException;
     void deleteOrder(Order order) throws ServiceException;
     boolean isDeleteOrder();
-    Order getOrderById(int id) throws ServiceException;
+    Order getOrderById(int id);
     void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException;
     void changeStatusOrder(Order order, OrderStatus status) throws ServiceException;
     List<Order> getOrders();

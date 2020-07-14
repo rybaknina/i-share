@@ -28,11 +28,11 @@ import java.util.List;
 public class SpotService implements ISpotService {
 
     @ConfigProperty(key = "spot")
-    private static String spotPath;
+    private String spotPath;
     @ConfigProperty(key = "modify.spot", type = ConfigType.BOOLEAN)
-    private static boolean isModifySpot;
+    private boolean isModifySpot;
     @Injection
-    private static ISpotRepository spotRepository;
+    private ISpotRepository spotRepository;
 
     public List<Spot> getSpots() {
         return spotRepository.getAll();
@@ -55,12 +55,8 @@ public class SpotService implements ISpotService {
         return isModifySpot;
     }
 
-    public Spot getSpotById(int id) throws ServiceException {
-        Spot spot = spotRepository.getById(id);
-        if (spot == null){
-            throw new ServiceException("Spot is not found");
-        }
-        return spot;
+    public Spot getSpotById(int id) {
+        return spotRepository.getById(id);
     }
 
     public void deleteSpot(Spot spot) throws ServiceException {
@@ -141,10 +137,6 @@ public class SpotService implements ISpotService {
 
         List<List<String>> data = new ArrayList<>();
 
-        List<String> headers = new ArrayList<>();
-        headers.add(CsvSpotHeader.ID.getName());
-        headers.add(CsvSpotHeader.GARAGE_ID.getName());
-
         try {
             for (Spot spot: spotRepository.getAll()){
                 if (spot != null) {
@@ -154,10 +146,17 @@ public class SpotService implements ISpotService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(spotPath)), headers, data);
+            CsvWriter.writeRecords(new File(String.valueOf(spotPath)), headerCsv(), data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
         }
+    }
+
+    private List<String> headerCsv() {
+        List<String> header = new ArrayList<>();
+        header.add(CsvSpotHeader.ID.getName());
+        header.add(CsvSpotHeader.GARAGE_ID.getName());
+        return header;
     }
 }

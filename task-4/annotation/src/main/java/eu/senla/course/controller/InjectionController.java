@@ -6,16 +6,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import static com.google.common.reflect.ClassPath.from;
 
 public class InjectionController {
     private final static InjectionController instance = new InjectionController();
     private final static String START_WITH = "eu.senla.course";
-    private BeanController beanController;
+    private BeanController beanController = BeanController.getInstance();
 
     private InjectionController(){
-        beanController = BeanController.getInstance();
+
     }
 
     public static InjectionController getInstance(){
@@ -26,7 +27,7 @@ public class InjectionController {
         try {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-            for (final var info : from(loader).getTopLevelClasses()) {
+            for (var info : from(loader).getTopLevelClasses()) {
                 if (info.getName().startsWith(START_WITH)) {
                     final Class<?> clazz = info.load();
                     createInstances(clazz);
@@ -45,13 +46,15 @@ public class InjectionController {
                     Class<?> iClazz = field.getType();
                     Object instance = beanController.getBean(iClazz);
                     if (instance != null) {
+                        Object containerClass = beanController.createInstance(clazz);
+
                         Field declaredField = clazz.getDeclaredField(field.getName());
                         declaredField.setAccessible(true);
-                        declaredField.set(clazz, instance);
+                        declaredField.set(containerClass, instance);
                     }
                 }
             }
-        } catch (NoSuchFieldException|IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
             throw new InjectionException(e.getMessage());
         }
     }

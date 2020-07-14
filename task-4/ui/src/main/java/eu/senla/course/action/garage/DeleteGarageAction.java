@@ -18,12 +18,11 @@ public class DeleteGarageAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Garage garage = controller.getGarageById(id);
         try {
-            Garage garage = controller.getGarageById(id);
             controller.deleteGarage(garage);
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());
         }
-
     }
 }

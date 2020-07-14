@@ -19,16 +19,19 @@ public class MenuController {
     private Navigator navigator = Navigator.getInstance();
 
     private MenuController(){
-        try {
-            AnnotationController.getInstance().init();
-        } catch (AnnotationException e) {
-            System.err.println("Wrong work with annotations " + e.getMessage());
-        }
+
         try {
             InjectionController.getInstance().inject();
         } catch (InjectionException e) {
             System.err.println("Wrong work with injections " + e.getMessage());
         }
+
+        try {
+            AnnotationController.getInstance().init();
+        } catch (AnnotationException e) {
+            System.err.println("Wrong work with annotations " + e.getMessage());
+        }
+
         try {
             new LoadFromFileAction().execute();
         } catch (IOException e) {

@@ -31,9 +31,9 @@ import java.util.List;
 public class MechanicService implements IMechanicService {
 
     @ConfigProperty(key = "mechanic")
-    private static String mechanicPath;
+    private String mechanicPath;
     @Injection
-    private static IMechanicRepository mechanicRepository;
+    private IMechanicRepository mechanicRepository;
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
         try {
@@ -59,13 +59,18 @@ public class MechanicService implements IMechanicService {
         }
     }
 
-    public Mechanic getMechanicById(int id) throws ServiceException {
-        Mechanic mechanic = mechanicRepository.getById(id);
-        if (mechanic == null){
-            throw new ServiceException("Mechanic is not found");
-        }
-        return mechanic;
+    public Mechanic getMechanicById(int id) {
+        return mechanicRepository.getById(id);
     }
+
+    public void updateMechanic(Mechanic mechanic) throws ServiceException {
+        try {
+            mechanicRepository.update(mechanic);
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
+        }
+    }
+
     public Mechanic firstFreeMechanic() throws ServiceException {
         if (mechanicRepository.getAll().size() == 0){
             throw new ServiceException("Auto mechanics are not exist");
@@ -127,21 +132,7 @@ public class MechanicService implements IMechanicService {
 
                 if (list.size() >= (n + 1)) {
                     List<String> idOrders = Arrays.asList(list.get(n++).split("\\|"));
-                    List<Order> orders = new ArrayList<>();
-                    for (String idOrderLine : idOrders) {
-                        if (!idOrderLine.isBlank()) {
-                            int idOrder = Integer.parseInt(idOrderLine);
-                            Order order = OrderController.getInstance().getOrderById(idOrder);
-                            if (order != null) {
-                                orders.add(order);
-                                order.setMechanic(newMechanic);
-                                OrderController.getInstance().updateOrder(order);
-                            }
-                        }
-                    }
-                    if (orders.size() > 0) {
-                        newMechanic.setOrders(orders);
-                    }
+                    ordersOfMechanic(newMechanic, idOrders);
                 }
                 if (list.size() >= (n+1)) {
                     int garageId = Integer.parseInt(list.get(n));
@@ -165,16 +156,28 @@ public class MechanicService implements IMechanicService {
         mechanicRepository.addAll(loadedMechanics);
     }
 
+    private void ordersOfMechanic(Mechanic newMechanic, List<String> idOrders) throws ServiceException {
+        List<Order> orders = new ArrayList<>();
+        for (String idOrderLine : idOrders) {
+            if (!idOrderLine.isBlank()) {
+                int idOrder = Integer.parseInt(idOrderLine);
+                Order order = OrderController.getInstance().getOrderById(idOrder);
+                if (order != null) {
+                    orders.add(order);
+                    order.setMechanic(newMechanic);
+                    OrderController.getInstance().updateOrder(order);
+                }
+            }
+        }
+        if (orders.size() > 0) {
+            newMechanic.setOrders(orders);
+        }
+    }
+
     @Override
     public void mechanicsToCsv() {
 
         List<List<String>> data = new ArrayList<>();
-
-        List<String> headers = new ArrayList<>();
-        headers.add(CsvMechanicHeader.ID.getName());
-        headers.add(CsvMechanicHeader.NAME.getName());
-        headers.add(CsvMechanicHeader.ORDER_IDS.getName());
-        headers.add(CsvMechanicHeader.GARAGE_ID.getName());
 
         try {
             for (Mechanic mechanic: mechanicRepository.getAll()){
@@ -183,45 +186,40 @@ public class MechanicService implements IMechanicService {
                     dataIn.add(String.valueOf(mechanic.getId()));
                     dataIn.add(mechanic.getName());
 
-                    StringBuilder ordersString = new StringBuilder();
-                    for (Order order: OrderController.getInstance().getOrders()){
-                        if (order != null && order.getMechanic().equals(mechanic)){
-                            ordersString.append(order.getId());
-                            ordersString.append("|");
-                        }
-                    }
+                    dataIn.add(orderToCsv(mechanic));
 
-                    dataIn.add(ordersString.toString());
                     if (mechanic.getGarage() != null) {
                         dataIn.add(String.valueOf(mechanic.getGarage().getId()));
                     }
+
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(mechanicPath), headers, data);
+            CsvWriter.writeRecords(new File(mechanicPath), headerCsv(), data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
         }
     }
 
-    public void updateMechanic(Mechanic mechanic) throws ServiceException {
-        try {
-            mechanicRepository.update(mechanic);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("\nFull current staff: \n");
-        for (Mechanic mechanic : mechanicRepository.getAll()) {
-            if (mechanic != null) {
-                stringBuilder.append(mechanic.getId()).append(" ").append(mechanic.getName()).append(" ").append(mechanic.getGarage().getId()).append("; ");
+    private String orderToCsv(Mechanic mechanic) {
+        StringBuilder ordersString = new StringBuilder();
+        for (Order order: OrderController.getInstance().getOrders()){
+            if (order != null && order.getMechanic().equals(mechanic)){
+                ordersString.append(order.getId());
+                ordersString.append("|");
             }
         }
-        return stringBuilder.toString();
+        return ordersString.toString();
+    }
+
+    private List<String> headerCsv() {
+        List<String> header = new ArrayList<>();
+        header.add(CsvMechanicHeader.ID.getName());
+        header.add(CsvMechanicHeader.NAME.getName());
+        header.add(CsvMechanicHeader.ORDER_IDS.getName());
+        header.add(CsvMechanicHeader.GARAGE_ID.getName());
+        return header;
     }
 
 }

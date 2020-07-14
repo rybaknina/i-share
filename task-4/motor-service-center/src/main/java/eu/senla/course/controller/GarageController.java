@@ -12,11 +12,10 @@ import java.util.List;
 
 public class GarageController {
     @Injection
-    private static IGarageService service;
-    private final static GarageController instance = new GarageController();
+    private IGarageService service;
+    private static GarageController instance = new GarageController();
 
     private GarageController() {
-
     }
 
     public static GarageController getInstance(){
@@ -32,7 +31,7 @@ public class GarageController {
     public List<Garage> getGarages(){
         return service.getGarages();
     }
-    public Garage getGarageById(int id) throws ServiceException {
+    public Garage getGarageById(int id) {
         return service.getGarageById(id);
     }
     public void deleteGarage(Garage garage) throws ServiceException {

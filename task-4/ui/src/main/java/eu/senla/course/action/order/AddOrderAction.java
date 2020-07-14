@@ -28,15 +28,13 @@ public class AddOrderAction implements IAction {
         LocalDateTime plannedDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
         Integer mechanicId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         Integer spotId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Mechanic mechanic = mechanicController.getMechanicById(mechanicId);
+        Spot spot = spotController.getSpotById(spotId);
 
         try {
-            Mechanic mechanic = mechanicController.getMechanicById(mechanicId);
-            Spot spot = spotController.getSpotById(spotId);
             orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());
         }
-
-
     }
 }

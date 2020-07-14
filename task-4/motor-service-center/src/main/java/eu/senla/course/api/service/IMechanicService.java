@@ -12,7 +12,7 @@ public interface IMechanicService {
     void setMechanics(List<Mechanic> mechanics);
     void deleteMechanic(Mechanic mechanic) throws ServiceException;
     void updateMechanic(Mechanic mechanic) throws ServiceException;
-    Mechanic getMechanicById(int id) throws ServiceException;
+    Mechanic getMechanicById(int id);
     Mechanic firstFreeMechanic() throws ServiceException;
     void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException;
     void mechanicsFromCsv() throws ServiceException;

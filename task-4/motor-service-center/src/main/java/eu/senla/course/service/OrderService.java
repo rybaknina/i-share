@@ -37,14 +37,14 @@ import java.util.List;
 public class OrderService implements IOrderService {
 
     @ConfigProperty(key = "order")
-    private static String orderPath;
+    private String orderPath;
     @ConfigProperty(key = "shift.order.time", type = ConfigType.BOOLEAN)
-    private static boolean isShiftTime;
+    private boolean isShiftTime;
     @ConfigProperty(key = "delete.order", type = ConfigType.BOOLEAN)
-    private static boolean isDeleteOrder;
+    private boolean isDeleteOrder;
 
     @Injection
-    private static IOrderRepository orderRepository;
+    private IOrderRepository orderRepository;
 
     public List<Order> getOrders() {
         return orderRepository.getAll();
@@ -54,12 +54,8 @@ public class OrderService implements IOrderService {
         orderRepository.setAll(orders);
     }
 
-    public Order getOrderById(int id) throws ServiceException {
-        Order order = orderRepository.getById(id);
-        if (order == null){
-            throw new ServiceException("Order is not found");
-        }
-        return order;
+    public Order getOrderById(int id) {
+        return orderRepository.getById(id);
     }
 
     public void addOrder(Order order) throws ServiceException {
@@ -172,7 +168,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Orders are not exist");
         }
         for (Order order: orderRepository.getAll()){
-            if (order.getStatus() == OrderStatus.IN_PROGRESS){
+            if (order.getMechanic().equals(mechanic) && order.getStatus() == OrderStatus.IN_PROGRESS){
                 return order;
             }
         }
@@ -180,9 +176,8 @@ public class OrderService implements IOrderService {
     }
 
     public Mechanic orderMechanic(Order order) throws ServiceException {
-        if (orderRepository.getAll().size() == 0){
-            throw new ServiceException("Orders are not exist");
-
+        if (orderRepository.getAll().size() == 0 || order == null){
+            throw new ServiceException("Order is not found");
         }
         for (Order orderExist : orderRepository.getAll()) {
             if (orderExist != null && orderExist.equals(order)) {
@@ -267,23 +262,7 @@ public class OrderService implements IOrderService {
                 if (!exist){
                     newOrder.setRequestDate(LocalDateTime.now());
                 } else {
-                    if (!status.isBlank()){
-
-                        switch (status) {
-                            case "CLOSE":
-                                newOrder.setStatus(OrderStatus.CLOSE);
-                                break;
-                            case "DELETE":
-                                newOrder.setStatus(OrderStatus.DELETE);
-                                break;
-                            case "CANCEL":
-                                newOrder.setStatus(OrderStatus.CANCEL);
-                                break;
-                            default:
-                                newOrder.setStatus(OrderStatus.IN_PROGRESS);
-                                break;
-                        }
-                    }
+                    setNewOrderStatus(status, newOrder);
                 }
                 newOrder.setPlannedDate(plannedDate);
                 newOrder.setMechanic(mechanic);
@@ -304,18 +283,30 @@ public class OrderService implements IOrderService {
         orderRepository.addAll(loadedOrders);
     }
 
+    private void setNewOrderStatus(String status, Order newOrder) {
+        if (!status.isBlank()){
+            switch (status) {
+                case "CLOSE":
+                    newOrder.setStatus(OrderStatus.CLOSE);
+                    break;
+                case "DELETE":
+                    newOrder.setStatus(OrderStatus.DELETE);
+                    break;
+                case "CANCEL":
+                    newOrder.setStatus(OrderStatus.CANCEL);
+                    break;
+                default:
+                    newOrder.setStatus(OrderStatus.IN_PROGRESS);
+                    break;
+            }
+        }
+    }
+
     @Override
     public void ordersToCsv() {
 
         List<List<String>> data = new ArrayList<>();
 
-        List<String> headers = new ArrayList<>();
-        headers.add(CsvOrderHeader.ID.getName());
-        headers.add(CsvOrderHeader.REQUEST_DATE.getName());
-        headers.add(CsvOrderHeader.PLANNED_DATE.getName());
-        headers.add(CsvOrderHeader.MECHANIC_ID.getName());
-        headers.add(CsvOrderHeader.SPOT_ID.getName());
-        headers.add(CsvOrderHeader.STATUS.getName());
         try {
             for (Order order: orderRepository.getAll()){
                 if (order != null) {
@@ -334,10 +325,21 @@ public class OrderService implements IOrderService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(orderPath), headers, data);
+            CsvWriter.writeRecords(new File(orderPath), headerCsv(), data);
 
         } catch (CsvException e) {
             System.out.println("Csv write exception" + e.getMessage());
         }
+    }
+
+    private List<String> headerCsv() {
+        List<String> header = new ArrayList<>();
+        header.add(CsvOrderHeader.ID.getName());
+        header.add(CsvOrderHeader.REQUEST_DATE.getName());
+        header.add(CsvOrderHeader.PLANNED_DATE.getName());
+        header.add(CsvOrderHeader.MECHANIC_ID.getName());
+        header.add(CsvOrderHeader.SPOT_ID.getName());
+        header.add(CsvOrderHeader.STATUS.getName());
+        return header;
     }
 }

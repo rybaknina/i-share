@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ToolController {
     @Injection
-    private static IToolService service;
+    private IToolService service;
     private final static ToolController instance = new ToolController();
 
     private ToolController() {
@@ -29,7 +29,7 @@ public class ToolController {
     public void setTools(List<Tool> tools){
         service.setTools(tools);
     }
-    public Tool getToolById(int id) throws ServiceException {
+    public Tool getToolById(int id) {
         return service.getToolById(id);
     }
 

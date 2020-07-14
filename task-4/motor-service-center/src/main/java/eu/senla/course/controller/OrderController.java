@@ -15,7 +15,7 @@ import java.util.List;
 
 public class OrderController {
     @Injection
-    private static IOrderService service;
+    private IOrderService service;
     private final static OrderController instance = new OrderController();
 
     private OrderController() {
@@ -40,7 +40,7 @@ public class OrderController {
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
         service.addToolsToOrder(order, tools);
     }
-    public Order getOrderById(int id) throws ServiceException {
+    public Order getOrderById(int id) {
         return service.getOrderById(id);
     }
     public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {

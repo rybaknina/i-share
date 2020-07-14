@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SpotController {
     @Injection
-    private static ISpotService service;
+    private ISpotService service;
     private final static SpotController instance = new SpotController();
 
     private SpotController() {
@@ -33,7 +33,7 @@ public class SpotController {
     public boolean isModifySpot(){
         return service.isModifySpot();
     }
-    public Spot getSpotById(int id) throws ServiceException {
+    public Spot getSpotById(int id) {
         return service.getSpotById(id);
     }
     public void deleteSpot(Spot spot) throws ServiceException {
