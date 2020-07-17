@@ -1,23 +1,16 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.IRepository;
+import eu.senla.course.annotation.di.Repository;
+import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.entity.Order;
 import eu.senla.course.exception.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderRepository implements IRepository<Order> {
-    private List<Order> orders;
-    private static final OrderRepository instance = new OrderRepository();
-
-    private OrderRepository(){
-        orders = new ArrayList<>();
-    }
-
-    public static OrderRepository getInstance(){
-        return instance;
-    }
+@Repository
+public class OrderRepository implements IOrderRepository {
+    private List<Order> orders = new ArrayList<>();
 
     @Override
     public void add(Order order) throws RepositoryException {

@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.entity;
 
 import java.io.Serializable;
 

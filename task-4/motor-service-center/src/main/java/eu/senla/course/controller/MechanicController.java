@@ -1,15 +1,16 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.api.IMechanicService;
+import eu.senla.course.annotation.di.Injection;
+import eu.senla.course.api.service.IMechanicService;
 import eu.senla.course.entity.Mechanic;
-import eu.senla.course.service.MechanicService;
 import eu.senla.course.exception.ServiceException;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class MechanicController {
-    private final IMechanicService service = MechanicService.getInstance();
+    @Injection
+    private IMechanicService service;
     private final static MechanicController instance = new MechanicController();
 
     private MechanicController() {
@@ -31,7 +32,10 @@ public class MechanicController {
     public void deleteMechanic(Mechanic mechanic) throws ServiceException {
         service.deleteMechanic(mechanic);
     }
-    public Mechanic getMechanicById(int id) throws ServiceException {
+    public void updateMechanic(Mechanic mechanic) throws ServiceException {
+        service.updateMechanic(mechanic);
+    }
+    public Mechanic getMechanicById(int id) {
         return service.getMechanicById(id);
     }
     public Mechanic firstFreeMechanic() throws ServiceException {
@@ -43,7 +47,7 @@ public class MechanicController {
     public void mechanicsFromCsv() throws ServiceException {
         service.mechanicsFromCsv();
     }
-    public void mechanicsToCsv() throws ServiceException {
+    public void mechanicsToCsv(){
         service.mechanicsToCsv();
     }
 }

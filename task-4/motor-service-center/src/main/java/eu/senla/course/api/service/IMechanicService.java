@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.service;
 
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.exception.ServiceException;
@@ -12,9 +12,9 @@ public interface IMechanicService {
     void setMechanics(List<Mechanic> mechanics);
     void deleteMechanic(Mechanic mechanic) throws ServiceException;
     void updateMechanic(Mechanic mechanic) throws ServiceException;
-    Mechanic getMechanicById(int id) throws ServiceException;
+    Mechanic getMechanicById(int id);
     Mechanic firstFreeMechanic() throws ServiceException;
     void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException;
     void mechanicsFromCsv() throws ServiceException;
-    void mechanicsToCsv() throws ServiceException;
+    void mechanicsToCsv();
 }

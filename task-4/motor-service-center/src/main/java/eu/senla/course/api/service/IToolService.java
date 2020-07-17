@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.service;
 
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.ServiceException;
@@ -9,9 +9,9 @@ public interface IToolService {
     void addTool(Tool tool) throws ServiceException;
     List<Tool> getTools();
     void setTools(List<Tool> tools);
-    Tool getToolById(int id) throws ServiceException;
+    Tool getToolById(int id);
     void deleteTool(Tool tool) throws ServiceException;
     void updateTool(Tool tool) throws ServiceException;
     void toolsFromCsv() throws ServiceException;
-    void toolsToCsv() throws ServiceException;
+    void toolsToCsv();
 }

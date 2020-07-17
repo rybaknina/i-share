@@ -1,4 +1,4 @@
-package eu.senla.course.api;
+package eu.senla.course.api.service;
 
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Order;
@@ -13,11 +13,11 @@ public interface IGarageService {
     void updateGarage(Garage garage) throws ServiceException;
     void setGarages(List<Garage> garages);
     List<Garage> getGarages();
-    Garage getGarageById(int id) throws ServiceException;
+    Garage getGarageById(int id);
     void deleteGarage(Garage garage) throws ServiceException;
     int lengthAllSpots();
     List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;
     int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;
     void garagesFromCsv() throws ServiceException;
-    void garagesToCsv() throws ServiceException;
+    void garagesToCsv();
 }

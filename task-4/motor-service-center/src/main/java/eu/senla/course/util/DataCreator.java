@@ -1,12 +1,13 @@
 package eu.senla.course.util;
 
+import eu.senla.course.annotation.di.Injection;
+import eu.senla.course.api.repository.IGarageRepository;
+import eu.senla.course.controller.MechanicController;
+import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.exception.ServiceException;
-import eu.senla.course.service.GarageService;
-import eu.senla.course.service.MechanicService;
-import eu.senla.course.service.ToolService;
+import eu.senla.course.exception.RepositoryException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,15 +18,17 @@ public class DataCreator {
     private final static int MAX_GARAGES = 4;
     private final static int MAX_MECHANICS = 5;
 
-    public List<Garage> createGarages() throws ServiceException {
+    @Injection
+    private IGarageRepository repository;
+    public List<Garage> createGarages() throws RepositoryException {
         int len = MAX_GARAGES;
         List<Garage> garages = new ArrayList<>();
         for (int i = 0; i < len; i++){
             Garage garage = new Garage("Garage " + (i + 1));
             garages.add(garage);
-            GarageService.getInstance().addGarage(garage);
+            repository.add(garage);
         }
-        GarageService.getInstance().setGarages(garages);
+        repository.setAll(garages);
         return garages;
     }
 
@@ -40,7 +43,7 @@ public class DataCreator {
         for (int i = 0; i < len; i++){
             tools.add(new Tool(names[i], hours[i], prices[i]));
         }
-        ToolService.getInstance().setTools(tools);
+        ToolController.getInstance().setTools(tools);
         return tools;
     }
 
@@ -54,7 +57,7 @@ public class DataCreator {
             mechanics.add(new Mechanic(i + "_Mechanic"));
             i--;
         } while (count < len);
-        MechanicService.getInstance().setMechanics(mechanics);
+        MechanicController.getInstance().setMechanics(mechanics);
         return mechanics;
     }
 }

@@ -1,23 +1,16 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.IRepository;
+import eu.senla.course.annotation.di.Repository;
+import eu.senla.course.api.repository.IToolRepository;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ToolRepository implements IRepository<Tool> {
-    private List<Tool> tools;
-    private static final ToolRepository instance = new ToolRepository();
-
-    private ToolRepository(){
-        tools = new ArrayList<>();
-    }
-
-    public static ToolRepository getInstance(){
-        return instance;
-    }
+@Repository
+public class ToolRepository implements IToolRepository {
+    private List<Tool> tools = new ArrayList<>();
 
     @Override
     public void add(Tool tool) throws RepositoryException {

@@ -1,9 +1,10 @@
 package eu.senla.course.util;
 
-import eu.senla.course.api.IEntity;
+import eu.senla.course.annotation.property.ConfigProperty;
+import eu.senla.course.api.entity.IEntity;
+import eu.senla.course.controller.*;
 import eu.senla.course.entity.*;
-import eu.senla.course.exception.RepositoryException;
-import eu.senla.course.repository.*;
+import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.exception.SerializeException;
 
 import java.io.*;
@@ -11,17 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SerializeUtil {
-    private final static String LOAD_PATH = "load.center";
+    @ConfigProperty(key = "load.center")
+    private static String loadPath;
 
     public static void serialize() throws SerializeException {
         List<List<? extends IEntity>> entityList = new ArrayList<>();
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PathToFile.getPath(LOAD_PATH)))){
+        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(loadPath))){
 
-            entityList.add(GarageRepository.getInstance().getAll());
-            entityList.add(MechanicRepository.getInstance().getAll());
-            entityList.add(OrderRepository.getInstance().getAll());
-            entityList.add(SpotRepository.getInstance().getAll());
-            entityList.add(ToolRepository.getInstance().getAll());
+            entityList.add(GarageController.getInstance().getGarages());
+            entityList.add(MechanicController.getInstance().getMechanics());
+            entityList.add(OrderController.getInstance().getOrders());
+            entityList.add(SpotController.getInstance().getSpots());
+            entityList.add(ToolController.getInstance().getTools());
 
             os.writeObject(entityList);
 
@@ -34,7 +36,7 @@ public class SerializeUtil {
 
     @SuppressWarnings("unchecked")
     public static void deserialize() throws SerializeException {
-        try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(PathToFile.getPath(LOAD_PATH)))){
+        try(ObjectInputStream is = new ObjectInputStream(new FileInputStream(loadPath))){
             List<List<? extends IEntity>> entityList = (List<List<? extends IEntity>>) is.readObject();
             int n = 0;
             int max = 0;
@@ -43,7 +45,7 @@ public class SerializeUtil {
                 if (max < garage.getId()){
                     max = garage.getId();
                 }
-                GarageRepository.getInstance().add(garage);
+                GarageController.getInstance().addGarage(garage);
             }
 
             while (Garage.getCount().get() < max){
@@ -56,7 +58,7 @@ public class SerializeUtil {
                 if (max < mechanic.getId()){
                     max = mechanic.getId();
                 }
-                MechanicRepository.getInstance().add(mechanic);
+                MechanicController.getInstance().addMechanic(mechanic);
             }
             while (Mechanic.getCount().get() < max){
                 Mechanic.getCount().incrementAndGet();
@@ -68,7 +70,7 @@ public class SerializeUtil {
                 if (max < order.getId()){
                     max = order.getId();
                 }
-                OrderRepository.getInstance().add(order);
+                OrderController.getInstance().addOrder(order);
             }
             while (Order.getCount().get() < max){
                 Order.getCount().incrementAndGet();
@@ -80,7 +82,7 @@ public class SerializeUtil {
                 if (max < spot.getId()){
                     max = spot.getId();
                 }
-                SpotRepository.getInstance().add(spot);
+                SpotController.getInstance().addSpot(spot);
             }
             while (Spot.getCount().get() < max){
                 Spot.getCount().incrementAndGet();
@@ -92,7 +94,7 @@ public class SerializeUtil {
                 if (max < tool.getId()){
                     max = tool.getId();
                 }
-                ToolRepository.getInstance().add(tool);
+                ToolController.getInstance().addTool(tool);
             }
             while (Tool.getCount().get() < max){
                 Tool.getCount().incrementAndGet();
@@ -100,7 +102,7 @@ public class SerializeUtil {
 
         } catch (FileNotFoundException e) {
             throw new SerializeException("File with data is not found");
-        } catch (IOException | RepositoryException e) {
+        } catch (IOException | ServiceException e) {
             throw new SerializeException("Load data from file was interrupted");
         } catch (ClassNotFoundException e) {
             throw new SerializeException("Class for object is not found");

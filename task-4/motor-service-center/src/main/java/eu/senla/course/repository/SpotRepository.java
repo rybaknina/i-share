@@ -1,23 +1,16 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.api.IRepository;
+import eu.senla.course.annotation.di.Repository;
+import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.exception.RepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpotRepository implements IRepository<Spot> {
-    private List<Spot> spots;
-    private static final SpotRepository instance = new SpotRepository();
-
-    private SpotRepository(){
-        spots = new ArrayList<>();
-    }
-
-    public static SpotRepository getInstance(){
-        return instance;
-    }
+@Repository
+public class SpotRepository implements ISpotRepository {
+    private List<Spot> spots = new ArrayList<>();
 
     @Override
     public void add(Spot spot) throws RepositoryException {

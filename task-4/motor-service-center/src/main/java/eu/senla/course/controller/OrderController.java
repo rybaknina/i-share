@@ -1,12 +1,11 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.api.IGarageService;
-import eu.senla.course.api.IOrderService;
+import eu.senla.course.annotation.di.Injection;
+import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
-import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.service.OrderService;
+import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
 
 import java.time.LocalDate;
@@ -15,7 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class OrderController {
-    private final IOrderService service = OrderService.getInstance();
+    @Injection
+    private IOrderService service;
     private final static OrderController instance = new OrderController();
 
     private OrderController() {
@@ -35,33 +35,28 @@ public class OrderController {
         service.deleteOrder(order);
     }
     public boolean isDeleteOrder(){
-        try {
-            return service.isDeleteOrder();
-        } catch (ServiceException e) {
-            return false;
-        }
+        return service.isDeleteOrder();
     }
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
         service.addToolsToOrder(order, tools);
     }
-    public Order getOrderById(int id) throws ServiceException {
+    public Order getOrderById(int id) {
         return service.getOrderById(id);
     }
     public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
         service.changeStatusOrder(order, status);
     }
     public boolean isShiftTime(){
-        try {
-            return service.isShiftTime();
-        } catch (ServiceException e) {
-            return false;
-        }
+        return service.isShiftTime();
+    }
+    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException{
+        return service.listOrders(comparator);
     }
     public void changeStartDateOrders(int hours) throws ServiceException {
         service.changeStartDateOrders(hours);
     }
-    public LocalDateTime nextAvailableDate(IGarageService garage, LocalDate endDate) throws ServiceException {
-        return service.nextAvailableDate(garage, endDate);
+    public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
+        return service.nextAvailableDate(endDate);
     }
     public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
         return service.mechanicOrder(mechanic);
@@ -84,7 +79,7 @@ public class OrderController {
     public void ordersFromCsv() throws ServiceException{
         service.ordersFromCsv();
     }
-    public void ordersToCsv() throws ServiceException{
+    public void ordersToCsv(){
         service.ordersToCsv();
     }
 }

@@ -18,13 +18,11 @@ public class BillAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
+        Order order = controller.getOrderById(id);
         try {
-            Order order = controller.getOrderById(id);
             controller.bill(order);
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());
         }
-
-
     }
 }

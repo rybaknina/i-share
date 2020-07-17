@@ -1,6 +1,6 @@
 package eu.senla.course.util;
 
-import eu.senla.course.api.IEntity;
+import eu.senla.course.api.entity.IEntity;
 
 import java.util.List;
 

@@ -1,16 +1,17 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.api.ISpotService;
+import eu.senla.course.annotation.di.Injection;
+import eu.senla.course.api.service.ISpotService;
+import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.service.SpotService;
 
 import java.util.List;
 
 public class SpotController {
-
+    @Injection
+    private ISpotService service;
     private final static SpotController instance = new SpotController();
-    private final ISpotService service = SpotService.getInstance();
 
     private SpotController() {
 
@@ -30,25 +31,24 @@ public class SpotController {
         service.addSpot(spot);
     }
     public boolean isModifySpot(){
-        try {
-            return service.isModifySpot();
-        } catch (ServiceException e) {
-            return false;
-        }
+        return service.isModifySpot();
     }
-    public Spot getSpotById(int id) throws ServiceException {
+    public Spot getSpotById(int id) {
         return service.getSpotById(id);
     }
     public void deleteSpot(Spot spot) throws ServiceException {
         service.deleteSpot(spot);
     }
-    public void updateSpot(int id, Spot spot) throws ServiceException {
+    public void updateSpot(Spot spot) throws ServiceException {
         service.updateSpot(spot);
+    }
+    public List<Spot> spotsInGarage(Garage garage){
+        return service.spotsInGarage(garage);
     }
     public void spotsFromCsv() throws ServiceException{
         service.spotsFromCsv();
     }
-    public void spotsToCsv() throws ServiceException{
+    public void spotsToCsv() {
         service.spotsToCsv();
     }
 }

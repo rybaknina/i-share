@@ -1,6 +1,6 @@
 package eu.senla.course.entity;
 
-import eu.senla.course.api.IEntity;
+import eu.senla.course.api.entity.IEntity;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;

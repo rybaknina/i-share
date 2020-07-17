@@ -22,9 +22,8 @@ public class AddMechanicAction implements IAction {
 
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-
+        Garage garage = garageController.getGarageById(id);
         try {
-            Garage garage = garageController.getGarageById(id);
             mechanicController.addMechanic(new Mechanic(name, garage));
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());
