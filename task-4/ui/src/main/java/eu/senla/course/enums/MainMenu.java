@@ -4,7 +4,7 @@ public enum MainMenu {
     SUB("Sub-menu"),
     ROOT("Home menu"),
     EXIT("Quit"),
-    RETURN("Back to TestInTurn menu");
+    RETURN("Back to Main menu");
 
     private String name;
 
