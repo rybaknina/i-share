@@ -33,7 +33,7 @@ public class ToolController {
         return service.getToolById(id);
     }
 
-    public void deleteTool(Tool tool) throws ServiceException {
+    public void deleteTool(Tool tool) {
         service.deleteTool(tool);
     }
 

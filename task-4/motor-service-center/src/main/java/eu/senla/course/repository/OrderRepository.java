@@ -21,10 +21,7 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public void delete(Order order) throws RepositoryException {
-        if (orders.size() == 0 || order == null){
-            throw new RepositoryException("Order is not found");
-        }
+    public void delete(Order order) {
         orders.removeIf(e -> e.equals(order));
     }
 

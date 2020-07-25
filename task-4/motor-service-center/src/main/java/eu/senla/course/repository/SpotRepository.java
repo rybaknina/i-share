@@ -21,10 +21,7 @@ public class SpotRepository implements ISpotRepository {
     }
 
     @Override
-    public void delete(Spot spot) throws RepositoryException {
-        if (spots.size() == 0 || spot == null){
-            throw new RepositoryException("Spot is not found");
-        }
+    public void delete(Spot spot)  {
         spots.removeIf(e -> e.equals(spot));
     }
 

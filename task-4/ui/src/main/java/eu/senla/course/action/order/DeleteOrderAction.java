@@ -4,7 +4,6 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Order;
 import eu.senla.course.enums.ActionHelper;
-import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -19,10 +18,10 @@ public class DeleteOrderAction implements IAction {
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         Order order = controller.getOrderById(id);
-        try {
+        if (order != null) {
             controller.deleteOrder(order);
-        } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+        } else {
+            System.err.println("Order is not found");
         }
     }
 }

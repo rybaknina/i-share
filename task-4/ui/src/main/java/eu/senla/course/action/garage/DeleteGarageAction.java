@@ -19,10 +19,10 @@ public class DeleteGarageAction implements IAction {
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         Garage garage = controller.getGarageById(id);
-        try {
+        if (garage != null){
             controller.deleteGarage(garage);
-        } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+        } else {
+            System.err.println("Garage is not found");
         }
     }
 }

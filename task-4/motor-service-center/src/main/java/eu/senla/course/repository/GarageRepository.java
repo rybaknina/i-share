@@ -21,10 +21,7 @@ public class GarageRepository implements IGarageRepository {
     }
 
     @Override
-    public void delete(Garage garage) throws RepositoryException {
-        if (garages.size() == 0 || garage == null){
-            throw new RepositoryException("Garage is not found");
-        }
+    public void delete(Garage garage) {
         garages.removeIf(e -> e.equals(garage));
     }
 

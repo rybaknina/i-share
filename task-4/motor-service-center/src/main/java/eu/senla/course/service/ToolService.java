@@ -13,14 +13,11 @@ import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ToolService implements IToolService {
@@ -51,12 +48,8 @@ public class ToolService implements IToolService {
         return toolRepository.getById(id);
     }
 
-    public void deleteTool(Tool tool) throws ServiceException {
-        try {
-            toolRepository.delete(tool);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
+    public void deleteTool(Tool tool) {
+        toolRepository.delete(tool);
     }
 
     public void updateTool(Tool tool) throws ServiceException {
@@ -70,11 +63,11 @@ public class ToolService implements IToolService {
     @Override
     public void toolsFromCsv() throws ServiceException {
         List<List<String>> lists;
-        Path path = Paths.get(toolPath);
-        try {
-            lists = CsvReader.readRecords(Files.newBufferedReader(path));
-            createTools(lists);
-
+        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(toolPath)) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(stream))) {
+                lists = CsvReader.readRecords(reader);
+                createTools(lists);
+            }
         } catch (CsvException e) {
             System.out.println("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
@@ -119,6 +112,7 @@ public class ToolService implements IToolService {
         List<List<String>> data = new ArrayList<>();
 
         try {
+            File file = CsvWriter.recordFile(toolPath);
             for (Tool tool: toolRepository.getAll()){
                 if (tool != null) {
                     List<String> dataIn = new ArrayList<>();
@@ -129,10 +123,10 @@ public class ToolService implements IToolService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(toolPath), headerCsv(), data);
+            CsvWriter.writeRecords(file, headerCsv(), data);
 
         } catch (CsvException e) {
-            System.out.println("Csv write exception" + e.getMessage());
+            System.out.println("Csv write exception " + e.getMessage());
         }
     }
 

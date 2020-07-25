@@ -21,10 +21,7 @@ public class MechanicRepository implements IMechanicRepository {
     }
 
     @Override
-    public void delete(Mechanic mechanic) throws RepositoryException {
-        if (mechanics.size() == 0 || mechanic == null){
-            throw new RepositoryException("Auto mechanic is not found");
-        }
+    public void delete(Mechanic mechanic) {
         mechanics.removeIf(e -> e.equals(mechanic));
     }
 

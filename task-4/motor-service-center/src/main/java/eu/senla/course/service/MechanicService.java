@@ -17,15 +17,8 @@ import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 @Service
 public class MechanicService implements IMechanicService {
@@ -51,12 +44,8 @@ public class MechanicService implements IMechanicService {
         mechanicRepository.setAll(mechanics);
     }
 
-    public void deleteMechanic(Mechanic mechanic) throws ServiceException {
-        try {
-            mechanicRepository.delete(mechanic);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
+    public void deleteMechanic(Mechanic mechanic) {
+        mechanicRepository.delete(mechanic);
     }
 
     public Mechanic getMechanicById(int id) {
@@ -98,12 +87,12 @@ public class MechanicService implements IMechanicService {
     public void mechanicsFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = Paths.get(mechanicPath);
 
-        try {
-            lists = CsvReader.readRecords(Files.newBufferedReader(path));
-            createMechanics(lists);
-
+        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(mechanicPath)) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(stream))) {
+                lists = CsvReader.readRecords(reader);
+                createMechanics(lists);
+            }
         } catch (CsvException e) {
             System.out.println("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
@@ -180,6 +169,7 @@ public class MechanicService implements IMechanicService {
         List<List<String>> data = new ArrayList<>();
 
         try {
+            File file = CsvWriter.recordFile(mechanicPath);
             for (Mechanic mechanic: mechanicRepository.getAll()){
                 if (mechanic != null) {
                     List<String> dataIn = new ArrayList<>();
@@ -195,10 +185,10 @@ public class MechanicService implements IMechanicService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(mechanicPath), headerCsv(), data);
+            CsvWriter.writeRecords(file, headerCsv(), data);
 
         } catch (CsvException e) {
-            System.out.println("Csv write exception" + e.getMessage());
+            System.out.println("Csv write exception " + e.getMessage());
         }
     }
 

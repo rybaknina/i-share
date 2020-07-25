@@ -21,10 +21,7 @@ import eu.senla.course.util.GeneratorUtil;
 import eu.senla.course.util.exception.CsvException;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,13 +62,9 @@ public class GarageService implements IGarageService {
         }
     }
 
-    public void deleteGarage(Garage garage) throws ServiceException {
-        try {
-            SpotController.getInstance().getSpots().removeIf(spot -> spot.getGarage().equals(garage));
-            garageRepository.delete(garage);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
+    public void deleteGarage(Garage garage)  {
+        SpotController.getInstance().getSpots().removeIf(spot -> spot.getGarage().equals(garage));
+        garageRepository.delete(garage);
     }
 
     public Garage getGarageById(int id) {
@@ -144,11 +137,12 @@ public class GarageService implements IGarageService {
     public void garagesFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = Path.of(garagePath);
 
-        try {
-            lists = CsvReader.readRecords(Files.newBufferedReader(path));
-            createGarages(lists);
+        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(garagePath)) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(stream))) {
+                lists = CsvReader.readRecords(reader);
+                createGarages(lists);
+            }
         } catch (CsvException e) {
             System.out.println("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
@@ -238,6 +232,7 @@ public class GarageService implements IGarageService {
         List<List<String>> data = new ArrayList<>();
 
         try {
+            File file = CsvWriter.recordFile(garagePath);
             for (Garage garage: garageRepository.getAll()){
                 if (garage != null) {
                     List<String> dataIn = new ArrayList<>();
@@ -251,10 +246,10 @@ public class GarageService implements IGarageService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(garagePath), headerCsv(), data);
+            CsvWriter.writeRecords(file, headerCsv(), data);
 
         } catch (CsvException e) {
-            System.out.println("Csv write exception" + e.getMessage());
+            System.out.println("Csv write exception " + e.getMessage());
         }
     }
 

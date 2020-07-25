@@ -4,11 +4,9 @@ import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.exception.InjectionException;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-
-import static com.google.common.reflect.ClassPath.from;
+import java.util.List;
 
 public class InjectionController {
     private final static InjectionController instance = new InjectionController();
@@ -25,15 +23,11 @@ public class InjectionController {
 
     public void inject() throws InjectionException {
         try {
-            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-            for (var info : from(loader).getTopLevelClasses()) {
-                if (info.getName().startsWith(START_WITH)) {
-                    final Class<?> clazz = info.load();
-                    createInstances(clazz);
-                }
+            List<Class <?>> classes = LoaderController.getClassesForPackage(START_WITH);
+            for (Class clazz: classes){
+                createInstances(clazz);
             }
-        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
             throw new InjectionException(e.getMessage());
         }
     }

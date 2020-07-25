@@ -4,14 +4,13 @@ import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.annotation.di.Service;
 import eu.senla.course.exception.InjectionException;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static com.google.common.reflect.ClassPath.from;
 
 class BeanController {
     private final Map<Class, Class> diMap = new HashMap<>();
@@ -30,20 +29,18 @@ class BeanController {
     }
 
     private void fillDiMap() throws InjectionException {
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         try {
-            for (final var info : from(loader).getTopLevelClasses()) {
-                if (info.getName().startsWith(START_WITH)) {
-                    final Class<?> clazz = info.load();
-                    for (Class iClass : clazz.getInterfaces()) {
-                        diMap.put(iClass, clazz);
-                    }
+            List<Class<?>> classes = LoaderController.getClassesForPackage(START_WITH);
+            for (Class clazz: classes){
+                for (Class iClass: clazz.getInterfaces()){
+                    diMap.put(iClass, clazz);
                 }
             }
-        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
             throw new InjectionException("Load map was broken");
         }
+
     }
 
     @SuppressWarnings("unchecked")

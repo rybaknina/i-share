@@ -4,7 +4,6 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.ActionHelper;
-import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -18,11 +17,11 @@ public class DeleteToolAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        try {
-            Tool tool = controller.getToolById(id);
+        Tool tool = controller.getToolById(id);
+        if (tool != null) {
             controller.deleteTool(tool);
-        } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+        } else {
+            System.err.println("Tool is not found");
         }
 
 

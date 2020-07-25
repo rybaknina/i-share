@@ -7,11 +7,9 @@ import eu.senla.course.exception.InjectionException;
 import eu.senla.course.util.PathToFile;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import static com.google.common.reflect.ClassPath.from;
+import java.util.List;
 
 
 public class AnnotationController {
@@ -29,16 +27,12 @@ public class AnnotationController {
     public void init() throws AnnotationException {
 
         try {
-            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-            for (final var info : from(loader).getTopLevelClasses()) {
-                 if (info.getName().startsWith(START_WITH)) {
-                    final Class<?> clazz = info.load();
-                    setProperty(clazz);
-                }
+            List<Class<?>> classes = LoaderController.getClassesForPackage(START_WITH);
+            for (Class clazz: classes){
+                setProperty(clazz);
             }
 
-        } catch (IllegalAccessException | IOException | InjectionException e) {
+        } catch (IllegalAccessException | InjectionException | ClassNotFoundException e) {
             throw new AnnotationException(e.getMessage());
         }
     }

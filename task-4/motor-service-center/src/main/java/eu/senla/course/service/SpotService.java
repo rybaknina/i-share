@@ -16,13 +16,10 @@ import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class SpotService implements ISpotService {
@@ -59,12 +56,8 @@ public class SpotService implements ISpotService {
         return spotRepository.getById(id);
     }
 
-    public void deleteSpot(Spot spot) throws ServiceException {
-        try {
-            spotRepository.delete(spot);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
+    public void deleteSpot(Spot spot) {
+        spotRepository.delete(spot);
     }
 
     public void updateSpot(Spot spot) throws ServiceException {
@@ -87,12 +80,11 @@ public class SpotService implements ISpotService {
     public void spotsFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = Paths.get(spotPath);
-
-        try {
-            lists = CsvReader.readRecords(Files.newBufferedReader(path));
-            createSpots(lists);
-
+        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(spotPath)) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(stream))) {
+                lists = CsvReader.readRecords(reader);
+                createSpots(lists);
+            }
         } catch (CsvException e) {
             System.out.println("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
@@ -138,6 +130,7 @@ public class SpotService implements ISpotService {
         List<List<String>> data = new ArrayList<>();
 
         try {
+            File file = CsvWriter.recordFile(spotPath);
             for (Spot spot: spotRepository.getAll()){
                 if (spot != null) {
                     List<String> dataIn = new ArrayList<>();
@@ -146,10 +139,10 @@ public class SpotService implements ISpotService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(String.valueOf(spotPath)), headerCsv(), data);
+            CsvWriter.writeRecords(file, headerCsv(), data);
 
         } catch (CsvException e) {
-            System.out.println("Csv write exception" + e.getMessage());
+            System.out.println("Csv write exception " + e.getMessage());
         }
     }
 
