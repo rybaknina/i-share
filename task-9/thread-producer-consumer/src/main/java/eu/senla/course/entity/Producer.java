@@ -26,7 +26,7 @@ public class Producer implements Runnable{
 
     private double produce() throws InterruptedException {
         synchronized (buffer) {
-            if (buffer.size() == size) {
+            while (buffer.size() == size) {
                 System.out.println("Buffer is full. Producer is waiting");
                 buffer.wait();
             }

@@ -22,7 +22,7 @@ public class Consumer implements Runnable {
     }
     private Double consume() throws InterruptedException {
         synchronized (buffer) {
-            if (buffer.isEmpty()) {
+            while (buffer.isEmpty()) {
                 System.out.println("Buffer is empty. Consumer is waiting");
                 buffer.wait();
             }

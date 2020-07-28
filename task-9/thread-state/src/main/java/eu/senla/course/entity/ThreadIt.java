@@ -16,6 +16,7 @@ public class ThreadIt extends Thread{
                 lock.notifyAll();
                 lock.wait(timeOut);
             }
+
         } catch (InterruptedException e) {
             System.err.println("Interrupted error occurred " + e.getMessage());
         }

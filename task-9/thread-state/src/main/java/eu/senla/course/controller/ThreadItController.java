@@ -3,7 +3,7 @@ package eu.senla.course.controller;
 import eu.senla.course.entity.ThreadIt;
 
 /**
- * 1 вариант с одной нитью и двумя вызовами в main
+ * Вариант с одной нитью и двумя объектами
  * Необходимые состояния:
  * - NEW,
  * - RUNNABLE,
@@ -16,18 +16,26 @@ import eu.senla.course.entity.ThreadIt;
 public class ThreadItController {
     public static void threadIt(long timeOut) throws InterruptedException {
         Object lock = new Object();
-        Thread thread = new ThreadIt(lock, timeOut);
-        displayState(thread);
+        Thread thread = new ThreadIt(lock, 0);
+        Thread threadOther = new ThreadIt(lock, timeOut); // second object
 
         synchronized (lock){
-            thread.start();
             displayState(thread);
 
-            lock.wait();
+            thread.start();
+            threadOther.start();
+            displayState(thread);
+
+            lock.wait(); // WAITING
             displayState(thread);
 
             lock.notifyAll();
             displayState(thread);
+
+            lock.wait(1000); // TIMED_WAITING
+            displayState(threadOther);
+
+            lock.notify();
         }
 
         try {
@@ -35,9 +43,10 @@ public class ThreadItController {
         } catch (InterruptedException e) {
             System.err.println("Interrupted error occurred " + e.getMessage());
         }
-        displayState(thread);
 
+        displayState(thread);
         thread.interrupt();
+        threadOther.interrupt();
 
     }
     private static void displayState(Thread thread){
