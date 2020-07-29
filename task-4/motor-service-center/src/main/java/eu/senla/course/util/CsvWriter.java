@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class CsvWriter {
     private static final String SEPARATOR = ";";
@@ -26,5 +27,10 @@ public class CsvWriter {
         } catch (IOException e) {
             throw new CsvException("Error work with write to csv");
         }
+    }
+
+    public static File recordFile(String resource){
+        File file = new File(Objects.requireNonNull(CsvWriter.class.getClassLoader().getResource(resource)).getFile());
+        return file;
     }
 }

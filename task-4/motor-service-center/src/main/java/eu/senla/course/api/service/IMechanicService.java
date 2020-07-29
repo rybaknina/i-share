@@ -10,7 +10,7 @@ public interface IMechanicService {
     void addMechanic(Mechanic mechanic) throws ServiceException;
     List<Mechanic> getMechanics();
     void setMechanics(List<Mechanic> mechanics);
-    void deleteMechanic(Mechanic mechanic) throws ServiceException;
+    void deleteMechanic(Mechanic mechanic);
     void updateMechanic(Mechanic mechanic) throws ServiceException;
     Mechanic getMechanicById(int id);
     Mechanic firstFreeMechanic() throws ServiceException;

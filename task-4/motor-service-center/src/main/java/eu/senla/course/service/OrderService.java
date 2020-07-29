@@ -21,17 +21,15 @@ import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrderService implements IOrderService {
@@ -66,12 +64,8 @@ public class OrderService implements IOrderService {
         }
     }
 
-    public void deleteOrder(Order order) throws ServiceException {
-        try {
-            orderRepository.delete(order);
-        } catch (RepositoryException e) {
-            throw new ServiceException("RepositoryException " + e.getMessage());
-        }
+    public void deleteOrder(Order order) {
+        orderRepository.delete(order);
     }
 
     @Override
@@ -221,12 +215,11 @@ public class OrderService implements IOrderService {
     public void ordersFromCsv() throws ServiceException {
 
         List<List<String>> lists;
-        Path path = Path.of(orderPath);
-
-        try {
-            lists = CsvReader.readRecords(Files.newBufferedReader(path));
-            createOrders(lists);
-
+        try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(orderPath)) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(stream))) {
+                lists = CsvReader.readRecords(reader);
+                createOrders(lists);
+            }
         } catch (CsvException e) {
             System.out.println("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
@@ -308,6 +301,7 @@ public class OrderService implements IOrderService {
         List<List<String>> data = new ArrayList<>();
 
         try {
+            File file = CsvWriter.recordFile(orderPath);
             for (Order order: orderRepository.getAll()){
                 if (order != null) {
                     List<String> dataIn = new ArrayList<>();
@@ -325,10 +319,10 @@ public class OrderService implements IOrderService {
                     data.add(dataIn);
                 }
             }
-            CsvWriter.writeRecords(new File(orderPath), headerCsv(), data);
+            CsvWriter.writeRecords(file, headerCsv(), data);
 
         } catch (CsvException e) {
-            System.out.println("Csv write exception" + e.getMessage());
+            System.out.println("Csv write exception " + e.getMessage());
         }
     }
 

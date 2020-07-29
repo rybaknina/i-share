@@ -12,7 +12,7 @@ public interface ISpotService {
     void setSpots(List<Spot> spots);
     void addSpot(Spot spot) throws ServiceException;
     Spot getSpotById(int id);
-    void deleteSpot(Spot spot) throws ServiceException;
+    void deleteSpot(Spot spot);
     void updateSpot(Spot spot) throws ServiceException;
     List<Spot> spotsInGarage(Garage garage);
     void spotsFromCsv() throws ServiceException;

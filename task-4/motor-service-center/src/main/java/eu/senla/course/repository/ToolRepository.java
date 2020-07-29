@@ -21,10 +21,7 @@ public class ToolRepository implements IToolRepository {
     }
 
     @Override
-    public void delete(Tool tool) throws RepositoryException {
-        if (tools.size() == 0 || tool == null){
-            throw new RepositoryException("Tool is not found");
-        }
+    public void delete(Tool tool)  {
         tools.removeIf(e -> e.equals(tool));
     }
 

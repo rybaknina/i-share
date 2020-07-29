@@ -31,7 +31,7 @@ public class OrderController {
     public List<Order> getOrders(){
         return service.getOrders();
     }
-    public void deleteOrder(Order order) throws ServiceException {
+    public void deleteOrder(Order order) {
         service.deleteOrder(order);
     }
     public boolean isDeleteOrder(){
