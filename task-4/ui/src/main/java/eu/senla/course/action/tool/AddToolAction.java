@@ -1,7 +1,9 @@
 package eu.senla.course.action.tool;
 
 import eu.senla.course.api.IAction;
+import eu.senla.course.controller.OrderController;
 import eu.senla.course.controller.ToolController;
+import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
@@ -18,12 +20,15 @@ public class AddToolAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
+        Integer orderId = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
         Integer hours = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
         BigDecimal price = InputValidator.readDecimal(reader, ActionHelper.IN_BIG_DECIMAL.getName());
 
+        Order order = OrderController.getInstance().getOrderById(orderId);
+
         try {
-            controller.addTool(new Tool(name, hours, price));
+            controller.addTool(new Tool(name, hours, price, order));
         } catch (ServiceException e) {
             System.err.println("Service exception " + e.getMessage());
         }

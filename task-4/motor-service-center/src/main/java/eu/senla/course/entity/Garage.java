@@ -24,6 +24,11 @@ public class Garage implements IEntity {
         this.name = name;
     }
 
+    public Garage(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

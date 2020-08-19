@@ -5,9 +5,7 @@ import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.service.IOrderService;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
+import eu.senla.course.controller.*;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -97,6 +95,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Order is not found");
         }
         order.setStatus(status);
+        updateOrder(order);
 
     }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
@@ -135,6 +134,7 @@ public class OrderService implements IOrderService {
                 order.setStartDate(order.getStartDate().plusHours(hours));
                 if (order.getCompleteDate() != null) {
                     order.setCompleteDate(order.getCompleteDate().plusHours(hours));
+                    updateOrder(order);
                 }
 
             }
@@ -195,19 +195,20 @@ public class OrderService implements IOrderService {
     }
 
     public void bill(Order order) throws ServiceException {
+        List<Tool> tools = ToolController.getInstance().getTools();
         if (order == null){
             throw new ServiceException("Order is not exist");
         }
-        if (order.getTools() == null || order.getTools().size() == 0){
-            System.out.println("Order has no services...");
-        } else {
-            BigDecimal amount = BigDecimal.ZERO;
-            for (Tool service : order.getTools()) {
-                amount = amount.add(service.getHourlyPrice().multiply(BigDecimal.valueOf(service.getHours())));
+        BigDecimal amount = BigDecimal.ZERO;
+        for (Tool tool : tools) {
+            if (tool.getOrder().getId() == order.getId()) {
+                amount = amount.add(tool.getHourlyPrice().multiply(BigDecimal.valueOf(tool.getHours())));
             }
-            order.setPrice(amount);
-            System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
         }
+        order.setPrice(amount);
+        updateOrder(order);
+        System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
+
     }
 
 

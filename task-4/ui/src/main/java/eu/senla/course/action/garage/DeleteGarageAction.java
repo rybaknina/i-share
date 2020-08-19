@@ -4,7 +4,6 @@ import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.enums.ActionHelper;
-import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
