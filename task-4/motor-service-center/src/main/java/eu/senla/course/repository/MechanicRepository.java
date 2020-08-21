@@ -101,9 +101,50 @@ public class MechanicRepository implements IMechanicRepository {
         }
     }
     public void setAll(List<Mechanic> mechanics){
-        //this.mechanics = mechanics;
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement deleleAll = connection.prepareStatement(SqlMechanic.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlMechanic.RESET.getName());PreparedStatement insert = connection.prepareStatement(SqlMechanic.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            deleleAll.executeUpdate();
+            reset.executeUpdate();
+
+            for (Mechanic mechanic: mechanics){
+                insert.setString(1, mechanic.getName());
+                insert.setInt(2, mechanic.getGarage().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
     public void addAll(List<Mechanic> mechanics){
-        //this.mechanics.addAll(mechanics);
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlMechanic.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Mechanic mechanic: mechanics){
+                insert.setString(1, mechanic.getName());
+                insert.setInt(2, mechanic.getGarage().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 }

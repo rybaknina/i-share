@@ -10,7 +10,9 @@ public enum SqlTool {
     DELETE("delete from tool where id = ?;"),
     SELECT_BY_ID("select name, hours, hourly_price, order_id from tool where id = ?;"),
     SELECT_ALL("select id, name, hours, hourly_price, order_id from tool;"),
-    UPDATE("update tool set name = ?, hours = ?, hourly_price = ?, order_id = ? where id = ?;");
+    UPDATE("update tool set name = ?, hours = ?, hourly_price = ?, order_id = ? where id = ?;"),
+    DELETE_ALL("delete from tool;"),
+    RESET("alter table tool auto_increment = 1;");
 
     private String name;
 

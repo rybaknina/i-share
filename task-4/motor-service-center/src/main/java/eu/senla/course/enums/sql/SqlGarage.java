@@ -8,7 +8,9 @@ public enum SqlGarage {
     DELETE("delete from garage where id = ?;"),
     SELECT_BY_ID("select name from garage where id = ?;"),
     SELECT_ALL("select id, name from garage;"),
-    UPDATE("update garage set name = ? where id = ?;");
+    UPDATE("update garage set name = ? where id = ?;"),
+    DELETE_ALL("delete from garage;"),
+    RESET("alter table garage auto_increment = 1;");
 
     private String name;
 

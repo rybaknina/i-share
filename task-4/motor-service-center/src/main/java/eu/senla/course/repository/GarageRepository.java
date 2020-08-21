@@ -107,11 +107,50 @@ public class GarageRepository implements IGarageRepository {
 
     @Override
     public void setAll(List<Garage> garages) {
-     //  this.garages = garages;
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement deleleAll = connection.prepareStatement(SqlGarage.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlGarage.RESET.getName());PreparedStatement insert = connection.prepareStatement(SqlGarage.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            deleleAll.executeUpdate();
+            reset.executeUpdate();
+
+            for (Garage garage: garages){
+                insert.setString(1, garage.getName());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 
     @Override
     public void addAll(List<Garage> garages) {
-     //   this.garages.addAll(garages);
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlGarage.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Garage garage: garages){
+                insert.setString(1, garage.getName());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 }

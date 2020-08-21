@@ -117,9 +117,51 @@ public class ToolRepository implements IToolRepository {
         }
     }
     public void setAll(List<Tool> tools){
-       // this.tools = tools;
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Tool tool: tools){
+                insert.setString(1, tool.getName());
+                insert.setInt(2, tool.getHours());
+                insert.setBigDecimal(3, tool.getHourlyPrice());
+                insert.setInt(4, tool.getOrder().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
     public void addAll(List<Tool> tools){
-       // this.tools.addAll(tools);
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Tool tool: tools){
+                insert.setString(1, tool.getName());
+                insert.setInt(2, tool.getHours());
+                insert.setBigDecimal(3, tool.getHourlyPrice());
+                insert.setInt(4, tool.getOrder().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 }

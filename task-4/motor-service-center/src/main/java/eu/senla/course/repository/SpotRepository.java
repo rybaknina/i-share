@@ -97,9 +97,48 @@ public class SpotRepository implements ISpotRepository {
         }
     }
     public void setAll(List<Spot> spots){
-        //this.spots = spots;
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement deleleAll = connection.prepareStatement(SqlSpot.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlSpot.RESET.getName());PreparedStatement insert = connection.prepareStatement(SqlSpot.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            deleleAll.executeUpdate();
+            reset.executeUpdate();
+
+            for (Spot spot: spots){
+                insert.setInt(1, spot.getGarage().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
     public void addAll(List<Spot> spots){
-        //this.spots.addAll(spots);
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlSpot.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Spot spot: spots){
+                insert.setInt(1, spot.getGarage().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 }

@@ -14,7 +14,9 @@ public enum SqlOrder {
     DELETE("delete from `order` where id = ?;"),
     SELECT_BY_ID("select request_date, planned_date, start_date, complete_date, price, status , mechanic_id, spot_id from `order` where id = ?;"),
     SELECT_ALL("select id, request_date, planned_date, start_date, complete_date, price, status , mechanic_id, spot_id from `order`;"),
-    UPDATE("update `order` set request_date = ?, planned_date = ?, start_date = ?, complete_date = ?, price = ?, status = ? , mechanic_id = ?, spot_id = ? where id = ?;");
+    UPDATE("update `order` set request_date = ?, planned_date = ?, start_date = ?, complete_date = ?, price = ?, status = ? , mechanic_id = ?, spot_id = ? where id = ?;"),
+    DELETE_ALL("delete from `order`;"),
+    RESET("alter table `order` auto_increment = 1;");
 
     private String name;
 

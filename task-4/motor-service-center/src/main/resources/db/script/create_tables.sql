@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`mechanic` (
   `name` VARCHAR(45) NOT NULL,
   `garage_id` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_mechanic_garage_idx` (`garage_id` ASC) VISIBLE,
+  INDEX `fk_mechanic_garage_idx` (`garage_id` ASC),
   CONSTRAINT `fk_mechanic_garage`
     FOREIGN KEY (`garage_id`)
     REFERENCES `motor_service_service`.`garage` (`id`)
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`spot` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `garage_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_spot_garage_idx` (`garage_id` ASC) VISIBLE,
+  INDEX `fk_spot_garage_idx` (`garage_id` ASC),
   CONSTRAINT `fk_spot_garage`
     FOREIGN KEY (`garage_id`)
     REFERENCES `motor_service_service`.`garage` (`id`)
@@ -61,21 +61,21 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`order` (
   `planned_date` TIMESTAMP NULL,
   `start_date` TIMESTAMP NULL,
   `complete_date` TIMESTAMP NULL,
-  `price` DECIMAL NULL,
+  `price` DECIMAL(17,2) NULL,
   `status` VARCHAR(15) NULL,
   `mechanic_id` INT NULL,
   `spot_id` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_order_spot_idx` (`spot_id` ASC) VISIBLE,
-  INDEX `fk_order_mechanic_idx` (`mechanic_id` ASC) VISIBLE,
-  CONSTRAINT `fk_order_spot`
-    FOREIGN KEY (`spot_id`)
-    REFERENCES `motor_service_service`.`spot` (`id`)
-    ON DELETE SET NULL
-    ON UPDATE NO ACTION,
+  INDEX `fk_order_mechanic_idx` (`mechanic_id` ASC),
+  INDEX `fk_order_spot_idx` (`spot_id` ASC),
   CONSTRAINT `fk_order_mechanic`
     FOREIGN KEY (`mechanic_id`)
     REFERENCES `motor_service_service`.`mechanic` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_spot`
+    FOREIGN KEY (`spot_id`)
+    REFERENCES `motor_service_service`.`spot` (`id`)
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`tool` (
   `hourly_price` DECIMAL(17,2) NULL,
   `order_id` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_tool_order_idx` (`order_id` ASC) VISIBLE,
+  INDEX `fk_tool_order_idx` (`order_id` ASC),
   CONSTRAINT `fk_tool_order`
     FOREIGN KEY (`order_id`)
     REFERENCES `motor_service_service`.`order` (`id`)

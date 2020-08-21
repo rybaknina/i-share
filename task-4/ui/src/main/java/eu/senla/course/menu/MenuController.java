@@ -7,6 +7,7 @@ import eu.senla.course.controller.InjectionController;
 import eu.senla.course.enums.MainMenu;
 import eu.senla.course.exception.AnnotationException;
 import eu.senla.course.exception.InjectionException;
+import eu.senla.course.util.ConnectionUtil;
 import eu.senla.course.util.InputValidator;
 
 import java.io.BufferedReader;
@@ -65,6 +66,7 @@ public class MenuController {
 
                 if (navigator.getCurrentMenu().getMenuItems().get(input).getTitle().equals(MainMenu.EXIT.getName())) {
                     new LoadToFileAction().execute();
+                    ConnectionUtil.getInstance().closeConnection();
                     exit = true;
                     continue;
                 }

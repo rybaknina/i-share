@@ -29,8 +29,8 @@ public class OrderRepository implements IOrderRepository {
         }
         Connection connection = ConnectionUtil.getInstance().connect();
         try ( PreparedStatement ps = connection.prepareStatement(SqlOrder.INSERT.getName())){
-            ps.setTimestamp(1, Timestamp.valueOf(order.getRequestDate()));
-            ps.setTimestamp(2, Timestamp.valueOf(order.getPlannedDate()));
+            ps.setTimestamp(1, psDateTime(order.getRequestDate()));
+            ps.setTimestamp(2, psDateTime(order.getPlannedDate()));
             ps.setInt(3, order.getMechanic().getId());
             ps.setInt(4, order.getSpot().getId());
             ps.executeUpdate();
@@ -163,9 +163,54 @@ public class OrderRepository implements IOrderRepository {
         }
     }
     public void setAll(List<Order> orders){
-        //this.orders = orders;
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement deleleAll = connection.prepareStatement(SqlOrder.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlOrder.RESET.getName());PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            deleleAll.executeUpdate();
+            reset.executeUpdate();
+
+            for (Order order: orders){
+                insert.setTimestamp(1, psDateTime(order.getRequestDate()));
+                insert.setTimestamp(2, psDateTime(order.getPlannedDate()));
+                insert.setInt(3, order.getMechanic().getId());
+                insert.setInt(4, order.getSpot().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
     public void addAll(List<Order> orders){
-       // this.orders.addAll(orders);
+        Connection connection = ConnectionUtil.getInstance().connect();
+
+        try (PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())){
+            connection.setAutoCommit(false);
+
+            for (Order order: orders){
+                insert.setTimestamp(1, psDateTime(order.getRequestDate()));
+                insert.setTimestamp(2, psDateTime(order.getPlannedDate()));
+                insert.setInt(3, order.getMechanic().getId());
+                insert.setInt(4, order.getSpot().getId());
+                insert.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.err.println("Rollback exception " + e.getMessage());
+            }
+            System.err.println("Exception " + e.getMessage());
+        }
     }
 }

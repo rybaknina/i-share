@@ -42,4 +42,13 @@ public class ConnectionUtil {
         return connection;
     }
 
+    public void closeConnection(){
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                System.err.println("Error close connection " + e.getMessage());
+            }
+        }
+    }
 }

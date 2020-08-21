@@ -162,7 +162,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Orders are not exist");
         }
         for (Order order: orderRepository.getAll()){
-            if (order.getMechanic().equals(mechanic) && order.getStatus() == OrderStatus.IN_PROGRESS){
+            if (order.getMechanic().getId() == mechanic.getId() && order.getStatus() == OrderStatus.IN_PROGRESS){
                 return order;
             }
         }
@@ -174,7 +174,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Order is not found");
         }
         for (Order orderExist : orderRepository.getAll()) {
-            if (orderExist != null && orderExist.equals(order)) {
+            if (orderExist != null && orderExist.getId() == order.getId()) {
                 return orderExist.getMechanic();
             }
         }
