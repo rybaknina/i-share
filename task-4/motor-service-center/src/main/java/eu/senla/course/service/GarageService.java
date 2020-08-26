@@ -62,8 +62,7 @@ public class GarageService implements IGarageService {
         }
     }
 
-    public void deleteGarage(Garage garage)  {
-        SpotController.getInstance().getSpots().removeIf(spot -> spot.getGarage().equals(garage));
+    public void deleteGarage(Garage garage) {
         garageRepository.delete(garage);
     }
 

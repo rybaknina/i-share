@@ -13,6 +13,7 @@ public class Tool implements IEntity {
     private String name;
     private int hours;
     private BigDecimal hourlyPrice;
+    private Order order;
 
     public Tool(String name) {
         this.id = count.incrementAndGet();
@@ -26,6 +27,22 @@ public class Tool implements IEntity {
         this.name = name;
         this.hours = hours;
         this.hourlyPrice = hourlyPrice;
+    }
+
+    public Tool(String name, int hours, BigDecimal hourlyPrice, Order order) {
+        this.id = count.incrementAndGet();
+        this.name = name;
+        this.hours = hours;
+        this.hourlyPrice = hourlyPrice;
+        this.order = order;
+    }
+
+    public Tool(int id, String name, int hours, BigDecimal hourlyPrice, Order order) {
+        this.id = id;
+        this.name = name;
+        this.hours = hours;
+        this.hourlyPrice = hourlyPrice;
+        this.order = order;
     }
 
     public int getId() {
@@ -64,13 +81,22 @@ public class Tool implements IEntity {
         this.hourlyPrice = hourlyPrice;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
     @Override
     public String toString() {
-        return "Tool{" +
+        return "Tool { " +
                 "id = " + id +
                 ", name = '" + name + '\'' +
                 ", hours = " + hours +
                 ", hourlyPrice = " + hourlyPrice +
+                ", order = " + order +
                 '}';
     }
 }

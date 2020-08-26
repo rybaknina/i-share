@@ -34,6 +34,14 @@ public class Order implements IEntity {
         this.status = OrderStatus.IN_PROGRESS;
     }
 
+    public Order(int id, LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
+        this.id = id;
+        this.requestDate = requestDate;
+        this.plannedDate = plannedDate;
+        this.mechanic = mechanic;
+        this.spot = spot;
+        this.status = OrderStatus.IN_PROGRESS;
+    }
     public int getId() {
         return id;
     }

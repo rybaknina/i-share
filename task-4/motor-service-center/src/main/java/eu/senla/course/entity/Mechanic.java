@@ -27,6 +27,12 @@ public class Mechanic implements IEntity {
         this.garage = garage;
     }
 
+    public Mechanic(int id, String name, Garage garage) {
+        this.id = id;
+        this.name = name;
+        this.garage = garage;
+    }
+
     public int getId() {
         return id;
     }

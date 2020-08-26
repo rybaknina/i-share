@@ -16,6 +16,11 @@ public class Spot implements IEntity {
         this.garage = garage;
     }
 
+    public Spot(int id, Garage garage) {
+        this.id = id;
+        this.garage = garage;
+    }
+
     public int getId() {
         return id;
     }
