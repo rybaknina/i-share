@@ -7,7 +7,7 @@ import eu.senla.course.exception.ServiceException;
 
 import java.util.List;
 
-public class ToolController {
+final public class ToolController {
     @Injection
     private IToolService service;
     private final static ToolController instance = new ToolController();
@@ -16,17 +16,17 @@ public class ToolController {
 
     }
 
-    public static ToolController getInstance(){
+    public static ToolController getInstance() {
         return instance;
     }
 
     public void addTool(Tool tool) throws ServiceException {
         service.addTool(tool);
     }
-    public List<Tool> getTools(){
+    public List<Tool> getTools() {
         return service.getTools();
     }
-    public void setTools(List<Tool> tools){
+    public void setTools(List<Tool> tools) {
         service.setTools(tools);
     }
     public Tool getToolById(int id) {
@@ -37,13 +37,13 @@ public class ToolController {
         service.deleteTool(tool);
     }
 
-    public void updateTool(Tool tool) throws ServiceException{
+    public void updateTool(Tool tool) throws ServiceException {
         service.updateTool(tool);
     }
-    public void toolsFromCsv() throws ServiceException{
+    public void toolsFromCsv() throws ServiceException {
         service.toolsFromCsv();
     }
-    public void toolsToCsv(){
+    public void toolsToCsv() {
         service.toolsToCsv();
     }
 }

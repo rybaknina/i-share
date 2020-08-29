@@ -27,7 +27,7 @@ public class Menu {
         this.menuItems = menuItems;
     }
 
-    public void add(MenuItem menuItem){
+    public void add(MenuItem menuItem) {
         menuItems.add(menuItem);
     }
 

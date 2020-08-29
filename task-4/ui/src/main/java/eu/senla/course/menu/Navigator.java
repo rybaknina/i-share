@@ -3,14 +3,14 @@ package eu.senla.course.menu;
 import java.io.IOException;
 import java.util.List;
 
-public class Navigator {
+final public class Navigator {
     private final static Navigator instance = new Navigator();
     private Menu currentMenu;
 
-    private Navigator(){
+    private Navigator() {
 
     }
-    public static Navigator getInstance(){
+    public static Navigator getInstance() {
         return instance;
     }
 
@@ -22,11 +22,11 @@ public class Navigator {
         this.currentMenu = currentMenu;
     }
 
-    public void printMenu(){
+    public void printMenu() {
         if (currentMenu != null) {
             System.out.println(currentMenu);
             List<MenuItem> items = currentMenu.getMenuItems();
-            for (int i = 0; i< items.size(); i++){
+            for (int i = 0; i < items.size(); i++) {
                 System.out.println((i + 1) + ". " + items.get(i));
             }
         } else {

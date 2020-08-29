@@ -39,7 +39,7 @@ public class InputValidator {
         String line = reader.readLine();
         boolean valid = false;
         while (!valid) {
-            if (pattern.matcher(line).matches()){
+            if (pattern.matcher(line).matches()) {
                 number = Integer.parseInt(line);
                 valid = true;
             } else {
@@ -64,7 +64,7 @@ public class InputValidator {
             try {
                 date = LocalDate.parse(line, dateFormatter);
                 valid = true;
-            } catch (DateTimeParseException ex){
+            } catch (DateTimeParseException ex) {
                 System.out.println("Wrong date entered! Try again...");
                 line = reader.readLine();
                 continue;
@@ -87,12 +87,11 @@ public class InputValidator {
                 //TODO: Check input. Something wrong. Need more debug - formatter?
                 dateTime = LocalDateTime.parse(line, dateTimeFormatter);
                 valid = true;
-            } catch (DateTimeParseException ex){
+            } catch (DateTimeParseException ex) {
                 System.out.println("Wrong date-time entered! Try again...");
                 line = reader.readLine();
                 continue;
             }
-
         }
         return dateTime;
     }
@@ -110,7 +109,7 @@ public class InputValidator {
             try {
                 decimal = new BigDecimal(line);
                 valid = true;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Not a BigDecimal entered! Try again...");
                 line = reader.readLine();
                 continue;

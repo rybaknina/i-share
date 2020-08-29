@@ -1,5 +1,6 @@
 package eu.senla.course.menu;
 
+
 import eu.senla.course.action.garage.*;
 import eu.senla.course.action.mechanic.*;
 import eu.senla.course.action.order.*;
@@ -9,7 +10,8 @@ import eu.senla.course.controller.OrderController;
 import eu.senla.course.controller.SpotController;
 import eu.senla.course.enums.*;
 
-public class Builder {
+
+final public class Builder {
 
     private final static Builder instance = new Builder();
 
@@ -18,11 +20,11 @@ public class Builder {
     private Builder() {
     }
 
-    public static Builder getInstance(){
+    public static Builder getInstance() {
         return instance;
     }
 
-    public Menu buildMenu(){
+    public Menu buildMenu() {
 
         Menu garageMenu = new Menu(MainMenu.SUB.getName());
         Menu toolMenu = new Menu(MainMenu.SUB.getName());
@@ -150,7 +152,7 @@ public class Builder {
         toolMenu.add(exitItem);
     }
 
-    private void createGarageMenu(Menu garageMenu, MenuItem exitItem){
+    private void createGarageMenu(Menu garageMenu, MenuItem exitItem) {
         garageMenu.add(new MenuItem(GarageMenu.ADD.getName(), garageMenu, new AddGarageAction()));
         garageMenu.add(new MenuItem(GarageMenu.DELETE.getName(), garageMenu, new DeleteGarageAction()));
         garageMenu.add(new MenuItem(GarageMenu.GET_ALL.getName(), garageMenu, new GetGaragesAction()));

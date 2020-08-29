@@ -7,12 +7,15 @@ import eu.senla.course.entity.Order;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class AddToolsToOrderAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(AddToolsToOrderAction.class);
     OrderController orderController = OrderController.getInstance();
     ToolController toolController = ToolController.getInstance();
     @Override
@@ -24,7 +27,7 @@ public class AddToolsToOrderAction implements IAction {
         try {
             orderController.addToolsToOrder(order, toolController.getTools());
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
     }
 }

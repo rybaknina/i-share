@@ -15,6 +15,5 @@ public class ImportToolsAction implements IAction {
         } catch (ServiceException e) {
             System.err.println("Error import tools from csv");
         }
-
     }
 }

@@ -15,6 +15,5 @@ public class ImportSpotsAction implements IAction {
         } catch (ServiceException e) {
             System.err.println("Error import spots from csv");
         }
-
     }
 }

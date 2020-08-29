@@ -11,6 +11,8 @@ import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.enums.sql.SqlOrder;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -21,20 +23,19 @@ import java.util.List;
 
 @Repository
 public class OrderRepository implements IOrderRepository {
-
+    private final static Logger logger = LogManager.getLogger(OrderRepository.class);
     @Override
     public void add(Order order) throws RepositoryException {
-        if (order == null){
+        if (order == null) {
             throw new RepositoryException("Order is not exist");
         }
         Connection connection = ConnectionUtil.getInstance().connect();
-        try ( PreparedStatement ps = connection.prepareStatement(SqlOrder.INSERT.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.INSERT.getName())) {
             ps.setTimestamp(1, psDateTime(order.getRequestDate()));
             ps.setTimestamp(2, psDateTime(order.getPlannedDate()));
             ps.setInt(3, order.getMechanic().getId());
             ps.setInt(4, order.getSpot().getId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new RepositoryException("Exception " + e.getMessage());
         }
@@ -44,35 +45,37 @@ public class OrderRepository implements IOrderRepository {
     public void delete(Order order) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.DELETE.getName())){
-
+        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.DELETE.getName())) {
             ps.setInt(1, order.getId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
-            System.err.println("Exception " + e.getMessage());
+            logger.error("Exception " + e.getMessage());
         }
     }
 
     @Override
     public Order getById(int id) {
         Order order = null;
+        if (id == 0) {
+            logger.warn("Wrong Id = " + id);
+            return order;
+        }
         Connection connection = ConnectionUtil.getInstance().connect();
-        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.SELECT_BY_ID.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.SELECT_BY_ID.getName())) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 order = fillOrder(rs, id);
             }
-
         } catch (SQLException e) {
+            logger.info("SQLException " + e.getMessage());
             order = null;
         }
         return order;
     }
 
     private void setOrderStatus(String status, Order order) {
-        if (status != null && !status.isBlank()){
+        if (status != null && !status.isBlank()) {
             switch (status) {
                 case "CLOSE":
                     order.setStatus(OrderStatus.CLOSE);
@@ -94,7 +97,7 @@ public class OrderRepository implements IOrderRepository {
     public List<Order> getAll() {
         List<Order> orders = new ArrayList<>();
         Connection connection = ConnectionUtil.getInstance().connect();
-        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.SELECT_ALL.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.SELECT_ALL.getName())) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Order order = null;
@@ -103,9 +106,8 @@ public class OrderRepository implements IOrderRepository {
 
                 orders.add(order);
             }
-
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
         }
         return orders;
     }
@@ -132,21 +134,21 @@ public class OrderRepository implements IOrderRepository {
         return order;
     }
 
-    private LocalDateTime rsTimeStamp(Timestamp timestamp){
-        if (timestamp != null){
+    private LocalDateTime rsTimeStamp(Timestamp timestamp) {
+        if (timestamp != null) {
             return timestamp.toLocalDateTime();
         }
         return null;
     }
-    private Timestamp psDateTime(LocalDateTime dateTime){
-        if (dateTime != null){
+    private Timestamp psDateTime(LocalDateTime dateTime) {
+        if (dateTime != null) {
             return Timestamp.valueOf(dateTime);
         }
         return null;
     }
-    public void update(Order order) throws RepositoryException{
+    public void update(Order order) throws RepositoryException {
         Connection connection = ConnectionUtil.getInstance().connect();
-        try ( PreparedStatement ps = connection.prepareStatement(SqlOrder.UPDATE.getName())) {
+        try (PreparedStatement ps = connection.prepareStatement(SqlOrder.UPDATE.getName())) {
             ps.setTimestamp(1, psDateTime(order.getRequestDate()));
             ps.setTimestamp(2, psDateTime(order.getPlannedDate()));
             ps.setTimestamp(3, psDateTime(order.getStartDate()));
@@ -162,16 +164,16 @@ public class OrderRepository implements IOrderRepository {
             throw new RepositoryException("Exception " + e.getMessage());
         }
     }
-    public void setAll(List<Order> orders){
+    public void setAll(List<Order> orders) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement deleleAll = connection.prepareStatement(SqlOrder.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlOrder.RESET.getName());PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())){
+        try (PreparedStatement deleleAll = connection.prepareStatement(SqlOrder.DELETE_ALL.getName()); PreparedStatement reset = connection.prepareStatement(SqlOrder.RESET.getName()); PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())) {
             connection.setAutoCommit(false);
 
             deleleAll.executeUpdate();
             reset.executeUpdate();
 
-            for (Order order: orders){
+            for (Order order: orders) {
                 insert.setTimestamp(1, psDateTime(order.getRequestDate()));
                 insert.setTimestamp(2, psDateTime(order.getPlannedDate()));
                 insert.setInt(3, order.getMechanic().getId());
@@ -184,18 +186,18 @@ public class OrderRepository implements IOrderRepository {
             try {
                 connection.rollback();
             } catch (SQLException e1) {
-                System.err.println("Rollback exception " + e.getMessage());
+                logger.error("Rollback exception " + e.getMessage());
             }
-            System.err.println("Exception " + e.getMessage());
+            logger.error("Exception " + e.getMessage());
         }
     }
-    public void addAll(List<Order> orders){
+    public void addAll(List<Order> orders) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())){
+        try (PreparedStatement insert = connection.prepareStatement(SqlOrder.INSERT.getName())) {
             connection.setAutoCommit(false);
 
-            for (Order order: orders){
+            for (Order order: orders) {
                 insert.setTimestamp(1, psDateTime(order.getRequestDate()));
                 insert.setTimestamp(2, psDateTime(order.getPlannedDate()));
                 insert.setInt(3, order.getMechanic().getId());
@@ -208,9 +210,9 @@ public class OrderRepository implements IOrderRepository {
             try {
                 connection.rollback();
             } catch (SQLException e1) {
-                System.err.println("Rollback exception " + e.getMessage());
+                logger.error("Rollback exception " + e.getMessage());
             }
-            System.err.println("Exception " + e.getMessage());
+            logger.error("Exception " + e.getMessage());
         }
     }
 }

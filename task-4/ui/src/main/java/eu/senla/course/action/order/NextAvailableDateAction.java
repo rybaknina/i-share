@@ -5,6 +5,8 @@ import eu.senla.course.controller.OrderController;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class NextAvailableDateAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(NextAvailableDateAction.class);
     private OrderController orderController = OrderController.getInstance();
     @Override
     public void execute() throws IOException {
@@ -25,7 +28,7 @@ public class NextAvailableDateAction implements IAction {
         try {
             nextDate = orderController.nextAvailableDate(endDate);
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
         if (nextDate != null) {
             System.out.println(nextDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")));

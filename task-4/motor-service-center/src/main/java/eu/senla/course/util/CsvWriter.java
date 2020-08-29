@@ -12,16 +12,15 @@ public class CsvWriter {
     private static final String SEPARATOR = ";";
 
     public static void writeRecords(File file, List<String> header, List<List<String>> data) throws CsvException {
-        try(FileWriter csvWriter = new FileWriter(file)){
+        try (FileWriter csvWriter = new FileWriter(file)) {
 
-            // TODO: Check more
-            for (String head: header){
+            for (String head: header) {
                 csvWriter.append(head);
                 csvWriter.append(SEPARATOR);
             }
             csvWriter.append("\n");
-            for (List<String> row: data){
-                csvWriter.append(String.join(SEPARATOR,row));
+            for (List<String> row: data) {
+                csvWriter.append(String.join(SEPARATOR, row));
                 csvWriter.append("\n");
             }
         } catch (IOException e) {
@@ -29,7 +28,7 @@ public class CsvWriter {
         }
     }
 
-    public static File recordFile(String resource){
+    public static File recordFile(String resource) {
         File file = new File(Objects.requireNonNull(CsvWriter.class.getClassLoader().getResource(resource)).getFile());
         return file;
     }

@@ -1,7 +1,17 @@
 package eu.senla.course.test;
 
-import eu.senla.course.controller.*;
-import eu.senla.course.entity.*;
+import eu.senla.course.controller.AnnotationController;
+import eu.senla.course.controller.InjectionController;
+import eu.senla.course.controller.MechanicController;
+import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.OrderController;
+import eu.senla.course.controller.SpotController;
+
+import eu.senla.course.entity.Garage;
+import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Order;
+import eu.senla.course.entity.Tool;
+import eu.senla.course.entity.Spot;
 import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
 import eu.senla.course.entity.comparator.mechanic.ByBusy;
 import eu.senla.course.entity.comparator.order.ByCompleteDate;
@@ -24,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestServiceCenter {
+
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" dd.mm.yyyy HH:mm");
     public static void main(String[] args) throws ServiceException, RepositoryException {
         try {
@@ -46,12 +57,12 @@ public class TestServiceCenter {
 
         // Мастерская оказывает услуги
         System.out.println("List of Tools: ");
-        for (Tool tool: tools){
+        for (Tool tool: tools) {
             System.out.print(tool.getName() + "; ");
         }
 
         // В автомастерской есть мастера
-        System.out.println("\n"+ MechanicController.getInstance().getMechanics().toString());
+        System.out.println("\n" + MechanicController.getInstance().getMechanics().toString());
 
         // Далее действия по услугам и заказу - безличное
 
@@ -75,10 +86,10 @@ public class TestServiceCenter {
         System.out.println("Number Available Spots on Date: " + GarageController.getInstance().numberAvailableSpots(plannedDate, OrderController.getInstance().getOrders()));
 
         // выбор свободного места в гараже, например, первое доступное
-        Spot spot = freeSpots.size()==0? SpotController.getInstance().getSpots().get(0): freeSpots.get(0);
+        Spot spot = freeSpots.size() == 0 ? SpotController.getInstance().getSpots().get(0) : freeSpots.get(0);
         // Создание заказа
         Order order = new Order(LocalDateTime.now(), plannedDate, mechanics.get(0), spot);
-        Order order2 = new Order(LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.size()<1? SpotController.getInstance().getSpots().get(1):freeSpots.get(1));
+        Order order2 = new Order(LocalDateTime.now().minusHours(3), plannedDate.plusHours(4), mechanics.get(0), freeSpots.size() < 1 ? SpotController.getInstance().getSpots().get(1) : freeSpots.get(1));
 
         List<Order> ordersMechanic = new ArrayList<>();
         ordersMechanic.add(order);
@@ -148,7 +159,7 @@ public class TestServiceCenter {
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders in progress for the period");
-        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByCompleteDate(), OrderStatus.IN_PROGRESS,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByCompleteDate(), OrderStatus.IN_PROGRESS, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         // после выставления счета - закрываем заказ
@@ -173,32 +184,30 @@ public class TestServiceCenter {
 
         // Заказы (выполненные/удаленные/отмененные) за промежуток времени
         System.out.println("Orders by Complete Date");
-        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByCompleteDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByCompleteDate(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Price");
-        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByPrice(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByPrice(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Request Date");
-        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByRequestDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByRequestDate(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
 
         System.out.println("Orders by Planned Date");
-        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE,LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
+        ordersForPeriod = OrderController.getInstance().ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusMonths(2));
         printOrders(ordersForPeriod);
-
-
     }
-    private static void printOrders(List<Order> orders){
-        for (Order order: orders){
-            if (order != null){
+    private static void printOrders(List<Order> orders) {
+        for (Order order: orders) {
+            if (order != null) {
                 System.out.println(order.toString());
             }
         }
     }
-    private static void printSpot(List<Spot> freeSpots){
-        for (Spot freeSpot: freeSpots){
+    private static void printSpot(List<Spot> freeSpots) {
+        for (Spot freeSpot: freeSpots) {
             if (freeSpot != null) {
                 System.out.println("Available spot: " + freeSpot.toString());
             }

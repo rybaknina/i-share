@@ -18,7 +18,7 @@
 **/bin/**
 **/testbin/**
 **/target/**
-**/target-ant/**
+**/log/**
 **/WEB-INF/classes/**
 
 #.gitignore
