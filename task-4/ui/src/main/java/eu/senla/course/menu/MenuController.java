@@ -9,38 +9,40 @@ import eu.senla.course.exception.AnnotationException;
 import eu.senla.course.exception.InjectionException;
 import eu.senla.course.util.ConnectionUtil;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class MenuController {
+final public class MenuController {
     private final static MenuController instance = new MenuController();
     private Builder builder = Builder.getInstance();
     private Navigator navigator = Navigator.getInstance();
-
-    private MenuController(){
+    private final static Logger logger = LogManager.getLogger(MenuController.class);
+    private MenuController() {
 
         try {
             InjectionController.getInstance().inject();
         } catch (InjectionException e) {
-            System.err.println("Wrong work with injections " + e.getMessage());
+            logger.error("Wrong work with injections " + e.getMessage());
         }
 
         try {
             AnnotationController.getInstance().init();
         } catch (AnnotationException e) {
-            System.err.println("Wrong work with annotations " + e.getMessage());
+            logger.error("Wrong work with annotations " + e.getMessage());
         }
 
         try {
             new LoadFromFileAction().execute();
         } catch (IOException e) {
-            System.out.println("File is broken");
+            logger.warn("File is broken " + e.getMessage());
         }
     }
 
-    public static MenuController getInstance(){
+    public static MenuController getInstance() {
         return instance;
     }
 
@@ -52,7 +54,7 @@ public class MenuController {
 
         boolean exit = false;
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             while (!exit) {
 
                 int input = InputValidator.readInteger(reader) - 1;

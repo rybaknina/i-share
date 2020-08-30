@@ -15,6 +15,8 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ import java.util.Objects;
 
 @Service
 public class SpotService implements ISpotService {
-
+    private final static Logger logger = LogManager.getLogger(SpotService.class);
     @ConfigProperty(key = "spot")
     private String spotPath;
     @ConfigProperty(key = "modify.spot", type = ConfigType.BOOLEAN)
@@ -68,9 +70,9 @@ public class SpotService implements ISpotService {
         }
     }
 
-    public List<Spot> spotsInGarage(Garage garage){
+    public List<Spot> spotsInGarage(Garage garage) {
         List<Spot> spotList = new ArrayList<>();
-        if (garage != null){
+        if (garage != null) {
             spotList = garage.getSpots();
         }
         return spotList;
@@ -86,7 +88,7 @@ public class SpotService implements ISpotService {
                 createSpots(lists);
             }
         } catch (CsvException e) {
-            System.out.println("Csv Reader exception " + e.getMessage());
+            logger.info("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
             throw new ServiceException("Error read file");
         }
@@ -96,13 +98,12 @@ public class SpotService implements ISpotService {
         List<Spot> loadedSpots = new ArrayList<>();
         try {
             for (List<String> list : lists) {
-
                 int n = 0;
                 int id = Integer.parseInt(list.get(n++));
                 int garageId = Integer.parseInt(list.get(n));
 
                 Garage garage = GarageController.getInstance().getGarageById(garageId);
-                if (garage == null){
+                if (garage == null) {
                     throw new ServiceException("Garage is not found");
                 }
 
@@ -110,13 +111,12 @@ public class SpotService implements ISpotService {
                 if (newSpot != null) {
                     newSpot.setGarage(garage);
                     updateSpot(newSpot);
-
                 } else {
                     newSpot = new Spot(garage);
                     loadedSpots.add(newSpot);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException("Error with create spot from csv");
         }
 
@@ -131,7 +131,7 @@ public class SpotService implements ISpotService {
 
         try {
             File file = CsvWriter.recordFile(spotPath);
-            for (Spot spot: spotRepository.getAll()){
+            for (Spot spot: spotRepository.getAll()) {
                 if (spot != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(spot.getId()));
@@ -140,9 +140,8 @@ public class SpotService implements ISpotService {
                 }
             }
             CsvWriter.writeRecords(file, headerCsv(), data);
-
         } catch (CsvException e) {
-            System.out.println("Csv write exception " + e.getMessage());
+            logger.warn("Csv write exception " + e.getMessage());
         }
     }
 

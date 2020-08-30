@@ -2,12 +2,26 @@ package eu.senla.course.util;
 
 import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.entity.IEntity;
-import eu.senla.course.controller.*;
-import eu.senla.course.entity.*;
+import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.MechanicController;
+import eu.senla.course.controller.OrderController;
+import eu.senla.course.controller.SpotController;
+import eu.senla.course.controller.ToolController;
+import eu.senla.course.entity.Garage;
+import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Order;
+import eu.senla.course.entity.Spot;
+import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.exception.SerializeException;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +42,6 @@ public class SerializeUtil {
                 entityList.add(ToolController.getInstance().getTools());
 
                 os.writeObject(entityList);
-
             }
         } catch (FileNotFoundException e) {
             throw new SerializeException("File with data is not found");

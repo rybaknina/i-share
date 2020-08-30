@@ -10,6 +10,8 @@ import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 
 public class AddOrderAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(AddOrderAction.class);
     private OrderController orderController = OrderController.getInstance();
     private MechanicController mechanicController = MechanicController.getInstance();
     private SpotController spotController = SpotController.getInstance();
@@ -34,7 +37,7 @@ public class AddOrderAction implements IAction {
         try {
             orderController.addOrder(new Order(requestDate, plannedDate, mechanic, spot));
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
     }
 }

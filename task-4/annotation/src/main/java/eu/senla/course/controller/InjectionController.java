@@ -2,29 +2,28 @@ package eu.senla.course.controller;
 
 import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.exception.InjectionException;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class InjectionController {
+final public class InjectionController {
     private final static InjectionController instance = new InjectionController();
     private final static String START_WITH = "eu.senla.course";
     private BeanController beanController = BeanController.getInstance();
 
-    private InjectionController(){
+    private InjectionController() {
 
     }
 
-    public static InjectionController getInstance(){
+    public static InjectionController getInstance() {
         return instance;
     }
 
     public void inject() throws InjectionException {
         try {
             List<Class <?>> classes = LoaderController.getClassesForPackage(START_WITH);
-            for (Class clazz: classes){
+            for (Class clazz: classes) {
                 createInstances(clazz);
             }
         } catch (ClassNotFoundException e) {
@@ -32,7 +31,7 @@ public class InjectionController {
         }
     }
 
-    private void createInstances(@NotNull Class<?> clazz) throws InjectionException {
+    private void createInstances(Class<?> clazz) throws InjectionException {
 
         try {
             for (Field field : clazz.getDeclaredFields()) {

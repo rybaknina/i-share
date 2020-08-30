@@ -8,6 +8,8 @@ import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.sql.SqlTool;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -20,43 +22,45 @@ import java.util.List;
 @Repository
 public class ToolRepository implements IToolRepository {
 
+    private final static Logger logger = LogManager.getLogger(ToolRepository.class);
     @Override
     public void add(Tool tool) throws RepositoryException {
-        if (tool == null){
+        if (tool == null) {
             throw new RepositoryException("Tool is not exist");
         }
         Connection connection = ConnectionUtil.getInstance().connect();
-        try ( PreparedStatement ps = connection.prepareStatement(SqlTool.INSERT.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlTool.INSERT.getName())) {
             ps.setString(1, tool.getName());
             ps.setInt(2, tool.getHours());
             ps.setBigDecimal(3, tool.getHourlyPrice());
             ps.setInt(4, tool.getOrder().getId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new RepositoryException("Exception " + e.getMessage());
         }
     }
 
     @Override
-    public void delete(Tool tool)  {
+    public void delete(Tool tool) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement ps = connection.prepareStatement(SqlTool.DELETE.getName())){
-
+        try (PreparedStatement ps = connection.prepareStatement(SqlTool.DELETE.getName())) {
             ps.setInt(1, tool.getId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
-            System.err.println("Exception " + e.getMessage());
+            logger.error("error message " + e.getMessage());
         }
     }
 
     @Override
     public Tool getById(int id) {
         Tool tool = null;
+        if (id == 0) {
+            logger.warn("Wrong Id = " + id);
+            return tool;
+        }
         Connection connection = ConnectionUtil.getInstance().connect();
-        try (PreparedStatement ps = connection.prepareStatement(SqlTool.SELECT_BY_ID.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlTool.SELECT_BY_ID.getName())) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -68,8 +72,8 @@ public class ToolRepository implements IToolRepository {
                 Order order = OrderController.getInstance().getOrderById(orderId);
                 tool = new Tool(id, name, hours, hourlyPrice, order);
             }
-
         } catch (SQLException e) {
+            logger.info("SQLException " + e.getMessage());
             tool = null;
         }
         return tool;
@@ -79,7 +83,7 @@ public class ToolRepository implements IToolRepository {
     public List<Tool> getAll() {
         List<Tool> tools = new ArrayList<>();
         Connection connection = ConnectionUtil.getInstance().connect();
-        try (PreparedStatement ps = connection.prepareStatement(SqlTool.SELECT_ALL.getName())){
+        try (PreparedStatement ps = connection.prepareStatement(SqlTool.SELECT_ALL.getName())) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Tool tool = null;
@@ -94,35 +98,32 @@ public class ToolRepository implements IToolRepository {
 
                 tools.add(tool);
             }
-
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            logger.error("SQLException " + e.getMessage());
         }
         return tools;
     }
 
-    public void update(Tool tool) throws RepositoryException{
+    public void update(Tool tool) throws RepositoryException {
         Connection connection = ConnectionUtil.getInstance().connect();
-        try ( PreparedStatement ps = connection.prepareStatement(SqlTool.UPDATE.getName())) {
-
+        try (PreparedStatement ps = connection.prepareStatement(SqlTool.UPDATE.getName())) {
             ps.setString(1, tool.getName());
             ps.setInt(2, tool.getHours());
             ps.setBigDecimal(3, tool.getHourlyPrice());
             ps.setInt(4, tool.getOrder().getId());
             ps.setInt(5, tool.getId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new RepositoryException("Exception " + e.getMessage());
         }
     }
-    public void setAll(List<Tool> tools){
+    public void setAll(List<Tool> tools) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())){
+        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())) {
             connection.setAutoCommit(false);
 
-            for (Tool tool: tools){
+            for (Tool tool: tools) {
                 insert.setString(1, tool.getName());
                 insert.setInt(2, tool.getHours());
                 insert.setBigDecimal(3, tool.getHourlyPrice());
@@ -135,18 +136,18 @@ public class ToolRepository implements IToolRepository {
             try {
                 connection.rollback();
             } catch (SQLException e1) {
-                System.err.println("Rollback exception " + e.getMessage());
+                logger.error("Rollback exception " + e.getMessage());
             }
-            System.err.println("Exception " + e.getMessage());
+            logger.error("SQLException " + e.getMessage());
         }
     }
-    public void addAll(List<Tool> tools){
+    public void addAll(List<Tool> tools) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
-        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())){
+        try (PreparedStatement insert = connection.prepareStatement(SqlTool.INSERT.getName())) {
             connection.setAutoCommit(false);
 
-            for (Tool tool: tools){
+            for (Tool tool: tools) {
                 insert.setString(1, tool.getName());
                 insert.setInt(2, tool.getHours());
                 insert.setBigDecimal(3, tool.getHourlyPrice());
@@ -159,9 +160,9 @@ public class ToolRepository implements IToolRepository {
             try {
                 connection.rollback();
             } catch (SQLException e1) {
-                System.err.println("Rollback exception " + e.getMessage());
+                logger.error("Rollback exception " + e.getMessage());
             }
-            System.err.println("Exception " + e.getMessage());
+            logger.error("SQLException " + e.getMessage());
         }
     }
 }

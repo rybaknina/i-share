@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -33,7 +31,7 @@ class LoaderController {
         }
     }
     private static void checkJarFile(JarURLConnection connection, String packageName, List<Class<?>> classes) throws ClassNotFoundException, IOException {
-        
+
         final Enumeration<JarEntry> entries = connection.getJarFile().entries();
 
         while (entries.hasMoreElements()) {
@@ -64,7 +62,7 @@ class LoaderController {
                 if (connection instanceof JarURLConnection) {
                     checkJarFile((JarURLConnection) connection, packageName, classes);
                 } else {
-                    checkDirectory(new File(URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8)), packageName, classes);
+                    checkDirectory(new File(url.getPath()), packageName, classes);
                 }
             }
         } catch (IOException e) {

@@ -23,7 +23,5 @@ public class DeleteToolAction implements IAction {
         } else {
             System.err.println("Tool is not found");
         }
-
-
     }
 }

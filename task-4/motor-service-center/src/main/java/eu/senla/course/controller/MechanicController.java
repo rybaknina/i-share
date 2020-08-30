@@ -8,7 +8,7 @@ import eu.senla.course.exception.ServiceException;
 import java.util.Comparator;
 import java.util.List;
 
-public class MechanicController {
+final public class MechanicController {
     @Injection
     private IMechanicService service;
     private final static MechanicController instance = new MechanicController();
@@ -16,17 +16,17 @@ public class MechanicController {
     private MechanicController() {
     }
 
-    public static MechanicController getInstance(){
+    public static MechanicController getInstance() {
         return instance;
     }
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
         service.addMechanic(mechanic);
     }
-    public List<Mechanic> getMechanics(){
+    public List<Mechanic> getMechanics() {
         return service.getMechanics();
     }
-    public void setMechanics(List<Mechanic> mechanics){
+    public void setMechanics(List<Mechanic> mechanics) {
         service.setMechanics(mechanics);
     }
     public void deleteMechanic(Mechanic mechanic) {
@@ -47,7 +47,7 @@ public class MechanicController {
     public void mechanicsFromCsv() throws ServiceException {
         service.mechanicsFromCsv();
     }
-    public void mechanicsToCsv(){
+    public void mechanicsToCsv() {
         service.mechanicsToCsv();
     }
 }

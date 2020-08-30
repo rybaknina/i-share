@@ -7,6 +7,8 @@ import eu.senla.course.entity.Order;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class NumberAvailableSpotsAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(NumberAvailableSpotsAction.class);
     private GarageController garageController = GarageController.getInstance();
     private OrderController orderController = OrderController.getInstance();
     @Override
@@ -27,8 +30,7 @@ public class NumberAvailableSpotsAction implements IAction {
         try {
             garageController.numberAvailableSpots(futureDate, orders);
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
-
     }
 }

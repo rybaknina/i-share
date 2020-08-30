@@ -19,7 +19,8 @@ import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.GeneratorUtil;
 import eu.senla.course.util.exception.CsvException;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ import java.util.Objects;
 
 @Service
 public class GarageService implements IGarageService {
-
+    private final static Logger logger = LogManager.getLogger(GarageService.class);
     @ConfigProperty(key = "garage")
     private String garagePath;
 
@@ -70,29 +71,29 @@ public class GarageService implements IGarageService {
         return garageRepository.getById(id);
     }
 
-    private List<Spot> createSpots(@NotNull Garage garage) throws ServiceException {
+    private List<Spot> createSpots(Garage garage) throws ServiceException {
         List<Spot> spots = SpotController.getInstance().spotsInGarage(garage);
-        if (spots.size() == 0){
+        if (spots.size() == 0) {
             int len = GeneratorUtil.generateNumber();
-            for (int i = 0; i < len; i++){
+            for (int i = 0; i < len; i++) {
                 SpotController.getInstance().addSpot(new Spot(garage));
             }
         }
         return SpotController.getInstance().getSpots();
     }
 
-    public int lengthAllSpots(){
+    public int lengthAllSpots() {
         int len = 0;
-        if (garageRepository.getAll().size() == 0){
+        if (garageRepository.getAll().size() == 0) {
             return len;
         }
-        for (Object garage: garageRepository.getAll()){
-            len += ((Garage)garage).getSpots().size();
+        for (Garage garage: garageRepository.getAll()) {
+            len += garage.getSpots().size();
         }
         return len;
     }
 
-    private List<Spot> spotsOnDate(LocalDateTime date, List<Order> orders){
+    private List<Spot> spotsOnDate(LocalDateTime date, List<Order> orders) {
         List<Spot> spots = new ArrayList<>();
         if (orders != null && orders.size() != 0) {
             for (Order order : orders) {
@@ -108,13 +109,13 @@ public class GarageService implements IGarageService {
 
     public List<Spot> listAvailableSpots(LocalDateTime date, List<Order> orders) throws ServiceException {
         List<Spot> freeSpots = new ArrayList<>();
-        if (garageRepository.getAll().size() == 0){
+        if (garageRepository.getAll().size() == 0) {
             throw new ServiceException("Spots are not available");
         }
-        for (Garage garage: garageRepository.getAll()){
+        for (Garage garage: garageRepository.getAll()) {
             List<Spot> busySpots = spotsOnDate(date, orders);
 
-            for (Spot spot: garage.getSpots()){
+            for (Spot spot: garage.getSpots()) {
                 if (spot != null) {
                     if (busySpots.size() == 0 || !busySpots.contains(spot)) {
                         freeSpots.add(spot);
@@ -126,7 +127,7 @@ public class GarageService implements IGarageService {
     }
 
     public int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException {
-        if (orders.size() == 0){
+        if (orders.size() == 0) {
             return 0;
         }
         return (int) listAvailableSpots(futureDate, orders).stream().filter(Objects::nonNull).count();
@@ -143,7 +144,7 @@ public class GarageService implements IGarageService {
                 createGarages(lists);
             }
         } catch (CsvException e) {
-            System.out.println("Csv Reader exception " + e.getMessage());
+            logger.warn("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
             throw new ServiceException("Error read file");
         }
@@ -183,7 +184,7 @@ public class GarageService implements IGarageService {
                     loadedGarages.add(newGarage);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException("Error with create garage from csv");
         }
 
@@ -227,12 +228,12 @@ public class GarageService implements IGarageService {
         }
     }
 
-    public void garagesToCsv(){
+    public void garagesToCsv() {
         List<List<String>> data = new ArrayList<>();
 
         try {
             File file = CsvWriter.recordFile(garagePath);
-            for (Garage garage: garageRepository.getAll()){
+            for (Garage garage: garageRepository.getAll()) {
                 if (garage != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(garage.getId()));
@@ -246,17 +247,16 @@ public class GarageService implements IGarageService {
                 }
             }
             CsvWriter.writeRecords(file, headerCsv(), data);
-
         } catch (CsvException e) {
-            System.out.println("Csv write exception " + e.getMessage());
+            logger.warn("Csv write exception " + e.getMessage());
         }
     }
 
     private String mechanicsToCsv(Garage garage) {
         StringBuilder mechanicsString = new StringBuilder();
         List<Mechanic> mechanics = MechanicController.getInstance().getMechanics();
-        for (Mechanic mechanic:mechanics){
-            if (mechanic != null && mechanic.getGarage().equals(garage)){
+        for (Mechanic mechanic:mechanics) {
+            if (mechanic != null && mechanic.getGarage().equals(garage)) {
                 mechanicsString.append(mechanic.getId());
                 mechanicsString.append("|");
             }
@@ -268,8 +268,8 @@ public class GarageService implements IGarageService {
         StringBuilder spotsString = new StringBuilder();
         List<Spot> spots = SpotController.getInstance().getSpots();
 
-        for (Spot spot: spots){
-            if (spot != null && spot.getGarage().equals(garage)){
+        for (Spot spot: spots) {
+            if (spot != null && spot.getGarage().equals(garage)) {
                 spotsString.append(spot.getId());
                 spotsString.append("|");
             }

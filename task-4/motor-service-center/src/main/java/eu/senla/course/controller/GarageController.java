@@ -10,7 +10,7 @@ import eu.senla.course.exception.ServiceException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class GarageController {
+final public class GarageController {
     @Injection
     private IGarageService service;
     private static GarageController instance = new GarageController();
@@ -18,17 +18,17 @@ public class GarageController {
     private GarageController() {
     }
 
-    public static GarageController getInstance(){
+    public static GarageController getInstance() {
         return instance;
     }
 
     public void addGarage(Garage garage) throws ServiceException {
         service.addGarage(garage);
     }
-    public void setGarages(List<Garage> garages){
+    public void setGarages(List<Garage> garages) {
         service.setGarages(garages);
     }
-    public List<Garage> getGarages(){
+    public List<Garage> getGarages() {
         return service.getGarages();
     }
     public Garage getGarageById(int id) {
@@ -37,7 +37,7 @@ public class GarageController {
     public void deleteGarage(Garage garage) {
         service.deleteGarage(garage);
     }
-    public int lengthAllSpots(){
+    public int lengthAllSpots() {
         return service.lengthAllSpots();
     }
     public List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException {
@@ -46,10 +46,10 @@ public class GarageController {
     public int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException {
         return service.numberAvailableSpots(futureDate, orders);
     }
-    public void garagesFromCsv() throws ServiceException{
+    public void garagesFromCsv() throws ServiceException {
         service.garagesFromCsv();
     }
-    public void garagesToCsv(){
+    public void garagesToCsv() {
         service.garagesToCsv();
     }
 }

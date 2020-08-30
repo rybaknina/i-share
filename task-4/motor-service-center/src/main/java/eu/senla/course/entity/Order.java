@@ -93,9 +93,9 @@ public class Order implements IEntity {
     public void setTools(List<Tool> tools) {
         this.tools = tools;
         int hours = 0;
-        if (tools != null){
-            for (int i = 0; i< tools.size(); i++){
-                if (tools.get(i) != null){
+        if (tools != null) {
+            for (int i = 0; i < tools.size(); i++) {
+                if (tools.get(i) != null) {
                     hours += tools.get(i).getHours();
                 }
             }
@@ -141,9 +141,9 @@ public class Order implements IEntity {
     public String toString() {
         return "Order{" +
                 "id = " + id +
-                ", requestDate = " + ((requestDate!=null)? requestDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
-                ", plannedDate = " + ((plannedDate!=null)? plannedDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
-                ", completeDate = " + ((completeDate!=null)? completeDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")):"") +
+                ", requestDate = " + ((requestDate != null) ? requestDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")) : "") +
+                ", plannedDate = " + ((plannedDate != null) ? plannedDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")) : "") +
+                ", completeDate = " + ((completeDate != null) ? completeDate.format(DateTimeFormatter.ofPattern("d.MM.uuuu HH:mm")) : "") +
                 ", price = " + price +
                 ", status = " + status +
                 '}';

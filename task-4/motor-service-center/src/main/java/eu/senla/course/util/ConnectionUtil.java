@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectionUtil {
+final public class ConnectionUtil {
 
     @ConfigProperty(key = "db.user")
     private static String user;
@@ -24,12 +24,12 @@ public class ConnectionUtil {
 
     }
 
-    public static ConnectionUtil getInstance(){
+    public static ConnectionUtil getInstance() {
         return instance;
     }
 
     public Connection connect() {
-        if (connection == null){
+        if (connection == null) {
             try {
                 if (driver != null) {
                     Class.forName(driver);
@@ -42,7 +42,7 @@ public class ConnectionUtil {
         return connection;
     }
 
-    public void closeConnection(){
+    public void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();

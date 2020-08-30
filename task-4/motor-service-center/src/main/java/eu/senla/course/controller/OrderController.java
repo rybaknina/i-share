@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderController {
+final public class OrderController {
     @Injection
     private IOrderService service;
     private final static OrderController instance = new OrderController();
@@ -21,20 +21,20 @@ public class OrderController {
     private OrderController() {
     }
 
-    public static OrderController getInstance(){
+    public static OrderController getInstance() {
         return instance;
     }
 
     public void addOrder(Order order) throws ServiceException {
         service.addOrder(order);
     }
-    public List<Order> getOrders(){
+    public List<Order> getOrders() {
         return service.getOrders();
     }
     public void deleteOrder(Order order) {
         service.deleteOrder(order);
     }
-    public boolean isDeleteOrder(){
+    public boolean isDeleteOrder() {
         return service.isDeleteOrder();
     }
     public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
@@ -46,10 +46,10 @@ public class OrderController {
     public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
         service.changeStatusOrder(order, status);
     }
-    public boolean isShiftTime(){
+    public boolean isShiftTime() {
         return service.isShiftTime();
     }
-    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException{
+    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
         return service.listOrders(comparator);
     }
     public void changeStartDateOrders(int hours) throws ServiceException {
@@ -76,10 +76,10 @@ public class OrderController {
     public void updateOrder(Order order) throws ServiceException {
         service.updateOrder(order);
     }
-    public void ordersFromCsv() throws ServiceException{
+    public void ordersFromCsv() throws ServiceException {
         service.ordersFromCsv();
     }
-    public void ordersToCsv(){
+    public void ordersToCsv() {
         service.ordersToCsv();
     }
 }

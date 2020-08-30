@@ -15,6 +15,5 @@ public class ImportMechanicsAction implements IAction {
         } catch (ServiceException e) {
             System.err.println("Error import mechanics from csv");
         }
-
     }
 }

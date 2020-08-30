@@ -16,13 +16,17 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.*;
 
+
+
 @Service
 public class MechanicService implements IMechanicService {
-
+    private final static Logger logger = LogManager.getLogger(MechanicService.class);
     @ConfigProperty(key = "mechanic")
     private String mechanicPath;
     @Injection
@@ -61,11 +65,11 @@ public class MechanicService implements IMechanicService {
     }
 
     public Mechanic firstFreeMechanic() throws ServiceException {
-        if (mechanicRepository.getAll().size() == 0){
+        if (mechanicRepository.getAll().size() == 0) {
             throw new ServiceException("Auto mechanics are not exist");
         }
-        for (Mechanic mechanic: mechanicRepository.getAll()){
-            if (mechanic.isMechanicFree()){
+        for (Mechanic mechanic: mechanicRepository.getAll()) {
+            if (mechanic.isMechanicFree()) {
                 return mechanic;
             }
         }
@@ -74,11 +78,11 @@ public class MechanicService implements IMechanicService {
     }
 
     public void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException {
-        if (mechanicRepository.getAll().size() == 0){
+        if (mechanicRepository.getAll().size() == 0) {
             throw new ServiceException("Auto mechanics are not exist");
         }
         mechanicRepository.getAll().sort(comparator);
-        for (Mechanic mechanic: mechanicRepository.getAll()){
+        for (Mechanic mechanic: mechanicRepository.getAll()) {
             System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());
         }
     }
@@ -94,7 +98,7 @@ public class MechanicService implements IMechanicService {
                 createMechanics(lists);
             }
         } catch (CsvException e) {
-            System.out.println("Csv Reader exception " + e.getMessage());
+            logger.warn("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
             throw new ServiceException("Error read file");
         }
@@ -123,10 +127,10 @@ public class MechanicService implements IMechanicService {
                     List<String> idOrders = Arrays.asList(list.get(n++).split("\\|"));
                     ordersOfMechanic(newMechanic, idOrders);
                 }
-                if (list.size() >= (n+1)) {
+                if (list.size() >= (n + 1)) {
                     int garageId = Integer.parseInt(list.get(n));
                     Garage garage = GarageController.getInstance().getGarageById(garageId);
-                    if (garage != null){
+                    if (garage != null) {
                         newMechanic.setGarage(garage);
                     }
                 }
@@ -135,9 +139,8 @@ public class MechanicService implements IMechanicService {
                 } else {
                     loadedMechanics.add(newMechanic);
                 }
-
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException("Error with create mechanics from csv");
         }
 
@@ -170,7 +173,7 @@ public class MechanicService implements IMechanicService {
 
         try {
             File file = CsvWriter.recordFile(mechanicPath);
-            for (Mechanic mechanic: mechanicRepository.getAll()){
+            for (Mechanic mechanic: mechanicRepository.getAll()) {
                 if (mechanic != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(mechanic.getId()));
@@ -186,16 +189,15 @@ public class MechanicService implements IMechanicService {
                 }
             }
             CsvWriter.writeRecords(file, headerCsv(), data);
-
         } catch (CsvException e) {
-            System.out.println("Csv write exception " + e.getMessage());
+            logger.warn("Csv write exception " + e.getMessage());
         }
     }
 
     private String orderToCsv(Mechanic mechanic) {
         StringBuilder ordersString = new StringBuilder();
-        for (Order order: OrderController.getInstance().getOrders()){
-            if (order != null && order.getMechanic().equals(mechanic)){
+        for (Order order: OrderController.getInstance().getOrders()) {
+            if (order != null && order.getMechanic().equals(mechanic)) {
                 ordersString.append(order.getId());
                 ordersString.append("|");
             }
@@ -211,5 +213,4 @@ public class MechanicService implements IMechanicService {
         header.add(CsvMechanicHeader.GARAGE_ID.getName());
         return header;
     }
-
 }

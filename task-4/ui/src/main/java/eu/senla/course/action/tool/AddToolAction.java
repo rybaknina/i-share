@@ -8,6 +8,8 @@ import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 public class AddToolAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(AddToolAction.class);
     private ToolController controller = ToolController.getInstance();
     @Override
     public void execute() throws IOException {
@@ -30,7 +33,7 @@ public class AddToolAction implements IAction {
         try {
             controller.addTool(new Tool(name, hours, price, order));
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
     }
 }

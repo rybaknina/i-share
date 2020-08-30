@@ -12,6 +12,8 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -21,7 +23,7 @@ import java.util.Objects;
 
 @Service
 public class ToolService implements IToolService {
-
+    private final static Logger logger = LogManager.getLogger(ToolService.class);
     @ConfigProperty(key = "tool")
     private String toolPath;
 
@@ -69,7 +71,7 @@ public class ToolService implements IToolService {
                 createTools(lists);
             }
         } catch (CsvException e) {
-            System.out.println("Csv Reader exception " + e.getMessage());
+            logger.warn("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
             throw new ServiceException("Error read file");
         }
@@ -92,13 +94,12 @@ public class ToolService implements IToolService {
                     newTool.setHours(hours);
                     newTool.setHourlyPrice(hourlyPrice);
                     updateTool(newTool);
-
                 } else {
                     newTool = new Tool(name, hours, hourlyPrice);
                     loadedTools.add(newTool);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException("Error with create tool from csv");
         }
 
@@ -113,7 +114,7 @@ public class ToolService implements IToolService {
 
         try {
             File file = CsvWriter.recordFile(toolPath);
-            for (Tool tool: toolRepository.getAll()){
+            for (Tool tool: toolRepository.getAll()) {
                 if (tool != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(tool.getId()));
@@ -124,9 +125,8 @@ public class ToolService implements IToolService {
                 }
             }
             CsvWriter.writeRecords(file, headerCsv(), data);
-
         } catch (CsvException e) {
-            System.out.println("Csv write exception " + e.getMessage());
+            logger.warn("Csv write exception " + e.getMessage());
         }
     }
 

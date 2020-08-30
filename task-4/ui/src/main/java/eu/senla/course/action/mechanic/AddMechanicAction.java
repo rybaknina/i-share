@@ -8,12 +8,15 @@ import eu.senla.course.entity.Mechanic;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class AddMechanicAction implements IAction {
+    private final static Logger logger = LogManager.getLogger(AddMechanicAction.class);
     private MechanicController mechanicController = MechanicController.getInstance();
     private GarageController garageController = GarageController.getInstance();
     @Override
@@ -26,7 +29,7 @@ public class AddMechanicAction implements IAction {
         try {
             mechanicController.addMechanic(new Mechanic(name, garage));
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
     }
 }

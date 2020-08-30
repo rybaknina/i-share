@@ -70,8 +70,8 @@ public class Mechanic implements IEntity {
     }
 
     // если у механика есть заказ, у которого дата завершения меньше (до) текущего времени или в статусе выполнения, то - не свободен
-    public boolean isMechanicFree(){
-        if (orders == null || orders.size() == 0){
+    public boolean isMechanicFree() {
+        if (orders == null || orders.size() == 0) {
             return true;
         }
         for (Order order: orders) {

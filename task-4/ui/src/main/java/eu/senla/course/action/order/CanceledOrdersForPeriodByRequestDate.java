@@ -2,11 +2,13 @@ package eu.senla.course.action.order;
 
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
-import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.entity.comparator.order.ByRequestDate;
 import eu.senla.course.enums.ActionHelper;
+import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 
 public class CanceledOrdersForPeriodByRequestDate implements IAction {
+    private final static Logger logger = LogManager.getLogger(CanceledOrdersForPeriodByRequestDate.class);
     private OrderController controller = OrderController.getInstance();
 
     @Override
@@ -25,7 +28,7 @@ public class CanceledOrdersForPeriodByRequestDate implements IAction {
         try {
             controller.ordersForPeriod(new ByRequestDate(), OrderStatus.CANCEL, startDate, endDate).forEach(System.out::println);
         } catch (ServiceException e) {
-            System.err.println("Service exception " + e.getMessage());
+            logger.error("Service exception " + e.getMessage());
         }
     }
 }

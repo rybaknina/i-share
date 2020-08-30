@@ -5,7 +5,10 @@ import eu.senla.course.annotation.di.Service;
 import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.service.IOrderService;
-import eu.senla.course.controller.*;
+import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.MechanicController;
+import eu.senla.course.controller.SpotController;
+import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -18,6 +21,8 @@ import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.CsvReader;
 import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -31,7 +36,7 @@ import java.util.Objects;
 
 @Service
 public class OrderService implements IOrderService {
-
+    private final static Logger logger = LogManager.getLogger(OrderService.class);
     @ConfigProperty(key = "order")
     private String orderPath;
     @ConfigProperty(key = "shift.order.time", type = ConfigType.BOOLEAN)
@@ -83,7 +88,7 @@ public class OrderService implements IOrderService {
         if (order == null) {
             throw new ServiceException("Order is not exist");
         }
-        if (tools.size() == 0){
+        if (tools.size() == 0) {
             throw new ServiceException("Tools are not exist");
         } else {
             order.setTools(tools);
@@ -96,15 +101,14 @@ public class OrderService implements IOrderService {
         }
         order.setStatus(status);
         updateOrder(order);
-
     }
     public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
-        if (orderRepository.getAll().size() == 0){
+        if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
         List<Order> ordersForPeriod = new ArrayList<>();
-        for (Order order: orderRepository.getAll()){
-            if (order!= null && order.getStartDate()!=null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0 ){
+        for (Order order: orderRepository.getAll()) {
+            if (order !=  null && order.getStartDate() != null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0) {
                 ordersForPeriod.add(order);
             }
         }
@@ -112,12 +116,12 @@ public class OrderService implements IOrderService {
         return ordersForPeriod;
     }
     public List<Order> listCurrentOrders(Comparator<Order> comparator) throws ServiceException {
-        if (orderRepository.getAll().size() == 0){
+        if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
         List<Order> currentOrders = new ArrayList<>();
-        for (Order order: orderRepository.getAll()){
-            if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS){
+        for (Order order: orderRepository.getAll()) {
+            if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS) {
                 currentOrders.add(order);
             }
         }
@@ -126,17 +130,17 @@ public class OrderService implements IOrderService {
     }
     public void changeStartDateOrders(int hours) throws ServiceException {
         LocalDateTime date = LocalDateTime.now().plusHours(hours);
-        if (orderRepository.getAll().size() == 0){
+        if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        for(Order order: orderRepository.getAll()){
-            if (order != null && (order.getStartDate()!=null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate()!=null) && date.isAfter(order.getStartDate())){
+
+        for (Order order: orderRepository.getAll()) {
+            if (order != null && (order.getStartDate() != null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate() != null) && date.isAfter(order.getStartDate())) {
                 order.setStartDate(order.getStartDate().plusHours(hours));
                 if (order.getCompleteDate() != null) {
                     order.setCompleteDate(order.getCompleteDate().plusHours(hours));
                     updateOrder(order);
                 }
-
             }
         }
     }
@@ -147,7 +151,7 @@ public class OrderService implements IOrderService {
     }
 
     public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
-        if (orderRepository.getAll().size() == 0){
+        if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
         orderRepository.getAll().sort(comparator);
@@ -155,14 +159,14 @@ public class OrderService implements IOrderService {
     }
 
     public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
-        if (mechanic == null){
+        if (mechanic == null) {
             throw new ServiceException("Mechanic does not exist");
         }
-        if (orderRepository.getAll().size() == 0){
+        if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        for (Order order: orderRepository.getAll()){
-            if (order.getMechanic().getId() == mechanic.getId() && order.getStatus() == OrderStatus.IN_PROGRESS){
+        for (Order order: orderRepository.getAll()) {
+            if (order.getMechanic().getId() == mechanic.getId() && order.getStatus() == OrderStatus.IN_PROGRESS) {
                 return order;
             }
         }
@@ -170,7 +174,7 @@ public class OrderService implements IOrderService {
     }
 
     public Mechanic orderMechanic(Order order) throws ServiceException {
-        if (orderRepository.getAll().size() == 0 || order == null){
+        if (orderRepository.getAll().size() == 0 || order == null) {
             throw new ServiceException("Order is not found");
         }
         for (Order orderExist : orderRepository.getAll()) {
@@ -183,7 +187,7 @@ public class OrderService implements IOrderService {
     public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
-        for (int i=0; i < days; i++) {
+        for (int i = 0; i < days; i++) {
             if (GarageController.getInstance().numberAvailableSpots(nextDate, orderRepository.getAll()) > 0) {
                 return nextDate;
             } else {
@@ -196,7 +200,7 @@ public class OrderService implements IOrderService {
 
     public void bill(Order order) throws ServiceException {
         List<Tool> tools = ToolController.getInstance().getTools();
-        if (order == null){
+        if (order == null) {
             throw new ServiceException("Order is not exist");
         }
         BigDecimal amount = BigDecimal.ZERO;
@@ -208,7 +212,6 @@ public class OrderService implements IOrderService {
         order.setPrice(amount);
         updateOrder(order);
         System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
-
     }
 
 
@@ -222,7 +225,7 @@ public class OrderService implements IOrderService {
                 createOrders(lists);
             }
         } catch (CsvException e) {
-            System.out.println("Csv Reader exception " + e.getMessage());
+            logger.warn("Csv Reader exception " + e.getMessage());
         } catch (IOException e) {
             throw new ServiceException("Error read file");
         }
@@ -253,7 +256,7 @@ public class OrderService implements IOrderService {
                 } else {
                     newOrder = new Order(requestDate, plannedDate, mechanic, spot);
                 }
-                if (!exist){
+                if (!exist) {
                     newOrder.setRequestDate(LocalDateTime.now());
                 } else {
                     setNewOrderStatus(status, newOrder);
@@ -267,9 +270,8 @@ public class OrderService implements IOrderService {
                 } else {
                     loadedOrders.add(newOrder);
                 }
-
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException("Error with create orders from csv");
         }
 
@@ -278,7 +280,7 @@ public class OrderService implements IOrderService {
     }
 
     private void setNewOrderStatus(String status, Order newOrder) {
-        if (!status.isBlank()){
+        if (!status.isEmpty()) {
             switch (status) {
                 case "CLOSE":
                     newOrder.setStatus(OrderStatus.CLOSE);
@@ -303,7 +305,7 @@ public class OrderService implements IOrderService {
 
         try {
             File file = CsvWriter.recordFile(orderPath);
-            for (Order order: orderRepository.getAll()){
+            for (Order order: orderRepository.getAll()) {
                 if (order != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(order.getId()));
@@ -312,7 +314,7 @@ public class OrderService implements IOrderService {
                     if (order.getMechanic() != null) {
                         dataIn.add(String.valueOf(order.getMechanic().getId()));
                     }
-                    if (order.getSpot()!= null){
+                    if (order.getSpot() != null) {
                         dataIn.add(String.valueOf(order.getSpot().getId()));
                     }
                     dataIn.add(String.valueOf(order.getStatus()));
@@ -321,9 +323,8 @@ public class OrderService implements IOrderService {
                 }
             }
             CsvWriter.writeRecords(file, headerCsv(), data);
-
         } catch (CsvException e) {
-            System.out.println("Csv write exception " + e.getMessage());
+            logger.warn("Csv write exception " + e.getMessage());
         }
     }
 

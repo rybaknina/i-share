@@ -6,7 +6,7 @@ public enum CsvOrderHeader {
     PLANNED_DATE("plannedDate"),
     MECHANIC_ID("mechanic_id"),
     SPOT_ID("spot_id"),
-    STATUS("status");    ;
+    STATUS("status");
 
     private String name;
 
