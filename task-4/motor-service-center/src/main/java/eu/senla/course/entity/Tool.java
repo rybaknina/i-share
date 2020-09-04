@@ -2,18 +2,30 @@ package eu.senla.course.entity;
 
 import eu.senla.course.api.entity.IEntity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
+@Table(name = "tool")
 public class Tool implements IEntity {
     private static final long serialVersionUID = 547711684159410719L;
 
     private static final AtomicInteger count = new AtomicInteger(0);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private int hours;
+    @Column(name = "hourly_price")
     private BigDecimal hourlyPrice;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
     private Order order;
+
+    public Tool() {
+
+    }
 
     public Tool(String name) {
         this.id = count.incrementAndGet();

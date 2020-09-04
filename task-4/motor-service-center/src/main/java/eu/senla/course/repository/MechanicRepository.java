@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class MechanicRepository implements IMechanicRepository {
     private final static Logger logger = LogManager.getLogger(MechanicRepository.class);
     @Override

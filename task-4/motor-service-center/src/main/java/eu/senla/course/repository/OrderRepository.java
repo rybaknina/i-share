@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.controller.MechanicController;
 import eu.senla.course.controller.SpotController;
@@ -20,8 +19,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Repository
 public class OrderRepository implements IOrderRepository {
     private final static Logger logger = LogManager.getLogger(OrderRepository.class);
     @Override

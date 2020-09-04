@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.enums.sql.SqlGarage;
@@ -16,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class GarageRepository implements IGarageRepository {
     private final static Logger logger = LogManager.getLogger(GarageRepository.class);
 

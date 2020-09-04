@@ -48,4 +48,10 @@
     <suppress checks="AvoidStarImportCheck" files="SpotService.java"/>
     <suppress checks="AvoidStarImportCheck" files="ToolService.java"/>
     <suppress checks="AvoidStarImportCheck" files="OrderRepository.java"/>
+    <suppress checks="AvoidStarImportCheck" files="Garage.java"/>
+    <suppress checks="AvoidStarImportCheck" files="Mechanic.java"/>
+    <suppress checks="AvoidStarImportCheck" files="Order.java"/>
+    <suppress checks="AvoidStarImportCheck" files="Spot.java"/>
+    <suppress checks="AvoidStarImportCheck" files="Tool.java"/>
+    <suppress checks="AvoidStarImportCheck" files="HibernateUtil.java"/>
 </suppressions>

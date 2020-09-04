@@ -2,20 +2,34 @@ package eu.senla.course.entity;
 
 import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.enums.OrderStatus;
+import org.hibernate.annotations.Cascade;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
+@Table(name = "mechanic")
 public class Mechanic implements IEntity {
     private static final long serialVersionUID = -625749130457859021L;
 
     private static final AtomicInteger count = new AtomicInteger(0);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @OneToMany(mappedBy = "mechanic", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
     private List<Order> orders = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "garage_id")
     private Garage garage;
+
+    public Mechanic() {
+
+    }
 
     public Mechanic(String name) {
         this.id = count.incrementAndGet();
