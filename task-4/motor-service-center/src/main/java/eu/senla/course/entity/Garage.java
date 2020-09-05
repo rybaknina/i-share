@@ -6,14 +6,12 @@ import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "garage")
 public class Garage implements IEntity {
     private static final long serialVersionUID = -2617930426404733166L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -29,7 +27,6 @@ public class Garage implements IEntity {
     }
 
     public Garage(String name) {
-        this.id = count.incrementAndGet();
         this.name = name;
     }
 
@@ -44,10 +41,6 @@ public class Garage implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public String getName() {

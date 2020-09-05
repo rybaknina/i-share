@@ -4,6 +4,7 @@
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
+    <suppress files="[/\\]target[/\\]" checks=".*"/>
     <suppress checks="JavadocPackage" files="java$"/>
     <suppress checks="JavadocType" files="java$"/>
     <suppress checks="JavadocVariable" files="java$"/>
@@ -54,4 +55,5 @@
     <suppress checks="AvoidStarImportCheck" files="Spot.java"/>
     <suppress checks="AvoidStarImportCheck" files="Tool.java"/>
     <suppress checks="AvoidStarImportCheck" files="HibernateUtil.java"/>
+    <suppress checks="AvoidStarImportCheck" files="GarageHibernateRepository.java"/>
 </suppressions>

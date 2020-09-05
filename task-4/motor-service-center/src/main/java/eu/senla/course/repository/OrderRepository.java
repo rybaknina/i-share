@@ -39,11 +39,11 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public void delete(Order order) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlOrder.DELETE.getName())) {
-            ps.setInt(1, order.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Exception " + e.getMessage());

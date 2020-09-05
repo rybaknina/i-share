@@ -10,14 +10,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "`order`")
 public class Order implements IEntity {
     private static final long serialVersionUID = 385639052892076759L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -29,10 +27,10 @@ public class Order implements IEntity {
     private LocalDateTime startDate;
     @Column(name = "complete_date")
     private LocalDateTime completeDate;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mechanic_id")
     private Mechanic mechanic;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spot_id")
     private Spot spot;
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -47,7 +45,6 @@ public class Order implements IEntity {
     }
 
     public Order(LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
-        this.id = count.incrementAndGet();
         this.requestDate = requestDate;
         this.plannedDate = plannedDate;
         this.mechanic = mechanic;
@@ -69,10 +66,6 @@ public class Order implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public LocalDateTime getRequestDate() {

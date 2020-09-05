@@ -10,7 +10,7 @@ public interface IToolService {
     List<Tool> getTools();
     void setTools(List<Tool> tools);
     Tool getToolById(int id);
-    void deleteTool(Tool tool);
+    void deleteTool(int id);
     void updateTool(Tool tool) throws ServiceException;
     void toolsFromCsv() throws ServiceException;
     void toolsToCsv();

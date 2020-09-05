@@ -4,14 +4,12 @@ import eu.senla.course.api.entity.IEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "tool")
 public class Tool implements IEntity {
     private static final long serialVersionUID = 547711684159410719L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -28,21 +26,18 @@ public class Tool implements IEntity {
     }
 
     public Tool(String name) {
-        this.id = count.incrementAndGet();
         this.name = name;
         this.hours = 1;
         this.hourlyPrice = new BigDecimal(5);
     }
 
     public Tool(String name, int hours, BigDecimal hourlyPrice) {
-        this.id = count.incrementAndGet();
         this.name = name;
         this.hours = hours;
         this.hourlyPrice = hourlyPrice;
     }
 
     public Tool(String name, int hours, BigDecimal hourlyPrice, Order order) {
-        this.id = count.incrementAndGet();
         this.name = name;
         this.hours = hours;
         this.hourlyPrice = hourlyPrice;
@@ -63,10 +58,6 @@ public class Tool implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public String getName() {

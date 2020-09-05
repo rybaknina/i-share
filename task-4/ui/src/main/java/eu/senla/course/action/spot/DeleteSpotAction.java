@@ -2,7 +2,6 @@ package eu.senla.course.action.spot;
 
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.SpotController;
-import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.util.InputValidator;
 
@@ -17,9 +16,8 @@ public class DeleteSpotAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        Spot spot = controller.getSpotById(id);
-        if (spot != null) {
-            controller.deleteSpot(spot);
+        if (id > 0) {
+            controller.deleteSpot(id);
         } else {
             System.out.println("Spot is not found");
         }

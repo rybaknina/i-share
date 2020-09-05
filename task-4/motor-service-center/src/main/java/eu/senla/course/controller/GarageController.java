@@ -34,8 +34,8 @@ final public class GarageController {
     public Garage getGarageById(int id) {
         return service.getGarageById(id);
     }
-    public void deleteGarage(Garage garage) {
-        service.deleteGarage(garage);
+    public void deleteGarage(int id) {
+        service.deleteGarage(id);
     }
     public int lengthAllSpots() {
         return service.lengthAllSpots();

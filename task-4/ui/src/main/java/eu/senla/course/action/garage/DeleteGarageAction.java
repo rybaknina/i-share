@@ -2,7 +2,6 @@ package eu.senla.course.action.garage;
 
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
-import eu.senla.course.entity.Garage;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.util.InputValidator;
 
@@ -17,9 +16,8 @@ public class DeleteGarageAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        Garage garage = controller.getGarageById(id);
-        if (garage != null) {
-            controller.deleteGarage(garage);
+        if (id > 0) {
+            controller.deleteGarage(id);
         } else {
             System.err.println("Garage is not found");
         }

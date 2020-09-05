@@ -29,8 +29,8 @@ final public class MechanicController {
     public void setMechanics(List<Mechanic> mechanics) {
         service.setMechanics(mechanics);
     }
-    public void deleteMechanic(Mechanic mechanic) {
-        service.deleteMechanic(mechanic);
+    public void deleteMechanic(int id) {
+        service.deleteMechanic(id);
     }
     public void updateMechanic(Mechanic mechanic) throws ServiceException {
         service.updateMechanic(mechanic);

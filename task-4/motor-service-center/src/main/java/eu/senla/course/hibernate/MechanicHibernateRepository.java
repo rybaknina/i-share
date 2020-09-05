@@ -4,37 +4,25 @@ import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.enums.sql.SqlMechanic;
-import eu.senla.course.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import eu.senla.course.util.JPAUtility;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaDelete;
 import java.util.List;
 
 @Repository
 public class MechanicHibernateRepository extends AbstractHibernateRepository<Mechanic> implements IMechanicRepository {
-    private SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private EntityManager entityManager = JPAUtility.getEntityManager();
 
     @Override
     public void setAll(List<Mechanic> mechanics) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery(SqlMechanic.DELETE_ALL.getName()).executeUpdate();
-        session.createSQLQuery(SqlMechanic.RESET.getName()).executeUpdate();
+        CriteriaDelete<Mechanic> criteriaDelete = entityManager.getCriteriaBuilder().createCriteriaDelete(Mechanic.class);
+        entityManager.getTransaction().begin();
+        entityManager.createQuery(criteriaDelete).executeUpdate();
+        entityManager.createNativeQuery(SqlMechanic.RESET.getName()).executeUpdate();
         for (Mechanic mechanic: mechanics) {
-            session.save(mechanic);
+            entityManager.merge(mechanic);
         }
-        session.getTransaction().commit();
-        session.close();
-    }
-
-    @Override
-    public void addAll(List<Mechanic> mechanics) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        for (Mechanic mechanic: mechanics) {
-            session.save(mechanic);
-        }
-        session.getTransaction().commit();
-        session.close();
+        entityManager.getTransaction().commit();
     }
 }

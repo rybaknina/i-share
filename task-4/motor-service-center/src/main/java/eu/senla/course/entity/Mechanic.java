@@ -8,14 +8,12 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "mechanic")
 public class Mechanic implements IEntity {
     private static final long serialVersionUID = -625749130457859021L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,7 +21,7 @@ public class Mechanic implements IEntity {
     @OneToMany(mappedBy = "mechanic", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
     private List<Order> orders = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "garage_id")
     private Garage garage;
 
@@ -32,7 +30,6 @@ public class Mechanic implements IEntity {
     }
 
     public Mechanic(String name) {
-        this.id = count.incrementAndGet();
         this.name = name;
     }
 
@@ -53,10 +50,6 @@ public class Mechanic implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public void setName(String name) {

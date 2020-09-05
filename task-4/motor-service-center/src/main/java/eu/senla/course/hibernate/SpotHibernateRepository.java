@@ -4,37 +4,25 @@ import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.sql.SqlSpot;
-import eu.senla.course.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import eu.senla.course.util.JPAUtility;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaDelete;
 import java.util.List;
 
 @Repository
 public class SpotHibernateRepository extends AbstractHibernateRepository<Spot> implements ISpotRepository {
-    private SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private EntityManager entityManager = JPAUtility.getEntityManager();
 
     @Override
     public void setAll(List<Spot> spots) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery(SqlSpot.DELETE_ALL.getName()).executeUpdate();
-        session.createSQLQuery(SqlSpot.RESET.getName()).executeUpdate();
+        CriteriaDelete<Spot> criteriaDelete = entityManager.getCriteriaBuilder().createCriteriaDelete(Spot.class);
+        entityManager.getTransaction().begin();
+        entityManager.createQuery(criteriaDelete).executeUpdate();
+        entityManager.createNativeQuery(SqlSpot.RESET.getName()).executeUpdate();
         for (Spot spot: spots) {
-            session.save(spot);
+            entityManager.merge(spot);
         }
-        session.getTransaction().commit();
-        session.close();
-    }
-
-    @Override
-    public void addAll(List<Spot> spots) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        for (Spot spot: spots) {
-            session.save(spot);
-        }
-        session.getTransaction().commit();
-        session.close();
+        entityManager.getTransaction().commit();
     }
 }

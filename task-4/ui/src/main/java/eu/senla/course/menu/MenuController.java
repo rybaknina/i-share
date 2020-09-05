@@ -10,6 +10,7 @@ import eu.senla.course.exception.InjectionException;
 import eu.senla.course.util.ConnectionUtil;
 import eu.senla.course.util.HibernateUtil;
 import eu.senla.course.util.InputValidator;
+import eu.senla.course.util.JPAUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,6 +72,7 @@ final public class MenuController {
                     new LoadToFileAction().execute();
                     ConnectionUtil.getInstance().closeConnection();
                     HibernateUtil.closeSessionFactory();
+                    JPAUtility.close();
                     exit = true;
                     continue;
                 }

@@ -33,16 +33,16 @@ public class GarageRepository implements IGarageRepository {
     }
 
     @Override
-    public void delete(Garage garage) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement psChild = connection.prepareStatement(SqlGarage.DELETE_SPOTS_IN_GARAGE.getName()); PreparedStatement ps = connection.prepareStatement(SqlGarage.DELETE.getName())) {
             connection.setAutoCommit(false);
 
-            psChild.setInt(1, garage.getId());
+            psChild.setInt(1, id);
             psChild.executeUpdate();
 
-            ps.setInt(1, garage.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
 
             connection.commit();

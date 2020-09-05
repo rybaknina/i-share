@@ -35,11 +35,11 @@ public class MechanicRepository implements IMechanicRepository {
     }
 
     @Override
-    public void delete(Mechanic mechanic) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlMechanic.DELETE.getName())) {
-            ps.setInt(1, mechanic.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Exception " + e.getMessage());

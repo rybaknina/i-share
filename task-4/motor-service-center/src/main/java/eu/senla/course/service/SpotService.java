@@ -6,6 +6,7 @@ import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.controller.GarageController;
+import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.ConfigType;
@@ -58,8 +59,8 @@ public class SpotService implements ISpotService {
         return spotRepository.getById(id);
     }
 
-    public void deleteSpot(Spot spot) {
-        spotRepository.delete(spot);
+    public void deleteSpot(int id) {
+        spotRepository.delete(id);
     }
 
     public void updateSpot(Spot spot) throws ServiceException {
@@ -73,7 +74,12 @@ public class SpotService implements ISpotService {
     public List<Spot> spotsInGarage(Garage garage) {
         List<Spot> spotList = new ArrayList<>();
         if (garage != null) {
-            spotList = garage.getSpots();
+            List<Spot> spots = SpotController.getInstance().getSpots();
+            for (Spot spot: spots) {
+                if (spot.getGarage().getId() == garage.getId()) {
+                    spotList.add(spot);
+                }
+            }
         }
         return spotList;
     }

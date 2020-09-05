@@ -50,8 +50,8 @@ public class ToolService implements IToolService {
         return toolRepository.getById(id);
     }
 
-    public void deleteTool(Tool tool) {
-        toolRepository.delete(tool);
+    public void deleteTool(int id) {
+        toolRepository.delete(id);
     }
 
     public void updateTool(Tool tool) throws ServiceException {

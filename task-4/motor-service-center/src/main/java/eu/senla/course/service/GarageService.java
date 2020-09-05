@@ -63,8 +63,8 @@ public class GarageService implements IGarageService {
         }
     }
 
-    public void deleteGarage(Garage garage) {
-        garageRepository.delete(garage);
+    public void deleteGarage(int id) {
+        garageRepository.delete(id);
     }
 
     public Garage getGarageById(int id) {

@@ -2,56 +2,54 @@ package eu.senla.course.hibernate;
 
 import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IGarageRepository;
-import eu.senla.course.controller.MechanicController;
 import eu.senla.course.entity.Garage;
+import eu.senla.course.entity.Garage_;
 import eu.senla.course.entity.Mechanic;
+import eu.senla.course.entity.Mechanic_;
 import eu.senla.course.enums.sql.SqlGarage;
-import eu.senla.course.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import eu.senla.course.util.JPAUtility;
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.expression.LiteralExpression;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
 public class GarageHibernateRepository extends AbstractHibernateRepository<Garage> implements IGarageRepository {
-    private SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
+    private EntityManager entityManager = JPAUtility.getEntityManager();
     @Override
-    public void delete(Garage garage) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        List<Mechanic> mechanics = MechanicController.getInstance().getMechanics();
-        for (Mechanic mechanic: mechanics) {
-            if (mechanic.getGarage().getId() == garage.getId()) {
-                mechanic.setGarage(null);
-            }
-        }
-        session.delete(garage);
-        session.getTransaction().commit();
-        session.close();
+    public void delete(int id) {
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Garage> criteriaDelete = criteriaBuilder.createCriteriaDelete(Garage.class);
+        Root<Garage> garageRoot = criteriaDelete.from(Garage.class);
+        criteriaDelete.where(criteriaBuilder.equal(garageRoot.get(Garage_.id), id));
+
+        CriteriaUpdate<Mechanic> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(Mechanic.class);
+        Root<Mechanic> mechanicRoot = criteriaUpdate.from(Mechanic.class);
+        setPathToNull((CriteriaBuilderImpl) criteriaBuilder, criteriaUpdate, mechanicRoot.get(Mechanic_.garage));
+        criteriaUpdate.where(criteriaBuilder.equal(mechanicRoot.get(Mechanic_.garage).get("id"), id));
+
+        entityManager.getTransaction().begin();
+        entityManager.createQuery(criteriaUpdate).executeUpdate();
+        entityManager.createQuery(criteriaDelete).executeUpdate();
+        entityManager.getTransaction().commit();
     }
 
     @Override
     public void setAll(List<Garage> garages) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.createSQLQuery(SqlGarage.DELETE_ALL.getName()).executeUpdate();
-        session.createSQLQuery(SqlGarage.RESET.getName()).executeUpdate();
+        CriteriaDelete<Garage> criteriaDelete = entityManager.getCriteriaBuilder().createCriteriaDelete(Garage.class);
+        entityManager.getTransaction().begin();
+        entityManager.createQuery(criteriaDelete).executeUpdate();
+        entityManager.createNativeQuery(SqlGarage.RESET.getName()).executeUpdate();
         for (Garage garage: garages) {
-            session.save(garage);
+            entityManager.merge(garage);
         }
-        session.getTransaction().commit();
-        session.close();
+        entityManager.getTransaction().commit();
     }
 
-    @Override
-    public void addAll(List<Garage> garages) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        for (Garage garage: garages) {
-            session.save(garage);
-        }
-        session.getTransaction().commit();
-        session.close();
+    private <Y> CriteriaUpdate<Mechanic> setPathToNull(CriteriaBuilderImpl criteriaBuilder, CriteriaUpdate<Mechanic> criteriaUpdate, Path<Y> value) {
+        return criteriaUpdate.set(value, new LiteralExpression<>(criteriaBuilder, (Y) null));
     }
 }

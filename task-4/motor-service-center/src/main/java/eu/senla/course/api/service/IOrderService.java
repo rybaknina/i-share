@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface IOrderService {
     void addOrder(Order order) throws ServiceException;
-    void deleteOrder(Order order);
+    void deleteOrder(int id);
     boolean isDeleteOrder();
     Order getOrderById(int id);
     void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException;

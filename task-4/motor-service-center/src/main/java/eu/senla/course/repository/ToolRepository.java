@@ -39,11 +39,11 @@ public class ToolRepository implements IToolRepository {
     }
 
     @Override
-    public void delete(Tool tool) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlTool.DELETE.getName())) {
-            ps.setInt(1, tool.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("error message " + e.getMessage());
