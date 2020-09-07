@@ -13,7 +13,6 @@ public class Garage implements IEntity {
     private static final long serialVersionUID = -2617930426404733166L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     @OneToMany(mappedBy = "garage", cascade = CascadeType.ALL)

@@ -11,13 +11,12 @@ public class Tool implements IEntity {
     private static final long serialVersionUID = 547711684159410719L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private int hours;
     @Column(name = "hourly_price")
     private BigDecimal hourlyPrice;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 

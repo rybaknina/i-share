@@ -17,7 +17,6 @@ public class Order implements IEntity {
     private static final long serialVersionUID = 385639052892076759L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "request_date")
     private LocalDateTime requestDate;

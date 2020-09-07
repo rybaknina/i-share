@@ -15,7 +15,6 @@ public class Mechanic implements IEntity {
     private static final long serialVersionUID = -625749130457859021L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     @OneToMany(mappedBy = "mechanic", cascade = {CascadeType.PERSIST, CascadeType.MERGE})

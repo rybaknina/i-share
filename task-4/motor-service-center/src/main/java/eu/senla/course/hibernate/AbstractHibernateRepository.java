@@ -1,5 +1,6 @@
 package eu.senla.course.hibernate;
 
+import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.api.repository.IRepository;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.JPAUtility;
@@ -10,7 +11,7 @@ import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public abstract class AbstractHibernateRepository<T> implements IRepository<T> {
+public abstract class AbstractHibernateRepository<T extends IEntity> implements IRepository<T> {
 
     private EntityManager entityManager = JPAUtility.getEntityManager();
 
@@ -27,8 +28,17 @@ public abstract class AbstractHibernateRepository<T> implements IRepository<T> {
             throw new RepositoryException("Entity is not exist");
         }
         entityManager.getTransaction().begin();
-        entityManager.merge(t);
+        findEntity(t);
         entityManager.getTransaction().commit();
+    }
+
+    private void findEntity(T t) {
+        T findEntity = entityManager.find(entityClass, t.getId());
+        if (findEntity != null) {
+            entityManager.merge(t);
+        } else {
+            entityManager.persist(t);
+        }
     }
 
     @Override
@@ -65,7 +75,11 @@ public abstract class AbstractHibernateRepository<T> implements IRepository<T> {
 
     @Override
     public void setAll(List<T> ts) {
-
+        entityManager.getTransaction().begin();
+        for (T t: ts) {
+            findEntity(t);
+        }
+        entityManager.getTransaction().commit();
     }
 
     @Override

@@ -54,6 +54,5 @@
     <suppress checks="AvoidStarImportCheck" files="Order.java"/>
     <suppress checks="AvoidStarImportCheck" files="Spot.java"/>
     <suppress checks="AvoidStarImportCheck" files="Tool.java"/>
-    <suppress checks="AvoidStarImportCheck" files="HibernateUtil.java"/>
     <suppress checks="AvoidStarImportCheck" files="GarageHibernateRepository.java"/>
 </suppressions>

@@ -8,7 +8,6 @@ import eu.senla.course.enums.MainMenu;
 import eu.senla.course.exception.AnnotationException;
 import eu.senla.course.exception.InjectionException;
 import eu.senla.course.util.ConnectionUtil;
-import eu.senla.course.util.HibernateUtil;
 import eu.senla.course.util.InputValidator;
 import eu.senla.course.util.JPAUtility;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +70,6 @@ final public class MenuController {
                 if (navigator.getCurrentMenu().getMenuItems().get(input).getTitle().equals(MainMenu.EXIT.getName())) {
                     new LoadToFileAction().execute();
                     ConnectionUtil.getInstance().closeConnection();
-                    HibernateUtil.closeSessionFactory();
                     JPAUtility.close();
                     exit = true;
                     continue;

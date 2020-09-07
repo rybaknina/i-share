@@ -2,11 +2,7 @@ package eu.senla.course.hibernate;
 
 import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IGarageRepository;
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Garage_;
-import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Mechanic_;
-import eu.senla.course.enums.sql.SqlGarage;
+import eu.senla.course.entity.*;
 import eu.senla.course.util.JPAUtility;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.hibernate.query.criteria.internal.expression.LiteralExpression;
@@ -18,6 +14,18 @@ import java.util.List;
 @Repository
 public class GarageHibernateRepository extends AbstractHibernateRepository<Garage> implements IGarageRepository {
     private EntityManager entityManager = JPAUtility.getEntityManager();
+
+    @Override
+    public List<Garage> getAll() {
+        CriteriaQuery<Garage> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(Garage.class);
+        Root<Garage> rootEntry = criteriaQuery.from(Garage.class);
+        ListJoin<Garage, Spot> spotJoin = rootEntry.join(Garage_.spots, JoinType.INNER);
+        CriteriaQuery<Garage> all = criteriaQuery.select(rootEntry).distinct(true);
+
+        List<Garage> garages = entityManager.createQuery(all).getResultList();
+        return garages;
+    }
+
     @Override
     public void delete(int id) {
 
@@ -34,18 +42,6 @@ public class GarageHibernateRepository extends AbstractHibernateRepository<Garag
         entityManager.getTransaction().begin();
         entityManager.createQuery(criteriaUpdate).executeUpdate();
         entityManager.createQuery(criteriaDelete).executeUpdate();
-        entityManager.getTransaction().commit();
-    }
-
-    @Override
-    public void setAll(List<Garage> garages) {
-        CriteriaDelete<Garage> criteriaDelete = entityManager.getCriteriaBuilder().createCriteriaDelete(Garage.class);
-        entityManager.getTransaction().begin();
-        entityManager.createQuery(criteriaDelete).executeUpdate();
-        entityManager.createNativeQuery(SqlGarage.RESET.getName()).executeUpdate();
-        for (Garage garage: garages) {
-            entityManager.merge(garage);
-        }
         entityManager.getTransaction().commit();
     }
 
