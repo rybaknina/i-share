@@ -36,7 +36,8 @@ final class BeanController {
             List<Class<?>> classes = LoaderController.getClassesForPackage(START_WITH);
             for (Class clazz: classes) {
                 for (Class iClass: clazz.getInterfaces()) {
-                    diMap.put(iClass, clazz);
+                    //diMap.put(iClass, clazz);
+                    diMap.put(clazz, iClass);
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -47,13 +48,17 @@ final class BeanController {
     @SuppressWarnings("unchecked")
     Object getBean(Class iClass) throws InjectionException {
         Object instance = null;
-        Class implClass = diMap.get(iClass);
-        if (implClass != null && (implClass.isAnnotationPresent(Service.class) || implClass.isAnnotationPresent(Repository.class))) {
-            try {
-               instance = implClass.getDeclaredConstructor().newInstance();
-               injectedMap.put(implClass, instance);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new InjectionException(e.getMessage());
+
+        for (Map.Entry<Class, Class> entry: diMap.entrySet()) {
+            Class implClass = entry.getKey();
+            if (iClass.equals(entry.getValue()) && (implClass.isAnnotationPresent(Service.class) || implClass.isAnnotationPresent(Repository.class))) {
+                try {
+                    instance = implClass.getDeclaredConstructor().newInstance();
+                    injectedMap.put(implClass, instance);
+                    break;
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    throw new InjectionException(e.getMessage());
+                }
             }
         }
         return instance;

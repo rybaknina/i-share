@@ -11,13 +11,13 @@ INSERT INTO `motor_service_service`.`mechanic` (`name`, `garage_id`) VALUES
 ('Ghost Rider', 1), ('Blade', 2), ('Daredevil', 3),  ('Deadpool', 4);
 
 INSERT INTO `motor_service_service`.`order` (`request_date`, `planned_date`, `start_date`, `complete_date`, `price`, `status`, `mechanic_id`, `spot_id`) VALUES
-(CURRENT_TIMESTAMP, '2020-08-15 13:30:00', '2020-08-15 13:30:00', null, null, 'IN_PROGRESS', 12, 1),
-(CURRENT_TIMESTAMP, '2020-08-16 13:30:00', '2020-08-16 13:30:00', null, null, 'IN_PROGRESS', 15, 5),
-(CURRENT_TIMESTAMP, '2020-08-17 13:30:00', '2020-08-17 13:30:00', null, null, 'IN_PROGRESS', 5, 2),
-(CURRENT_TIMESTAMP, '2020-08-18 13:30:00', '2020-08-18 13:30:00', null, null, 'IN_PROGRESS', 4, 4),
-(CURRENT_TIMESTAMP, '2020-08-19 13:30:00', '2020-08-19 13:30:00', null, null, 'IN_PROGRESS', 1, 8),
-(CURRENT_TIMESTAMP, '2020-08-20 13:30:00', '2020-08-20 13:30:00', null, null, 'IN_PROGRESS', 6, 2),
-(CURRENT_TIMESTAMP, '2020-08-21 13:30:00', '2020-08-21 13:30:00', null, null, 'IN_PROGRESS', 3, 3);
+('2020-08-15 13:30:00', '2020-08-15 13:30:00', '2020-08-15 13:30:00', null, null, 'IN_PROGRESS', 12, 1),
+('2020-08-16 13:30:00', '2020-08-16 13:30:00', '2020-08-16 13:30:00', null, null, 'IN_PROGRESS', 15, 5),
+('2020-08-17 13:30:00', '2020-08-17 13:30:00', '2020-08-17 13:30:00', null, null, 'IN_PROGRESS', 5, 2),
+('2020-08-18 13:30:00', '2020-08-18 13:30:00', '2020-08-18 13:30:00', null, null, 'IN_PROGRESS', 4, 4),
+('2020-08-19 13:30:00', '2020-08-19 13:30:00', '2020-08-19 13:30:00', null, null, 'IN_PROGRESS', 1, 8),
+('2020-08-20 13:30:00', '2020-08-20 13:30:00', '2020-08-20 13:30:00', null, null, 'IN_PROGRESS', 6, 2),
+('2020-08-21 13:30:00', '2020-08-21 13:30:00', '2020-08-21 13:30:00', null, null, 'IN_PROGRESS', 3, 3);
 
 INSERT INTO `motor_service_service`.`tool` (`name`, `hours`, `hourly_price`, `order_id`) VALUES
 ('Check Engine', 2, 3.5, 1), ('Diagnosis', 1, 1, 1),

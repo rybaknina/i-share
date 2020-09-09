@@ -14,7 +14,7 @@ public interface IGarageService {
     void setGarages(List<Garage> garages);
     List<Garage> getGarages();
     Garage getGarageById(int id);
-    void deleteGarage(Garage garage);
+    void deleteGarage(int id);
     int lengthAllSpots();
     List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;
     int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException;

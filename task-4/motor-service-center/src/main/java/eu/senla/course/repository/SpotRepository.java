@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class SpotRepository implements ISpotRepository {
     private final static Logger logger = LogManager.getLogger(SpotRepository.class);
     @Override
@@ -36,11 +34,11 @@ public class SpotRepository implements ISpotRepository {
     }
 
     @Override
-    public void delete(Spot spot)  {
+    public void delete(int id)  {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlSpot.DELETE.getName())) {
-            ps.setInt(1, spot.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("SQLException " + e.getMessage());

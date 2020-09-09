@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class MechanicRepository implements IMechanicRepository {
     private final static Logger logger = LogManager.getLogger(MechanicRepository.class);
     @Override
@@ -37,11 +35,11 @@ public class MechanicRepository implements IMechanicRepository {
     }
 
     @Override
-    public void delete(Mechanic mechanic) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlMechanic.DELETE.getName())) {
-            ps.setInt(1, mechanic.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Exception " + e.getMessage());

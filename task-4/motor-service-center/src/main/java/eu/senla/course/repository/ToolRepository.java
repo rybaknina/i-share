@@ -1,6 +1,5 @@
 package eu.senla.course.repository;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IToolRepository;
 import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Order;
@@ -19,7 +18,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class ToolRepository implements IToolRepository {
 
     private final static Logger logger = LogManager.getLogger(ToolRepository.class);
@@ -41,11 +39,11 @@ public class ToolRepository implements IToolRepository {
     }
 
     @Override
-    public void delete(Tool tool) {
+    public void delete(int id) {
         Connection connection = ConnectionUtil.getInstance().connect();
 
         try (PreparedStatement ps = connection.prepareStatement(SqlTool.DELETE.getName())) {
-            ps.setInt(1, tool.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("error message " + e.getMessage());

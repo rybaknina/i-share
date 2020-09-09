@@ -1,26 +1,31 @@
 package eu.senla.course.entity;
 
 import eu.senla.course.api.entity.IEntity;
+import org.hibernate.annotations.Cascade;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
+@Table(name = "garage")
 public class Garage implements IEntity {
     private static final long serialVersionUID = -2617930426404733166L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
+    @Id
     private int id;
     private String name;
+    @OneToMany(mappedBy = "garage", cascade = CascadeType.ALL)
     private List<Spot> spots = new ArrayList<>();
+    @OneToMany(mappedBy = "garage", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
     private List<Mechanic> mechanics = new ArrayList<>();
 
     public Garage() {
-        this.id = count.incrementAndGet();
+
     }
 
     public Garage(String name) {
-        this();
         this.name = name;
     }
 
@@ -35,10 +40,6 @@ public class Garage implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public String getName() {

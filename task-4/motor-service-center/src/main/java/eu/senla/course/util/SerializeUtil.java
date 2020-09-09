@@ -66,10 +66,6 @@ public class SerializeUtil {
                     GarageController.getInstance().addGarage(garage);
                 }
 
-                while (Garage.getCount().get() < max) {
-                    Garage.getCount().incrementAndGet();
-                }
-
                 max = 0;
                 List<Mechanic> mechanics = (List<Mechanic>) entityList.get(n++);
                 for (Mechanic mechanic : mechanics) {
@@ -77,9 +73,6 @@ public class SerializeUtil {
                         max = mechanic.getId();
                     }
                     MechanicController.getInstance().addMechanic(mechanic);
-                }
-                while (Mechanic.getCount().get() < max) {
-                    Mechanic.getCount().incrementAndGet();
                 }
 
                 max = 0;
@@ -90,9 +83,6 @@ public class SerializeUtil {
                     }
                     OrderController.getInstance().addOrder(order);
                 }
-                while (Order.getCount().get() < max) {
-                    Order.getCount().incrementAndGet();
-                }
 
                 max = 0;
                 List<Spot> spots = (List<Spot>) entityList.get(n++);
@@ -102,9 +92,6 @@ public class SerializeUtil {
                     }
                     SpotController.getInstance().addSpot(spot);
                 }
-                while (Spot.getCount().get() < max) {
-                    Spot.getCount().incrementAndGet();
-                }
 
                 max = 0;
                 List<Tool> tools = (List<Tool>) entityList.get(n);
@@ -113,9 +100,6 @@ public class SerializeUtil {
                         max = tool.getId();
                     }
                     ToolController.getInstance().addTool(tool);
-                }
-                while (Tool.getCount().get() < max) {
-                    Tool.getCount().incrementAndGet();
                 }
             }
         } catch (FileNotFoundException e) {

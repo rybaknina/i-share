@@ -33,8 +33,8 @@ final public class ToolController {
         return service.getToolById(id);
     }
 
-    public void deleteTool(Tool tool) {
-        service.deleteTool(tool);
+    public void deleteTool(int id) {
+        service.deleteTool(id);
     }
 
     public void updateTool(Tool tool) throws ServiceException {

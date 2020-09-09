@@ -48,8 +48,8 @@ public class MechanicService implements IMechanicService {
         mechanicRepository.setAll(mechanics);
     }
 
-    public void deleteMechanic(Mechanic mechanic) {
-        mechanicRepository.delete(mechanic);
+    public void deleteMechanic(int id) {
+        mechanicRepository.delete(id);
     }
 
     public Mechanic getMechanicById(int id) {

@@ -2,31 +2,48 @@ package eu.senla.course.entity;
 
 import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.enums.OrderStatus;
+import org.hibernate.annotations.Cascade;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
+@Table(name = "`order`")
 public class Order implements IEntity {
     private static final long serialVersionUID = 385639052892076759L;
 
-    private static final AtomicInteger count = new AtomicInteger(0);
+    @Id
     private int id;
+    @Column(name = "request_date")
     private LocalDateTime requestDate;
+    @Column(name = "planned_date")
     private LocalDateTime plannedDate;
+    @Column(name = "start_date")
     private LocalDateTime startDate;
+    @Column(name = "complete_date")
     private LocalDateTime completeDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mechanic_id")
     private Mechanic mechanic;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "spot_id")
     private Spot spot;
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
     private List<Tool> tools = new ArrayList<>();
     private BigDecimal price;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    public Order() {
+
+    }
+
     public Order(LocalDateTime requestDate, LocalDateTime plannedDate, Mechanic mechanic, Spot spot) {
-        this.id = count.incrementAndGet();
         this.requestDate = requestDate;
         this.plannedDate = plannedDate;
         this.mechanic = mechanic;
@@ -48,10 +65,6 @@ public class Order implements IEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public static AtomicInteger getCount() {
-        return count;
     }
 
     public LocalDateTime getRequestDate() {

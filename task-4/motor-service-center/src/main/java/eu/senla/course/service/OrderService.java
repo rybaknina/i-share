@@ -67,8 +67,8 @@ public class OrderService implements IOrderService {
         }
     }
 
-    public void deleteOrder(Order order) {
-        orderRepository.delete(order);
+    public void deleteOrder(int id) {
+        orderRepository.delete(id);
     }
 
     @Override

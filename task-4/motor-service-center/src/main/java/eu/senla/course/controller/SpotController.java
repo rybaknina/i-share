@@ -36,8 +36,8 @@ final public class SpotController {
     public Spot getSpotById(int id) {
         return service.getSpotById(id);
     }
-    public void deleteSpot(Spot spot) {
-        service.deleteSpot(spot);
+    public void deleteSpot(int id) {
+        service.deleteSpot(id);
     }
     public void updateSpot(Spot spot) throws ServiceException {
         service.updateSpot(spot);

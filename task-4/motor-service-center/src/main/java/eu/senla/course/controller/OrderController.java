@@ -31,8 +31,8 @@ final public class OrderController {
     public List<Order> getOrders() {
         return service.getOrders();
     }
-    public void deleteOrder(Order order) {
-        service.deleteOrder(order);
+    public void deleteOrder(int id) {
+        service.deleteOrder(id);
     }
     public boolean isDeleteOrder() {
         return service.isDeleteOrder();
