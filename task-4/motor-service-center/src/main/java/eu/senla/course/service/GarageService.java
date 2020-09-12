@@ -1,8 +1,5 @@
 package eu.senla.course.service;
 
-import eu.senla.course.annotation.di.Injection;
-import eu.senla.course.annotation.di.Service;
-import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.controller.MechanicController;
@@ -21,6 +18,9 @@ import eu.senla.course.util.GeneratorUtil;
 import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -29,14 +29,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class GarageService implements IGarageService {
     private final static Logger logger = LogManager.getLogger(GarageService.class);
-    @ConfigProperty(key = "garage")
+    @Value("${garage}")
     private String garagePath;
 
-    @Injection
+
     private IGarageRepository garageRepository;
+    @Autowired
+    public void setGarageRepository(IGarageRepository garageRepository) {
+        this.garageRepository = garageRepository;
+    }
 
     public List<Garage> getGarages() {
         return garageRepository.getAll();

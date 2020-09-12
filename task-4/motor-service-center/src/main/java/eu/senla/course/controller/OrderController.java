@@ -1,28 +1,42 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
+@Component
 final public class OrderController {
-    @Injection
+
     private IOrderService service;
-    private final static OrderController instance = new OrderController();
+    private static OrderController instance;
 
     private OrderController() {
     }
 
     public static OrderController getInstance() {
+        if (instance == null) {
+            instance = new OrderController();
+        }
         return instance;
+    }
+
+    @Autowired
+    public void setController(OrderController controller) {
+        this.instance = controller;
+    }
+    @Autowired
+    public void setService(IOrderService service) {
+        this.service = service;
     }
 
     public void addOrder(Order order) throws ServiceException {

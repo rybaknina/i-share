@@ -1,15 +1,11 @@
 package eu.senla.course.service;
 
-import eu.senla.course.annotation.di.Injection;
-import eu.senla.course.annotation.di.Service;
-import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
-import eu.senla.course.enums.ConfigType;
 import eu.senla.course.enums.CsvSpotHeader;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
@@ -18,21 +14,29 @@ import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class SpotService implements ISpotService {
     private final static Logger logger = LogManager.getLogger(SpotService.class);
-    @ConfigProperty(key = "spot")
+
+    @Value("${spot}")
     private String spotPath;
-    @ConfigProperty(key = "modify.spot", type = ConfigType.BOOLEAN)
+    @Value("${modify.spot}")
     private boolean isModifySpot;
-    @Injection
+
     private ISpotRepository spotRepository;
+    @Autowired
+    public void setSpotRepository(ISpotRepository spotRepository) {
+        this.spotRepository = spotRepository;
+    }
 
     public List<Spot> getSpots() {
         return spotRepository.getAll();

@@ -1,17 +1,17 @@
 package eu.senla.course.hibernate;
 
-import eu.senla.course.annotation.di.Repository;
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.entity.*;
 import eu.senla.course.util.JPAUtility;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.hibernate.query.criteria.internal.expression.LiteralExpression;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.List;
 
-@Repository
+@Component
 public class GarageHibernateRepository extends AbstractHibernateRepository<Garage> implements IGarageRepository {
     private EntityManager entityManager = JPAUtility.getEntityManager();
 

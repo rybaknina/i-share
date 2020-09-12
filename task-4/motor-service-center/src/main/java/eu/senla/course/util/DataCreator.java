@@ -1,6 +1,5 @@
 package eu.senla.course.util;
 
-import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.controller.MechanicController;
 import eu.senla.course.controller.ToolController;
@@ -8,6 +7,7 @@ import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.RepositoryException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class DataCreator {
     private final static int MAX_GARAGES = 4;
     private final static int MAX_MECHANICS = 5;
 
-    @Injection
+    @Autowired
     private IGarageRepository repository;
     public List<Garage> createGarages() throws RepositoryException {
         int len = MAX_GARAGES;

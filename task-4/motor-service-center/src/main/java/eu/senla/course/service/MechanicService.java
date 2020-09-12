@@ -1,8 +1,5 @@
 package eu.senla.course.service;
 
-import eu.senla.course.annotation.di.Injection;
-import eu.senla.course.annotation.di.Service;
-import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.api.service.IMechanicService;
 import eu.senla.course.controller.GarageController;
@@ -18,19 +15,26 @@ import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 
 
 
-@Service
+@Component
 public class MechanicService implements IMechanicService {
     private final static Logger logger = LogManager.getLogger(MechanicService.class);
-    @ConfigProperty(key = "mechanic")
+    @Value("${mechanic}")
     private String mechanicPath;
-    @Injection
+
     private IMechanicRepository mechanicRepository;
+    @Autowired
+    public void setMechanicRepository(IMechanicRepository mechanicRepository) {
+        this.mechanicRepository = mechanicRepository;
+    }
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
         try {

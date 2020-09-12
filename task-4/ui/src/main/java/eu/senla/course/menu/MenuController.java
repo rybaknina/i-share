@@ -2,11 +2,8 @@ package eu.senla.course.menu;
 
 import eu.senla.course.action.load.LoadFromFileAction;
 import eu.senla.course.action.load.LoadToFileAction;
-import eu.senla.course.controller.AnnotationController;
-import eu.senla.course.controller.InjectionController;
 import eu.senla.course.enums.MainMenu;
-import eu.senla.course.exception.AnnotationException;
-import eu.senla.course.exception.InjectionException;
+import eu.senla.course.util.AppConfig;
 import eu.senla.course.util.ConnectionUtil;
 import eu.senla.course.util.InputValidator;
 import eu.senla.course.util.JPAUtility;
@@ -24,17 +21,7 @@ final public class MenuController {
     private final static Logger logger = LogManager.getLogger(MenuController.class);
     private MenuController() {
 
-        try {
-            InjectionController.getInstance().inject();
-        } catch (InjectionException e) {
-            logger.error("Wrong work with injections " + e.getMessage());
-        }
-
-        try {
-            AnnotationController.getInstance().init();
-        } catch (AnnotationException e) {
-            logger.error("Wrong work with annotations " + e.getMessage());
-        }
+        new AppConfig();
 
         try {
             new LoadFromFileAction().execute();

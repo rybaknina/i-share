@@ -55,4 +55,6 @@
     <suppress checks="AvoidStarImportCheck" files="Spot.java"/>
     <suppress checks="AvoidStarImportCheck" files="Tool.java"/>
     <suppress checks="AvoidStarImportCheck" files="GarageHibernateRepository.java"/>
+    <suppress checks="AvoidStarImportCheck" files="SerializeUtil.java"/>
+    <suppress checks="AvoidStarImportCheck" files="AppConfig.java"/>
 </suppressions>
