@@ -16,7 +16,7 @@
         <hibernate.version>5.4.21.Final</hibernate.version>
         <hibernate.annotation.version>3.5.6-Final</hibernate.annotation.version>
         <javax.transaction.version>1.1</javax.transaction.version>
-        <jpamodelgen.version>5.4.21.Final</jpamodelgen.version>
+        <spring.version>5.2.8.RELEASE</spring.version>
     </properties>
     <dependencies>
         <dependency>
@@ -41,16 +41,24 @@
             <version>${hibernate.annotation.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>${jpamodelgen.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
             <version>${javax.transaction.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 

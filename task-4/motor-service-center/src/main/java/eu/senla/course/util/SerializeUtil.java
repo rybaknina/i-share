@@ -1,34 +1,26 @@
 package eu.senla.course.util;
 
-import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.entity.IEntity;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.OrderController;
-import eu.senla.course.controller.SpotController;
-import eu.senla.course.controller.ToolController;
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Spot;
-import eu.senla.course.entity.Tool;
+import eu.senla.course.controller.*;
+import eu.senla.course.entity.*;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.exception.SerializeException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class SerializeUtil {
-    @ConfigProperty(key = "load.center")
     private static String loadPath;
+
+    @Value("${load.center}")
+    public void setLoadPath(String loadPath) {
+        SerializeUtil.loadPath = loadPath;
+    }
 
     public static void serialize() throws SerializeException {
         List<List<? extends IEntity>> entityList = new ArrayList<>();

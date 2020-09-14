@@ -1,21 +1,35 @@
 package eu.senla.course.util;
 
-import eu.senla.course.annotation.property.ConfigProperty;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Component
 final public class ConnectionUtil {
 
-    @ConfigProperty(key = "db.user")
     private static String user;
-    @ConfigProperty(key = "db.password")
     private static String password;
-    @ConfigProperty(key = "db.url")
     private static String url;
-    @ConfigProperty(key = "db.driver")
     private static String driver;
+    @Value("${db.user}")
+    public void setUser(String user) {
+        ConnectionUtil.user = user;
+    }
+    @Value("${db.password}")
+    public void setPassword(String password) {
+        ConnectionUtil.password = password;
+    }
+    @Value("${db.url}")
+    public void setUrl(String url) {
+        ConnectionUtil.url = url;
+    }
+    @Value("${db.driver}")
+    public void setDriver(String driver) {
+        ConnectionUtil.driver = driver;
+    }
 
     private static ConnectionUtil instance = new ConnectionUtil();
     private static Connection connection = null;

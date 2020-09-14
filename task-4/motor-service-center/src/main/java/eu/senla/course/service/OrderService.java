@@ -1,8 +1,5 @@
 package eu.senla.course.service;
 
-import eu.senla.course.annotation.di.Injection;
-import eu.senla.course.annotation.di.Service;
-import eu.senla.course.annotation.property.ConfigProperty;
 import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.controller.GarageController;
@@ -13,7 +10,6 @@ import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.entity.Tool;
-import eu.senla.course.enums.ConfigType;
 import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.RepositoryException;
@@ -23,6 +19,9 @@ import eu.senla.course.util.CsvWriter;
 import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -34,18 +33,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class OrderService implements IOrderService {
     private final static Logger logger = LogManager.getLogger(OrderService.class);
-    @ConfigProperty(key = "order")
+    @Value("${order}")
     private String orderPath;
-    @ConfigProperty(key = "shift.order.time", type = ConfigType.BOOLEAN)
+    @Value("${shift.order.time}")
     private boolean isShiftTime;
-    @ConfigProperty(key = "delete.order", type = ConfigType.BOOLEAN)
+    @Value("${delete.order}")
     private boolean isDeleteOrder;
 
-    @Injection
+
     private IOrderRepository orderRepository;
+    @Autowired
+    public void setOrderRepository(IOrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     public List<Order> getOrders() {
         return orderRepository.getAll();

@@ -1,23 +1,37 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.api.service.IToolService;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 final public class ToolController {
-    @Injection
+
     private IToolService service;
-    private final static ToolController instance = new ToolController();
+    private static ToolController instance;
 
     private ToolController() {
-
     }
 
     public static ToolController getInstance() {
+        if (instance == null) {
+            instance = new ToolController();
+        }
         return instance;
+    }
+
+    @Autowired
+    public void setService(IToolService service) {
+        this.service = service;
+    }
+
+    @Autowired
+    public void setController(ToolController controller) {
+        this.instance = controller;
     }
 
     public void addTool(Tool tool) throws ServiceException {

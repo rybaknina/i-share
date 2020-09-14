@@ -1,24 +1,37 @@
 package eu.senla.course.controller;
 
-import eu.senla.course.annotation.di.Injection;
 import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 final public class SpotController {
-    @Injection
+
     private ISpotService service;
-    private final static SpotController instance = new SpotController();
+    private static SpotController instance;
 
     private SpotController() {
-
     }
 
     public static SpotController getInstance() {
+        if (instance == null) {
+            instance = new SpotController();
+        }
         return instance;
+    }
+
+    @Autowired
+    public void setController(SpotController controller) {
+        this.instance = controller;
+    }
+    @Autowired
+    public void setService(ISpotService service) {
+        this.service = service;
     }
 
     public List<Spot> getSpots() {
