@@ -1,14 +1,14 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IMechanicRepository;
+import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.api.service.IMechanicService;
+import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.config.PropertyTestConfig;
-import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.TestUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -49,6 +49,16 @@ class MechanicServiceTest {
         public IMechanicRepository getMechanicRepository() {
             return Mockito.mock(IMechanicRepository.class);
         }
+
+        @Bean
+        public IOrderService getOrderService() {
+            return Mockito.mock(IOrderService.class);
+        }
+
+        @Bean
+        public IGarageService getGarageService() {
+            return Mockito.mock(IGarageService.class);
+        }
     }
 
     @Autowired
@@ -56,6 +66,12 @@ class MechanicServiceTest {
 
     @Autowired
     private IMechanicService service;
+
+    @Autowired
+    private IOrderService orderService;
+
+    @Autowired
+    private IGarageService garageService;
 
     private static List<Mechanic> data = new ArrayList<>();
 
@@ -170,14 +186,10 @@ class MechanicServiceTest {
 
     @Test
     void mechanicsToCsvShouldValidTest() {
-        OrderController orderController = mock(OrderController.class);
-        TestUtil.setMock(orderController, OrderController.class);
-        given(orderController.getOrders()).willReturn(new ArrayList<>());
+        given(orderService.getOrders()).willReturn(new ArrayList<>());
 
         when(repository.getAll()).thenReturn(data);
         service.mechanicsToCsv();
-
-        TestUtil.resetSingleton(OrderController.class);
     }
 
     @AfterAll

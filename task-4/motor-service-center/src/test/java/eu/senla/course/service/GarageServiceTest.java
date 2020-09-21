@@ -2,13 +2,12 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.api.service.IGarageService;
+import eu.senla.course.api.service.IMechanicService;
+import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.config.PropertyTestConfig;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.TestUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -53,6 +52,16 @@ class GarageServiceTest {
         public IGarageRepository getGarageRepository() {
             return Mockito.mock(IGarageRepository.class);
         }
+
+        @Bean
+        public ISpotService getSpotService() {
+            return Mockito.mock(ISpotService.class);
+        }
+
+        @Bean
+        public IMechanicService getMechanicService() {
+            return Mockito.mock(IMechanicService.class);
+        }
     }
 
     @Autowired
@@ -60,6 +69,12 @@ class GarageServiceTest {
 
     @Autowired
     private IGarageService service;
+
+    @Autowired
+    private ISpotService spotService;
+
+    @Autowired
+    private IMechanicService mechanicService;
 
     private static List<Garage> data = new ArrayList<>();
 
@@ -105,9 +120,7 @@ class GarageServiceTest {
     @Test
     void addGarageShouldValidTest() throws RepositoryException, ServiceException {
         Garage newObject = new Garage("3");
-        SpotController controller = mock(SpotController.class);
-        TestUtil.setMock(controller, SpotController.class);
-        when(controller.spotsInGarage(any())).thenReturn(new ArrayList<>());
+        when(spotService.spotsInGarage(any())).thenReturn(new ArrayList<>());
         doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(newObject, arg);
@@ -115,7 +128,6 @@ class GarageServiceTest {
         }).when(repository).add(any(Garage.class));
         service.addGarage(newObject);
         verify(repository).add(newObject);
-        TestUtil.resetSingleton(SpotController.class);
     }
 
     @Test
@@ -194,19 +206,11 @@ class GarageServiceTest {
 
     @Test
     void garagesToCsvShouldValidTest() {
-        SpotController spotController = mock(SpotController.class);
-        TestUtil.setMock(spotController, SpotController.class);
-        given(spotController.getSpots()).willReturn(new ArrayList<>());
-
-        MechanicController mechanicController = mock(MechanicController.class);
-        TestUtil.setMock(mechanicController, MechanicController.class);
-        given(mechanicController.getMechanics()).willReturn(new ArrayList<>());
+        given(spotService.getSpots()).willReturn(new ArrayList<>());
+        given(mechanicService.getMechanics()).willReturn(new ArrayList<>());
 
         when(repository.getAll()).thenReturn(data);
         service.garagesToCsv();
-
-        TestUtil.resetSingleton(SpotController.class);
-        TestUtil.resetSingleton(MechanicController.class);
     }
 
     @AfterAll

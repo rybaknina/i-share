@@ -1,14 +1,13 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.ISpotRepository;
+import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.config.PropertyTestConfig;
-import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.TestUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -40,13 +39,18 @@ class SpotServiceTest {
     @Import({PropertyTestConfig.class})
     static class ContextConfiguration {
         @Bean
-        public ISpotService getMechanicService() {
+        public ISpotService getSpotService() {
             return new SpotService();
         }
 
         @Bean
-        public ISpotRepository getMechanicRepository() {
+        public ISpotRepository getSpotRepository() {
             return Mockito.mock(ISpotRepository.class);
+        }
+
+        @Bean
+        public IGarageService getGarageService() {
+            return Mockito.mock(IGarageService.class);
         }
     }
 
@@ -55,6 +59,9 @@ class SpotServiceTest {
 
     @Autowired
     private ISpotService service;
+
+    @Autowired
+    private IGarageService garageService;
 
     private static List<Spot> data = new ArrayList<>();
 
@@ -141,11 +148,8 @@ class SpotServiceTest {
     @Test
     void spotsInGarageShouldReturnNumberOfSpotsTest() {
         Garage garage = data.get(0).getGarage();
-        SpotController spotController = mock(SpotController.class);
-        TestUtil.setMock(spotController, SpotController.class);
-        given(spotController.getSpots()).willReturn(data);
+        given(service.getSpots()).willReturn(data);
         assertEquals(2, service.spotsInGarage(garage).size());
-        TestUtil.resetSingleton(SpotController.class);
     }
 
     @Test

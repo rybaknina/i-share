@@ -1,25 +1,19 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IOrderRepository;
-import eu.senla.course.api.service.IOrderService;
+import eu.senla.course.api.service.*;
 import eu.senla.course.config.PropertyTestConfig;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.ToolController;
 import eu.senla.course.entity.*;
 import eu.senla.course.entity.comparator.order.ByPlannedDate;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
-import eu.senla.course.util.TestUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.JavaTimeConversionPattern;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -58,13 +52,47 @@ class OrderServiceTest {
         public IOrderRepository getMechanicRepository() {
             return Mockito.mock(IOrderRepository.class);
         }
+
+        @Bean
+        public IGarageService setGarageService() {
+            return Mockito.mock(IGarageService.class);
+        }
+
+        @Bean
+        public IMechanicService setMechanicService() {
+            return Mockito.mock(IMechanicService.class);
+        }
+
+        @Bean
+        public IToolService setToolService() {
+            return Mockito.mock(IToolService.class);
+        }
+
+        @Bean
+        public ISpotService setSpotService() {
+            return Mockito.mock(ISpotService.class);
+        }
     }
+
+
 
     @Autowired
     private IOrderRepository repository;
 
     @Autowired
     private IOrderService service;
+
+    @Autowired
+    private IGarageService garageService;
+
+    @Autowired
+    private IToolService toolService;
+
+    @Autowired
+    private IMechanicService mechanicService;
+
+    @Autowired
+    private ISpotService spotService;
 
     private static List<Order> data = new ArrayList<>();
 
@@ -238,19 +266,16 @@ class OrderServiceTest {
         }
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"20.09.2020"})
-    void nextAvailableDateShouldReturnNowTest(@JavaTimeConversionPattern(value = "dd.MM.yyyy") LocalDate endDate) {
-        GarageController garageController = mock(GarageController.class);
-        TestUtil.setMock(garageController, GarageController.class);
+    @Test
+    void nextAvailableDateShouldReturnNowTest() {
+        LocalDate endDate = LocalDate.now().plusDays(1);
         when(repository.getAll()).thenReturn(data);
         try {
-            given(garageController.numberAvailableSpots(any(LocalDateTime.class), eq(data))).willReturn(2);
+            given(garageService.numberAvailableSpots(any(LocalDateTime.class), eq(data))).willReturn(2);
             assertEquals(LocalDate.now(), service.nextAvailableDate(endDate).toLocalDate());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
         }
-        TestUtil.resetSingleton(GarageController.class);
     }
 
     @Test
@@ -258,9 +283,7 @@ class OrderServiceTest {
         Order order = data.get(0);
         List<Tool> tools = new ArrayList<>();
         tools.add(new Tool(1, "1", 2, new BigDecimal(2.5), order));
-        ToolController toolController = mock(ToolController.class);
-        TestUtil.setMock(toolController, ToolController.class);
-        given(toolController.getTools()).willReturn(tools);
+        given(toolService.getTools()).willReturn(tools);
         try {
             service.bill(order);
             BigDecimal amount = new BigDecimal(5);

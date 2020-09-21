@@ -1,9 +1,8 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.ISpotRepository;
+import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.api.service.ISpotService;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.CsvSpotHeader;
@@ -33,9 +32,16 @@ public class SpotService implements ISpotService {
     private boolean isModifySpot;
 
     private ISpotRepository spotRepository;
+    private IGarageService garageService;
+
     @Autowired
     public void setSpotRepository(ISpotRepository spotRepository) {
         this.spotRepository = spotRepository;
+    }
+
+    @Autowired
+    public void setGarageService(IGarageService garageService) {
+        this.garageService = garageService;
     }
 
     public List<Spot> getSpots() {
@@ -78,7 +84,7 @@ public class SpotService implements ISpotService {
     public List<Spot> spotsInGarage(Garage garage) {
         List<Spot> spotList = new ArrayList<>();
         if (garage != null) {
-            List<Spot> spots = SpotController.getInstance().getSpots();
+            List<Spot> spots = this.getSpots();
             for (Spot spot: spots) {
                 if (spot.getGarage().getId() == garage.getId()) {
                     spotList.add(spot);
@@ -112,7 +118,7 @@ public class SpotService implements ISpotService {
                 int id = Integer.parseInt(list.get(n++));
                 int garageId = Integer.parseInt(list.get(n));
 
-                Garage garage = GarageController.getInstance().getGarageById(garageId);
+                Garage garage = garageService.getGarageById(garageId);
                 if (garage == null) {
                     throw new ServiceException("Garage is not found");
                 }

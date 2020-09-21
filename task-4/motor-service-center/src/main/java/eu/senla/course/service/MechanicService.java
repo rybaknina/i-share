@@ -1,9 +1,9 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IMechanicRepository;
+import eu.senla.course.api.service.IGarageService;
 import eu.senla.course.api.service.IMechanicService;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.OrderController;
+import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
@@ -31,9 +31,22 @@ public class MechanicService implements IMechanicService {
     private String mechanicPath;
 
     private IMechanicRepository mechanicRepository;
+    private IGarageService garageService;
+    private IOrderService orderService;
+
     @Autowired
     public void setMechanicRepository(IMechanicRepository mechanicRepository) {
         this.mechanicRepository = mechanicRepository;
+    }
+
+    @Autowired
+    public void setGarageService(IGarageService garageService) {
+        this.garageService = garageService;
+    }
+
+    @Autowired
+    public void setOrderService(IOrderService orderService) {
+        this.orderService = orderService;
     }
 
     public void addMechanic(Mechanic mechanic) throws ServiceException {
@@ -133,7 +146,7 @@ public class MechanicService implements IMechanicService {
                 }
                 if (list.size() >= (n + 1)) {
                     int garageId = Integer.parseInt(list.get(n));
-                    Garage garage = GarageController.getInstance().getGarageById(garageId);
+                    Garage garage = garageService.getGarageById(garageId);
                     if (garage != null) {
                         newMechanic.setGarage(garage);
                     }
@@ -157,11 +170,11 @@ public class MechanicService implements IMechanicService {
         for (String idOrderLine : idOrders) {
             if (!idOrderLine.isBlank()) {
                 int idOrder = Integer.parseInt(idOrderLine);
-                Order order = OrderController.getInstance().getOrderById(idOrder);
+                Order order = orderService.getOrderById(idOrder);
                 if (order != null) {
                     orders.add(order);
                     order.setMechanic(newMechanic);
-                    OrderController.getInstance().updateOrder(order);
+                    orderService.updateOrder(order);
                 }
             }
         }
@@ -200,7 +213,7 @@ public class MechanicService implements IMechanicService {
 
     private String orderToCsv(Mechanic mechanic) {
         StringBuilder ordersString = new StringBuilder();
-        for (Order order: OrderController.getInstance().getOrders()) {
+        for (Order order: orderService.getOrders()) {
             if (order != null && order.getMechanic().equals(mechanic)) {
                 ordersString.append(order.getId());
                 ordersString.append("|");
