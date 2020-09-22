@@ -1,0 +1,24 @@
+# Package Files #
+#*.jar
+#*.war
+#*.ear
+
+*.mf
+*.class
+
+.idea/
+*.iml
+
+.checkstyle
+.classpath
+.project
+.settings/
+.springBeans
+**/out/**
+**/bin/**
+**/testbin/**
+**/target/**
+**/log/**
+**/WEB-INF/classes/**
+
+#.gitignore
