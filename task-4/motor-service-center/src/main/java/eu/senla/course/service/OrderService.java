@@ -1,11 +1,7 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IOrderRepository;
-import eu.senla.course.api.service.IOrderService;
-import eu.senla.course.controller.GarageController;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
-import eu.senla.course.controller.ToolController;
+import eu.senla.course.api.service.*;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -45,9 +41,34 @@ public class OrderService implements IOrderService {
 
 
     private IOrderRepository orderRepository;
+    private IGarageService garageService;
+    private IToolService toolService;
+    private IMechanicService mechanicService;
+    private ISpotService spotService;
+
     @Autowired
     public void setOrderRepository(IOrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setGarageService(IGarageService garageService) {
+        this.garageService = garageService;
+    }
+
+    @Autowired
+    public void setToolService(IToolService toolService) {
+        this.toolService = toolService;
+    }
+
+    @Autowired
+    public void setMechanicService(IMechanicService mechanicService) {
+        this.mechanicService = mechanicService;
+    }
+
+    @Autowired
+    public void setSpotService(ISpotService spotService) {
+        this.spotService = spotService;
     }
 
     public List<Order> getOrders() {
@@ -191,7 +212,7 @@ public class OrderService implements IOrderService {
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
         for (int i = 0; i < days; i++) {
-            if (GarageController.getInstance().numberAvailableSpots(nextDate, orderRepository.getAll()) > 0) {
+            if (garageService.numberAvailableSpots(nextDate, orderRepository.getAll()) > 0) {
                 return nextDate;
             } else {
                 nextDate = nextDate.plusDays(1);
@@ -202,7 +223,7 @@ public class OrderService implements IOrderService {
     }
 
     public void bill(Order order) throws ServiceException {
-        List<Tool> tools = ToolController.getInstance().getTools();
+        List<Tool> tools = toolService.getTools();
         if (order == null) {
             throw new ServiceException("Order is not exist");
         }
@@ -248,8 +269,8 @@ public class OrderService implements IOrderService {
                 int spotId = Integer.parseInt(list.get(n++));
                 String status = list.get(n);
 
-                Mechanic mechanic = MechanicController.getInstance().getMechanicById(mechanicId);
-                Spot spot = SpotController.getInstance().getSpotById(spotId);
+                Mechanic mechanic = mechanicService.getMechanicById(mechanicId);
+                Spot spot = spotService.getSpotById(spotId);
 
                 boolean exist = false;
 

@@ -2,8 +2,8 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.api.service.IGarageService;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
+import eu.senla.course.api.service.IMechanicService;
+import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
@@ -35,11 +35,23 @@ public class GarageService implements IGarageService {
     @Value("${garage}")
     private String garagePath;
 
-
     private IGarageRepository garageRepository;
+    private ISpotService spotService;
+    private IMechanicService mechanicService;
+
     @Autowired
     public void setGarageRepository(IGarageRepository garageRepository) {
         this.garageRepository = garageRepository;
+    }
+
+    @Autowired
+    public void setSpotService(ISpotService spotService) {
+        this.spotService = spotService;
+    }
+
+    @Autowired
+    public void setMechanicService(IMechanicService mechanicService) {
+        this.mechanicService = mechanicService;
     }
 
     public List<Garage> getGarages() {
@@ -76,14 +88,14 @@ public class GarageService implements IGarageService {
     }
 
     private List<Spot> createSpots(Garage garage) throws ServiceException {
-        List<Spot> spots = SpotController.getInstance().spotsInGarage(garage);
+        List<Spot> spots = spotService.spotsInGarage(garage);
         if (spots.size() == 0) {
             int len = GeneratorUtil.generateNumber();
             for (int i = 0; i < len; i++) {
-                SpotController.getInstance().addSpot(new Spot(garage));
+                spotService.addSpot(new Spot(garage));
             }
         }
-        return SpotController.getInstance().getSpots();
+        return spotService.getSpots();
     }
 
     public int lengthAllSpots() {
@@ -201,11 +213,11 @@ public class GarageService implements IGarageService {
         for (String idMechanicLine : idMechanics) {
             if (!idMechanicLine.isBlank()) {
                 int idMechanic = Integer.parseInt(idMechanicLine);
-                Mechanic mechanic = MechanicController.getInstance().getMechanicById(idMechanic);
+                Mechanic mechanic = mechanicService.getMechanicById(idMechanic);
                 if (mechanic != null) {
                     mechanics.add(mechanic);
                     mechanic.setGarage(newGarage);
-                    MechanicController.getInstance().updateMechanic(mechanic);
+                    mechanicService.updateMechanic(mechanic);
                 }
             }
         }
@@ -219,11 +231,11 @@ public class GarageService implements IGarageService {
         for (String idSpotLine : idSpots) {
             if (!idSpotLine.isBlank()) {
                 int idSpot = Integer.parseInt(idSpotLine);
-                Spot spot = SpotController.getInstance().getSpotById(idSpot);
+                Spot spot = spotService.getSpotById(idSpot);
                 if (spot != null) {
                     spots.add(spot);
                     spot.setGarage(newGarage);
-                    SpotController.getInstance().updateSpot(spot);
+                    spotService.updateSpot(spot);
                 }
             }
         }
@@ -258,7 +270,7 @@ public class GarageService implements IGarageService {
 
     private String mechanicsToCsv(Garage garage) {
         StringBuilder mechanicsString = new StringBuilder();
-        List<Mechanic> mechanics = MechanicController.getInstance().getMechanics();
+        List<Mechanic> mechanics = mechanicService.getMechanics();
         for (Mechanic mechanic:mechanics) {
             if (mechanic != null && mechanic.getGarage().equals(garage)) {
                 mechanicsString.append(mechanic.getId());
@@ -270,7 +282,7 @@ public class GarageService implements IGarageService {
 
     private String spotsToCsv(Garage garage) {
         StringBuilder spotsString = new StringBuilder();
-        List<Spot> spots = SpotController.getInstance().getSpots();
+        List<Spot> spots = spotService.getSpots();
 
         for (Spot spot: spots) {
             if (spot != null && spot.getGarage().equals(garage)) {

@@ -17,6 +17,9 @@
         <hibernate.annotation.version>3.5.6-Final</hibernate.annotation.version>
         <javax.transaction.version>1.1</javax.transaction.version>
         <spring.version>5.2.8.RELEASE</spring.version>
+        <juint.version>5.7.0</juint.version>
+        <mockito.core.version>3.5.10</mockito.core.version>
+        <mockito.junit.version>2.17.0</mockito.junit.version>
     </properties>
     <dependencies>
         <dependency>
@@ -60,6 +63,43 @@
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${juint.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${juint.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${juint.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
