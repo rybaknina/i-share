@@ -1,7 +1,6 @@
 package eu.senla.course.repository;
 
 import eu.senla.course.api.repository.IMechanicRepository;
-import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.enums.sql.SqlMechanic;
@@ -60,7 +59,7 @@ public class MechanicRepository implements IMechanicRepository {
             if (rs.next()) {
                 String name = rs.getString(SqlMechanic.NAME.getName());
                 int garageId = rs.getInt(SqlMechanic.GARAGE_ID.getName());
-                Garage garage = GarageController.getInstance().getGarageById(garageId);
+                Garage garage = new GarageRepository().getById(garageId);
                 mechanic = new Mechanic(id, name, garage);
             }
         } catch (SQLException e) {
@@ -80,7 +79,7 @@ public class MechanicRepository implements IMechanicRepository {
                 int id = rs.getInt(SqlMechanic.ID.getName());
                 String name = rs.getString(SqlMechanic.NAME.getName());
                 int garageId = rs.getInt(SqlMechanic.GARAGE_ID.getName());
-                Garage garage = GarageController.getInstance().getGarageById(garageId);
+                Garage garage = new GarageRepository().getById(garageId);
                 mechanics.add(new Mechanic(id, name, garage));
             }
         } catch (SQLException e) {

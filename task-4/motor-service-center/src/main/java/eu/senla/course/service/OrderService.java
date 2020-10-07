@@ -2,10 +2,14 @@ package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.service.*;
-import eu.senla.course.entity.Mechanic;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.dto.mechanic.MechanicShortDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.spot.SpotDto;
+import eu.senla.course.dto.spot.SpotShortDto;
+import eu.senla.course.dto.tool.ToolDto;
+import eu.senla.course.dto.tool.ToolShortDto;
 import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Spot;
-import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvOrderHeader;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.RepositoryException;
@@ -16,8 +20,10 @@ import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -28,8 +34,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Component
+@Component("orderService")
 public class OrderService implements IOrderService {
     private final static Logger logger = LogManager.getLogger(OrderService.class);
     @Value("${order}")
@@ -46,51 +53,84 @@ public class OrderService implements IOrderService {
     private IMechanicService mechanicService;
     private ISpotService spotService;
 
+    public Order orderDtoToEntity(OrderDto orderDto) {
+        Order order = new Order();
+        order.setId(orderDto.getId());
+        order.setRequestDate(orderDto.getRequestDate());
+        order.setPlannedDate(orderDto.getPlannedDate());
+        order.setStartDate(orderDto.getStartDate());
+        order.setCompleteDate(orderDto.getCompleteDate());
+        if (orderDto.getMechanicShortDto() != null) {
+            order.setMechanic(mechanicService.mechanicShortDtoToEntity(orderDto.getMechanicShortDto()));
+        }
+        if (orderDto.getSpotShortDto() != null) {
+            order.setSpot(spotService.spotShortDtoToEntity(orderDto.getSpotShortDto()));
+        }
+        order.setPrice(orderDto.getPrice());
+        order.setStatus(orderDto.getStatus());
+
+        return order;
+    }
+
     @Autowired
+    @Qualifier("orderHibernateRepository")
     public void setOrderRepository(IOrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     @Autowired
+    @Qualifier("garageService")
     public void setGarageService(IGarageService garageService) {
         this.garageService = garageService;
     }
 
     @Autowired
+    @Qualifier("toolService")
     public void setToolService(IToolService toolService) {
         this.toolService = toolService;
     }
 
     @Autowired
+    @Qualifier("mechanicService")
     public void setMechanicService(IMechanicService mechanicService) {
         this.mechanicService = mechanicService;
     }
 
     @Autowired
+    @Qualifier("spotService")
     public void setSpotService(ISpotService spotService) {
         this.spotService = spotService;
     }
 
-    public List<Order> getOrders() {
-        return orderRepository.getAll();
+    @Transactional(readOnly = true)
+    public List<OrderDto> getOrders() {
+        return orderRepository
+               .getAll()
+               .stream()
+               .map(OrderDto::new)
+               .collect(Collectors.toList());
     }
 
-    public void setOrders(List<Order> orders) {
-        orderRepository.setAll(orders);
+    @Transactional
+    public void setOrders(List<OrderDto> orderDtoList) {
+        orderRepository.setAll(orderDtoList.stream().map(this::orderDtoToEntity).collect(Collectors.toList()));
     }
 
-    public Order getOrderById(int id) {
-        return orderRepository.getById(id);
+    @Transactional(readOnly = true)
+    public OrderDto getOrderById(int id) {
+        return new OrderDto(orderRepository.getById(id));
     }
 
-    public void addOrder(Order order) throws ServiceException {
+    @Transactional
+    public void addOrder(OrderDto orderDto) throws ServiceException {
         try {
-            orderRepository.add(order);
+            orderRepository.add(orderDtoToEntity(orderDto));
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
+    @Transactional
     public void deleteOrder(int id) {
         orderRepository.delete(id);
     }
@@ -100,38 +140,44 @@ public class OrderService implements IOrderService {
         return isDeleteOrder;
     }
 
-    public void updateOrder(Order order) throws ServiceException {
+    @Transactional
+    public void updateOrder(OrderDto orderDto) throws ServiceException {
         try {
-            orderRepository.update(order);
+            orderRepository.update(orderDtoToEntity(orderDto));
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
-    public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
-        if (order == null) {
+    @Transactional
+    public void addToolsToOrder(OrderDto orderDto, List<ToolDto> toolDtoList) throws ServiceException {
+        if (orderDto == null) {
             throw new ServiceException("Order is not exist");
         }
-        if (tools.size() == 0) {
+        if (toolDtoList.size() == 0) {
             throw new ServiceException("Tools are not exist");
         } else {
-            order.setTools(tools);
+            orderDto.setToolShortDtoList(toolDtoList.stream().map(ToolShortDto::new).collect(Collectors.toList()));
         }
     }
 
-    public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
-        if (order == null) {
+    @Transactional
+    public void changeStatusOrder(OrderDto orderDto, OrderStatus status) throws ServiceException {
+        if (orderDto == null) {
             throw new ServiceException("Order is not found");
         }
-        order.setStatus(status);
-        updateOrder(order);
+        orderDto.setStatus(status);
+        updateOrder(orderDto);
     }
-    public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
+
+    @Transactional(readOnly = true)
+    public List<OrderDto> ordersForPeriod(Comparator<OrderDto> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
         if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        List<Order> ordersForPeriod = new ArrayList<>();
-        for (Order order: orderRepository.getAll()) {
+        List<OrderDto> ordersForPeriod = new ArrayList<>();
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
+        for (OrderDto order: orderDtoList) {
             if (order !=  null && order.getStartDate() != null && order.getStatus() == status && order.getStartDate().compareTo(startDate) >= 0 && order.getStartDate().compareTo(endDate) <= 0) {
                 ordersForPeriod.add(order);
             }
@@ -139,12 +185,15 @@ public class OrderService implements IOrderService {
         ordersForPeriod.sort(comparator);
         return ordersForPeriod;
     }
-    public List<Order> listCurrentOrders(Comparator<Order> comparator) throws ServiceException {
+
+    @Transactional(readOnly = true)
+    public List<OrderDto> listCurrentOrders(Comparator<OrderDto> comparator) throws ServiceException {
         if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        List<Order> currentOrders = new ArrayList<>();
-        for (Order order: orderRepository.getAll()) {
+        List<OrderDto> currentOrders = new ArrayList<>();
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
+        for (OrderDto order: orderDtoList) {
             if (order != null && order.getStatus() == OrderStatus.IN_PROGRESS) {
                 currentOrders.add(order);
             }
@@ -152,13 +201,15 @@ public class OrderService implements IOrderService {
         currentOrders.sort(comparator);
         return currentOrders;
     }
+
+    @Transactional
     public void changeStartDateOrders(int hours) throws ServiceException {
         LocalDateTime date = LocalDateTime.now().plusHours(hours);
         if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-
-        for (Order order: orderRepository.getAll()) {
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
+        for (OrderDto order: orderDtoList) {
             if (order != null && (order.getStartDate() != null) && order.getStatus() == OrderStatus.IN_PROGRESS && (order.getCompleteDate() != null) && date.isAfter(order.getStartDate())) {
                 order.setStartDate(order.getStartDate().plusHours(hours));
                 if (order.getCompleteDate() != null) {
@@ -174,45 +225,56 @@ public class OrderService implements IOrderService {
         return isShiftTime;
     }
 
-    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
+    @Transactional(readOnly = true)
+    public List<OrderDto> listOrders(Comparator<OrderDto> comparator) throws ServiceException {
         if (orderRepository.getAll().size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        orderRepository.getAll().sort(comparator);
-        return orderRepository.getAll();
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).sorted(comparator).collect(Collectors.toList());
+        return orderDtoList;
     }
 
-    public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
-        if (mechanic == null) {
+    @Transactional(readOnly = true)
+    public OrderDto mechanicOrder(MechanicDto mechanicDto) throws ServiceException {
+        if (mechanicDto == null) {
             throw new ServiceException("Mechanic does not exist");
         }
-        if (orderRepository.getAll().size() == 0) {
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
+        if (orderDtoList.size() == 0) {
             throw new ServiceException("Orders are not exist");
         }
-        for (Order order: orderRepository.getAll()) {
-            if (order.getMechanic().getId() == mechanic.getId() && order.getStatus() == OrderStatus.IN_PROGRESS) {
+        for (OrderDto order: orderDtoList) {
+            if (order.getMechanicShortDto().getId() == mechanicDto.getId() && order.getStatus() == OrderStatus.IN_PROGRESS) {
                 return order;
             }
         }
         return null;
     }
 
-    public Mechanic orderMechanic(Order order) throws ServiceException {
-        if (orderRepository.getAll().size() == 0 || order == null) {
+    @Transactional(readOnly = true)
+    public MechanicDto orderMechanic(OrderDto order) throws ServiceException {
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
+        if (orderDtoList.size() == 0 || order == null) {
             throw new ServiceException("Order is not found");
         }
-        for (Order orderExist : orderRepository.getAll()) {
+        for (OrderDto orderExist : orderDtoList) {
             if (orderExist != null && orderExist.getId() == order.getId()) {
-                return orderExist.getMechanic();
+                MechanicDto mechanicDto = new MechanicDto();
+                mechanicDto.setId(orderExist.getMechanicShortDto().getId());
+                mechanicDto.setName(orderExist.getMechanicShortDto().getName());
+                return mechanicDto;
             }
         }
         return null;
     }
+
+    @Transactional(readOnly = true)
     public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
         int days = Period.between(LocalDate.now(), endDate).getDays();
         LocalDateTime nextDate = LocalDateTime.now();
+        List<OrderDto> orderDtoList = orderRepository.getAll().stream().map(OrderDto::new).collect(Collectors.toList());
         for (int i = 0; i < days; i++) {
-            if (garageService.numberAvailableSpots(nextDate, orderRepository.getAll()) > 0) {
+            if (garageService.numberAvailableSpots(nextDate, orderDtoList) > 0) {
                 return nextDate;
             } else {
                 nextDate = nextDate.plusDays(1);
@@ -222,24 +284,27 @@ public class OrderService implements IOrderService {
         return null;
     }
 
-    public void bill(Order order) throws ServiceException {
-        List<Tool> tools = toolService.getTools();
-        if (order == null) {
+    @Transactional
+    public BigDecimal bill(OrderDto orderDto) throws ServiceException {
+        List<ToolDto> tools = toolService.getTools();
+        if (orderDto == null) {
             throw new ServiceException("Order is not exist");
         }
         BigDecimal amount = BigDecimal.ZERO;
-        for (Tool tool : tools) {
-            if (tool.getOrder().getId() == order.getId()) {
+        for (ToolDto tool : tools) {
+            if (tool.getOrderDto().getId() == orderDto.getId()) {
                 amount = amount.add(tool.getHourlyPrice().multiply(BigDecimal.valueOf(tool.getHours())));
             }
         }
-        order.setPrice(amount);
-        updateOrder(order);
-        System.out.println("Pay your bill " + order.getPrice() + " for order " + order.getId());
+        orderDto.setPrice(amount);
+        updateOrder(orderDto);
+        System.out.println("Pay your bill " + orderDto.getPrice() + " for order " + orderDto.getId());
+        return orderDto.getPrice();
     }
 
 
     @Override
+    @Transactional
     public void ordersFromCsv() throws ServiceException {
 
         List<List<String>> lists;
@@ -257,7 +322,7 @@ public class OrderService implements IOrderService {
 
     private void createOrders(List<List<String>> lists) throws ServiceException {
 
-        List<Order> loadedOrders = new ArrayList<>();
+        List<OrderDto> loadedOrders = new ArrayList<>();
         try {
             for (List<String> list : lists) {
                 int n = 0;
@@ -269,16 +334,19 @@ public class OrderService implements IOrderService {
                 int spotId = Integer.parseInt(list.get(n++));
                 String status = list.get(n);
 
-                Mechanic mechanic = mechanicService.getMechanicById(mechanicId);
-                Spot spot = spotService.getSpotById(spotId);
+                MechanicDto mechanic = mechanicService.getMechanicById(mechanicId);
+                SpotDto spot = spotService.getSpotById(spotId);
 
                 boolean exist = false;
 
-                Order newOrder = orderRepository.getById(id);
-                if (newOrder != null) {
+                Order order = orderRepository.getById(id);
+                OrderDto newOrder;
+                if (order != null) {
+                    newOrder = new OrderDto(order);
                     exist = true;
                 } else {
-                    newOrder = new Order(requestDate, plannedDate, mechanic, spot);
+                    newOrder = new OrderDto();
+                    newOrder.setRequestDate(requestDate);
                 }
                 if (!exist) {
                     newOrder.setRequestDate(LocalDateTime.now());
@@ -286,8 +354,8 @@ public class OrderService implements IOrderService {
                     setNewOrderStatus(status, newOrder);
                 }
                 newOrder.setPlannedDate(plannedDate);
-                newOrder.setMechanic(mechanic);
-                newOrder.setSpot(spot);
+                newOrder.setMechanicShortDto(new MechanicShortDto(mechanic));
+                newOrder.setSpotShortDto(new SpotShortDto(spot));
 
                 if (exist) {
                     updateOrder(newOrder);
@@ -300,10 +368,10 @@ public class OrderService implements IOrderService {
         }
 
         loadedOrders.forEach(System.out::println);
-        orderRepository.addAll(loadedOrders);
+        orderRepository.addAll(loadedOrders.stream().map(this::orderDtoToEntity).collect(Collectors.toList()));
     }
 
-    private void setNewOrderStatus(String status, Order newOrder) {
+    private void setNewOrderStatus(String status, OrderDto newOrder) {
         if (!status.isEmpty()) {
             switch (status) {
                 case "CLOSE":
@@ -323,6 +391,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void ordersToCsv() {
 
         List<List<String>> data = new ArrayList<>();

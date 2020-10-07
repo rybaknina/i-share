@@ -185,7 +185,7 @@
     </module>
 
     <module name="SuppressionFilter">
-        <property name="file" value="task-4/motor-service-center/src/main/resources/suppressions.xml"/>
+        <property name="file" value="../motor-service-center/src/main/resources/suppressions.xml"/>
     </module>
 
     <module name="RegexpMultiline">

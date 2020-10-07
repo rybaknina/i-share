@@ -1,7 +1,6 @@
 package eu.senla.course.repository;
 
 import eu.senla.course.api.repository.ISpotRepository;
-import eu.senla.course.controller.GarageController;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
 import eu.senla.course.enums.sql.SqlSpot;
@@ -58,7 +57,7 @@ public class SpotRepository implements ISpotRepository {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int garageId = rs.getInt(SqlSpot.GARAGE_ID.getName());
-                Garage garage = GarageController.getInstance().getGarageById(garageId);
+                Garage garage = new GarageRepository().getById(garageId);
                 spot = new Spot(id, garage);
             }
         } catch (SQLException e) {
@@ -77,7 +76,7 @@ public class SpotRepository implements ISpotRepository {
             while (rs.next()) {
                 int id = rs.getInt(SqlSpot.ID.getName());
                 int garageId = rs.getInt(SqlSpot.GARAGE_ID.getName());
-                Garage garage = GarageController.getInstance().getGarageById(garageId);
+                Garage garage = new GarageRepository().getById(garageId);
                 spots.add(new Spot(id, garage));
             }
         } catch (SQLException e) {

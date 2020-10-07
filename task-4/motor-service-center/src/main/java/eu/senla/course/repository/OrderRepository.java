@@ -1,8 +1,6 @@
 package eu.senla.course.repository;
 
 import eu.senla.course.api.repository.IOrderRepository;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -120,8 +118,8 @@ public class OrderRepository implements IOrderRepository {
         int mechanicId = rs.getInt(SqlOrder.MECHANIC_ID.getName());
         int spotId = rs.getInt(SqlOrder.SPOT_ID.getName());
 
-        Mechanic mechanic = MechanicController.getInstance().getMechanicById(mechanicId);
-        Spot spot = SpotController.getInstance().getSpotById(spotId);
+        Mechanic mechanic = new MechanicRepository().getById(mechanicId);
+        Spot spot = new SpotRepository().getById(spotId);
 
         order = new Order(id, requestDate, plannedDate, mechanic, spot);
         order.setStartDate(startDate);

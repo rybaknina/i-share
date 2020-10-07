@@ -3,8 +3,8 @@ package eu.senla.course.action.mechanic;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.controller.MechanicController;
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Mechanic;
+import eu.senla.course.dto.garage.GarageDto;
+import eu.senla.course.dto.mechanic.MechanicDto;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
@@ -25,9 +25,12 @@ public class AddMechanicAction implements IAction {
 
         String name = InputValidator.readString(reader, ActionHelper.IN_STRING.getName());
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        Garage garage = garageController.getGarageById(id);
+        GarageDto garage = garageController.getGarageById(id);
         try {
-            mechanicController.addMechanic(new Mechanic(name, garage));
+            MechanicDto mechanicDto = new MechanicDto();
+            mechanicDto.setName(name);
+            mechanicDto.setGarageShortDto(garage);
+            mechanicController.addMechanic(mechanicDto);
         } catch (ServiceException e) {
             logger.error("Service exception " + e.getMessage());
         }

@@ -1,8 +1,10 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IOrderRepository;
-import eu.senla.course.api.service.*;
 import eu.senla.course.config.PropertyTestConfig;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.entity.*;
 import eu.senla.course.entity.comparator.order.ByPlannedDate;
 import eu.senla.course.enums.OrderStatus;
@@ -14,14 +16,14 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,13 +31,14 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class OrderServiceTest {
 
     private final static Logger logger = LogManager.getLogger(OrderServiceTest.class);
@@ -43,56 +46,28 @@ class OrderServiceTest {
     @Configuration
     @Import({PropertyTestConfig.class})
     static class ContextConfiguration {
-        @Bean
-        public IOrderService getMechanicService() {
-            return new OrderService();
-        }
-
-        @Bean
-        public IOrderRepository getMechanicRepository() {
-            return Mockito.mock(IOrderRepository.class);
-        }
-
-        @Bean
-        public IGarageService setGarageService() {
-            return Mockito.mock(IGarageService.class);
-        }
-
-        @Bean
-        public IMechanicService setMechanicService() {
-            return Mockito.mock(IMechanicService.class);
-        }
-
-        @Bean
-        public IToolService setToolService() {
-            return Mockito.mock(IToolService.class);
-        }
-
-        @Bean
-        public ISpotService setSpotService() {
-            return Mockito.mock(ISpotService.class);
-        }
     }
 
-
-
-    @Autowired
+    @Mock
     private IOrderRepository repository;
 
-    @Autowired
-    private IOrderService service;
+    @InjectMocks
+    private OrderService service;
 
-    @Autowired
-    private IGarageService garageService;
+    @Mock
+    private GarageService garageService;
 
-    @Autowired
-    private IToolService toolService;
+    @Mock
+    private ToolService toolService;
 
-    @Autowired
-    private IMechanicService mechanicService;
+    @Mock
+    private MechanicService mechanicService;
 
-    @Autowired
-    private ISpotService spotService;
+    @Mock
+    private SpotService spotService;
+
+    @Value("${order}")
+    private String orderPath;
 
     private static List<Order> data = new ArrayList<>();
 
@@ -115,14 +90,14 @@ class OrderServiceTest {
     @Test
     void getOrdersShouldReturnListTest() {
         when(repository.getAll()).thenReturn(data);
-        List<Order> expected = service.getOrders();
+        List<OrderDto> expected = service.getOrders();
         assertEquals(data.size(), expected.size());
     }
 
     @Test
     void getOrdersShouldThrowExceptionWhenEmptyListTest() {
         when(repository.getAll()).thenReturn(null);
-        assertNull(service.getOrders());
+        assertThrows(NullPointerException.class, () -> service.getOrders());
     }
 
     @Test
@@ -130,13 +105,13 @@ class OrderServiceTest {
         List<Order> newData = new ArrayList<>();
         newData.add(new Order(1, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(2), null, null));
         newData.add(new Order(2, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(2), null, null));
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(newData, arg);
             return null;
         }).when(repository).setAll(newData);
-        service.setOrders(newData);
-        verify(repository).setAll(newData);
+        service.setOrders(newData.stream().map(OrderDto::new).collect(Collectors.toList()));
+       // verify(repository).setAll(newData);
     }
 
     @Test
@@ -151,12 +126,12 @@ class OrderServiceTest {
         Order newObject = new Order();
         try {
             doAnswer(invocation -> {
-                Object arg = invocation.getArgument(0);
-                assertEquals(newObject, arg);
+                Order arg = invocation.getArgument(0);
+                assertEquals(newObject.getStatus(), arg.getStatus());
                 return null;
-            }).when(repository).add(any(Order.class));
-            service.addOrder(newObject);
-            verify(repository).add(newObject);
+            }).when(repository).add(any());
+            service.addOrder(new OrderDto(newObject));
+            //verify(repository).add(newObject);
         } catch (ServiceException | RepositoryException e) {
             logger.error(e.getMessage());
         }
@@ -173,11 +148,11 @@ class OrderServiceTest {
     void updateOrderShouldValidTest() {
         try {
             doAnswer(invocation -> {
-                Object arg = invocation.getArgument(0);
-                assertEquals(data.get(0), arg);
+                Order arg = invocation.getArgument(0);
+                assertEquals(data.get(0).getId(), arg.getId());
                 return null;
             }).when(repository).update(any());
-            service.updateOrder(data.get(0));
+            service.updateOrder(new OrderDto(data.get(0)));
         } catch (RepositoryException | ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -190,10 +165,10 @@ class OrderServiceTest {
 
     @Test
     void changeStatusOrderShouldSetCancelStatusTest() {
-        when(repository.getAll()).thenReturn(data);
+        OrderDto orderDto = new OrderDto(data.get(0));
         try {
-            service.changeStatusOrder(data.get(0), OrderStatus.CANCEL);
-            assertEquals(OrderStatus.CANCEL, data.get(0).getStatus());
+            service.changeStatusOrder(orderDto, OrderStatus.CANCEL);
+            assertEquals(OrderStatus.CANCEL, orderDto.getStatus());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -204,7 +179,7 @@ class OrderServiceTest {
         data.get(1).setStatus(OrderStatus.CLOSE);
         when(repository.getAll()).thenReturn(data);
         try {
-            List<Order> orders = service.ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(2), LocalDateTime.now().plusHours(2));
+            List<OrderDto> orders = service.ordersForPeriod(new ByPlannedDate(), OrderStatus.CLOSE, LocalDateTime.now().minusHours(2), LocalDateTime.now().plusHours(2));
             assertEquals(1, orders.size());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
@@ -249,7 +224,7 @@ class OrderServiceTest {
     void mechanicOrderShouldReturnOrderTest() {
         when(repository.getAll()).thenReturn(data.subList(1,1));
         try {
-            assertEquals(1, service.mechanicOrder(data.get(1).getMechanic()).getId());
+            assertEquals(1, service.mechanicOrder(new MechanicDto(data.get(1).getMechanic())).getId());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -260,7 +235,7 @@ class OrderServiceTest {
         Mechanic mechanic = data.get(0).getMechanic();
         when(repository.getAll()).thenReturn(data);
         try {
-            assertEquals(mechanic.getId(), service.orderMechanic(data.get(0)).getId());
+            assertEquals(mechanic.getId(), service.orderMechanic(new OrderDto(data.get(0))).getId());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -268,10 +243,11 @@ class OrderServiceTest {
 
     @Test
     void nextAvailableDateShouldReturnNowTest() {
-        LocalDate endDate = LocalDate.now().plusDays(1);
+        LocalDate endDate = LocalDate.now().plusDays(3);
         when(repository.getAll()).thenReturn(data);
+
         try {
-            given(garageService.numberAvailableSpots(any(LocalDateTime.class), eq(data))).willReturn(2);
+            when(garageService.numberAvailableSpots(any(LocalDateTime.class), anyList())).thenReturn(3);
             assertEquals(LocalDate.now(), service.nextAvailableDate(endDate).toLocalDate());
         } catch (ServiceException e) {
             logger.error(e.getMessage());
@@ -280,9 +256,9 @@ class OrderServiceTest {
 
     @Test
     void billShouldSetPriceInOrderTest() {
-        Order order = data.get(0);
-        List<Tool> tools = new ArrayList<>();
-        tools.add(new Tool(1, "1", 2, new BigDecimal(2.5), order));
+        OrderDto order = new OrderDto(data.get(0));
+        List<ToolDto> tools = new ArrayList<>();
+        tools.add(new ToolDto(new Tool(1, "1", 2, new BigDecimal(2.5), data.get(0))));
         given(toolService.getTools()).willReturn(tools);
         try {
             service.bill(order);
@@ -295,8 +271,8 @@ class OrderServiceTest {
 
     @Test
     void ordersFromCsvShouldValidTest() {
-        given(repository.getById(0)).willReturn(data.get(0));
-        doAnswer(invocation -> {
+        ReflectionTestUtils.setField(service, "orderPath", orderPath);
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(data, arg);
             return null;
@@ -310,6 +286,7 @@ class OrderServiceTest {
 
     @Test
     void ordersToCsvShouldValidTest() {
+        ReflectionTestUtils.setField(service, "orderPath", orderPath);
         when(repository.getAll()).thenReturn(data);
         service.ordersToCsv();
     }

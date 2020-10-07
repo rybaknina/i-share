@@ -1,20 +1,22 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IOrderService;
-import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Tool;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-@Component
+@RestController
 final public class OrderController {
 
     private IOrderService service;
@@ -35,60 +37,72 @@ final public class OrderController {
         this.instance = controller;
     }
     @Autowired
+    @Qualifier("orderService")
     public void setService(IOrderService service) {
         this.service = service;
     }
 
-    public void addOrder(Order order) throws ServiceException {
-        service.addOrder(order);
+    @PostMapping("/order")
+    public void addOrder(@RequestBody OrderDto orderDto) throws ServiceException {
+        service.addOrder(orderDto);
     }
-    public List<Order> getOrders() {
+
+    @GetMapping("/orders")
+    public List<OrderDto> getOrders() {
         return service.getOrders();
     }
-    public void deleteOrder(int id) {
+
+    @DeleteMapping("/order/{id}")
+    public void deleteOrder(@PathVariable int id) {
         service.deleteOrder(id);
     }
     public boolean isDeleteOrder() {
         return service.isDeleteOrder();
     }
-    public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
-        service.addToolsToOrder(order, tools);
+
+    public void addToolsToOrder(OrderDto orderDto, List<ToolDto> toolDtoList) throws ServiceException {
+        service.addToolsToOrder(orderDto, toolDtoList);
     }
-    public Order getOrderById(int id) {
+
+    @GetMapping("/order/{id}")
+    public OrderDto getOrderById(@PathVariable int id) {
         return service.getOrderById(id);
     }
-    public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
-        service.changeStatusOrder(order, status);
+    public void changeStatusOrder(OrderDto orderDto, OrderStatus status) throws ServiceException {
+        service.changeStatusOrder(orderDto, status);
     }
     public boolean isShiftTime() {
         return service.isShiftTime();
     }
-    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
+    public List<OrderDto> listOrders(Comparator<OrderDto> comparator) throws ServiceException {
         return service.listOrders(comparator);
     }
+
     public void changeStartDateOrders(int hours) throws ServiceException {
         service.changeStartDateOrders(hours);
     }
     public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
         return service.nextAvailableDate(endDate);
     }
-    public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
-        return service.mechanicOrder(mechanic);
+    public OrderDto mechanicOrder(MechanicDto mechanicDto) throws ServiceException {
+        return service.mechanicOrder(mechanicDto);
     }
-    public Mechanic orderMechanic(Order order) throws ServiceException {
-        return service.orderMechanic(order);
+    public MechanicDto orderMechanic(OrderDto orderDto) throws ServiceException {
+        return service.orderMechanic(orderDto);
     }
-    public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
+    public List<OrderDto> ordersForPeriod(Comparator<OrderDto> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
         return service.ordersForPeriod(comparator, status, startDate, endDate);
     }
-    public List<Order> listCurrentOrders(Comparator<Order> comparator) throws ServiceException {
+    public List<OrderDto> listCurrentOrders(Comparator<OrderDto> comparator) throws ServiceException {
         return service.listCurrentOrders(comparator);
     }
-    public void bill(Order order) throws ServiceException {
-        service.bill(order);
+    public BigDecimal bill(OrderDto orderDto) throws ServiceException {
+        return service.bill(orderDto);
     }
-    public void updateOrder(Order order) throws ServiceException {
-        service.updateOrder(order);
+
+    @PutMapping("/order")
+    public void updateOrder(@RequestBody OrderDto orderDto) throws ServiceException {
+        service.updateOrder(orderDto);
     }
     public void ordersFromCsv() throws ServiceException {
         service.ordersFromCsv();

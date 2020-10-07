@@ -1,15 +1,16 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.ISpotService;
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Spot;
+import eu.senla.course.dto.garage.GarageDto;
+import eu.senla.course.dto.spot.SpotDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Component
+@RestController
 final public class SpotController {
 
     private ISpotService service;
@@ -29,35 +30,52 @@ final public class SpotController {
     public void setController(SpotController controller) {
         this.instance = controller;
     }
+
     @Autowired
+    @Qualifier("spotService")
     public void setService(ISpotService service) {
         this.service = service;
     }
 
-    public List<Spot> getSpots() {
+    @GetMapping(path = "/spots", produces = "application/json")
+    public List<SpotDto> getSpots() {
         return service.getSpots();
     }
-    public void setSpots(List<Spot> spots) {
-        service.setSpots(spots);
+
+    @PutMapping("/spots")
+    public void setSpots(@PathVariable List<SpotDto> spotDtoList) {
+        service.setSpots(spotDtoList);
     }
-    public void addSpot(Spot spot) throws ServiceException {
-        service.addSpot(spot);
+
+    @PostMapping("/spot")
+    public void addSpot(@RequestBody SpotDto spotDto) throws ServiceException {
+        service.addSpot(spotDto);
     }
+
     public boolean isModifySpot() {
         return service.isModifySpot();
     }
-    public Spot getSpotById(int id) {
+
+    @GetMapping("/spot/{id}")
+    public SpotDto getSpotById(@PathVariable int id) {
         return service.getSpotById(id);
     }
-    public void deleteSpot(int id) {
+
+    @DeleteMapping("/spot/{id}")
+    public void deleteSpot(@PathVariable int id) {
         service.deleteSpot(id);
     }
-    public void updateSpot(Spot spot) throws ServiceException {
-        service.updateSpot(spot);
+
+    @PutMapping("/spot")
+    public void updateSpot(@RequestBody SpotDto spotDto) throws ServiceException {
+        service.updateSpot(spotDto);
     }
-    public List<Spot> spotsInGarage(Garage garage) {
-        return service.spotsInGarage(garage);
+
+    @GetMapping(path = "/spots_in_garage", produces = "application/json")
+    public List<SpotDto> spotsInGarage(@PathVariable GarageDto garageDto) {
+        return service.spotsInGarage(garageDto);
     }
+
     public void spotsFromCsv() throws ServiceException {
         service.spotsFromCsv();
     }

@@ -57,4 +57,10 @@
     <suppress checks="AvoidStarImportCheck" files="GarageHibernateRepository.java"/>
     <suppress checks="AvoidStarImportCheck" files="SerializeUtil.java"/>
     <suppress checks="AvoidStarImportCheck" files="AppConfig.java"/>
+    <suppress checks="AvoidStarImportCheck" files="HibernateUtil.java"/>
+    <suppress checks="AvoidStarImportCheck" files="GarageController.java"/>
+    <suppress checks="AvoidStarImportCheck" files="SpotController.java"/>
+    <suppress checks="AvoidStarImportCheck" files="MechanicController.java"/>
+    <suppress checks="AvoidStarImportCheck" files="OrderController.java"/>
+    <suppress checks="AvoidStarImportCheck" files="ToolController.java"/>
 </suppressions>

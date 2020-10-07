@@ -1,7 +1,6 @@
 package eu.senla.course.repository;
 
 import eu.senla.course.api.repository.IToolRepository;
-import eu.senla.course.controller.OrderController;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.sql.SqlTool;
@@ -46,7 +45,7 @@ public class ToolRepository implements IToolRepository {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("error message " + e.getMessage());
+            logger.error("handler message " + e.getMessage());
         }
     }
 
@@ -67,7 +66,7 @@ public class ToolRepository implements IToolRepository {
                 int hours = rs.getInt(SqlTool.HOURS.getName());
                 BigDecimal hourlyPrice = rs.getBigDecimal(SqlTool.HOURLY_PRICE.getName());
                 int orderId = rs.getInt(SqlTool.ORDER_ID.getName());
-                Order order = OrderController.getInstance().getOrderById(orderId);
+                Order order = new OrderRepository().getById(orderId);
                 tool = new Tool(id, name, hours, hourlyPrice, order);
             }
         } catch (SQLException e) {
@@ -91,7 +90,7 @@ public class ToolRepository implements IToolRepository {
                 int hours = rs.getInt(SqlTool.HOURS.getName());
                 BigDecimal hourlyPrice = rs.getBigDecimal(SqlTool.HOURLY_PRICE.getName());
                 int orderId = rs.getInt(SqlTool.ORDER_ID.getName());
-                Order order = OrderController.getInstance().getOrderById(orderId);
+                Order order = new OrderRepository().getById(orderId);
                 tool = new Tool(id, name, hours, hourlyPrice, order);
 
                 tools.add(tool);

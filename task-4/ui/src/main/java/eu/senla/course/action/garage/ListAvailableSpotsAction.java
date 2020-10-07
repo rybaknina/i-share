@@ -3,7 +3,7 @@ package eu.senla.course.action.garage;
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.GarageController;
 import eu.senla.course.controller.OrderController;
-import eu.senla.course.entity.Order;
+import eu.senla.course.dto.order.OrderDto;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
@@ -24,7 +24,7 @@ public class ListAvailableSpotsAction implements IAction {
     public void execute() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        List<Order> orders = orderController.getOrders();
+        List<OrderDto> orders = orderController.getOrders();
         LocalDateTime futureDate = InputValidator.readDateTime(reader, ActionHelper.IN_LOCAL_DATE_TIME.getName());
 
         try {
