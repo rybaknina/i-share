@@ -18,7 +18,7 @@ public interface IMechanicService {
     void updateMechanic(MechanicDto mechanicDto) throws ServiceException;
     MechanicDto getMechanicById(int id);
     MechanicDto firstFreeMechanic() throws ServiceException;
-    void sortMechanicsBy(Comparator<MechanicDto> comparator) throws ServiceException;
+    List<MechanicDto> sortMechanicsBy(Comparator<MechanicDto> comparator) throws ServiceException;
     void mechanicsFromCsv() throws ServiceException;
     void mechanicsToCsv();
 }

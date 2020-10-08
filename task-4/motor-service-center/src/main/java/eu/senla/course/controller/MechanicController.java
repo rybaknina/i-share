@@ -2,6 +2,9 @@ package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IMechanicService;
 import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
+import eu.senla.course.entity.comparator.mechanic.ByBusy;
+import eu.senla.course.enums.MechanicComparator;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,9 +73,36 @@ final public class MechanicController {
     public MechanicDto firstFreeMechanic() throws ServiceException {
         return service.firstFreeMechanic();
     }
-    public void sortMechanicsBy(Comparator<MechanicDto> comparator) throws ServiceException {
-        service.sortMechanicsBy(comparator);
+
+    @GetMapping("/sort_mechanics/{comparator}")
+    public List<MechanicDto> sortMechanicsBy(@PathVariable String comparator) throws ServiceException {
+        Comparator<MechanicDto> dtoComparator = getMechanicComparator(comparator);
+        return service.sortMechanicsBy(dtoComparator);
     }
+
+    private Comparator<MechanicDto> getMechanicComparator(String comparator) {
+        comparator = comparator.toUpperCase();
+        MechanicComparator mechanicComparator;
+        try {
+            mechanicComparator = MechanicComparator.valueOf(comparator);
+        } catch (IllegalArgumentException ex) {
+            mechanicComparator = MechanicComparator.BY_ALPHABET;
+        }
+        Comparator<MechanicDto> dtoComparator;
+        switch (mechanicComparator) {
+            case BY_BUSY:
+                dtoComparator = new ByBusy();
+                break;
+            case BY_ALPHABET:
+                dtoComparator = new ByAlphabet();
+                break;
+            default:
+                dtoComparator = new ByAlphabet();
+                break;
+        }
+        return dtoComparator;
+    }
+
     public void mechanicsFromCsv() throws ServiceException {
         service.mechanicsFromCsv();
     }

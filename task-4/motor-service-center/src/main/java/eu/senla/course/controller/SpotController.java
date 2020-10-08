@@ -72,7 +72,7 @@ final public class SpotController {
     }
 
     @GetMapping(path = "/spots_in_garage", produces = "application/json")
-    public List<SpotDto> spotsInGarage(@PathVariable GarageDto garageDto) {
+    public List<SpotDto> spotsInGarage(@RequestBody GarageDto garageDto) {
         return service.spotsInGarage(garageDto);
     }
 

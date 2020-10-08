@@ -244,7 +244,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Orders are not exist");
         }
         for (OrderDto order: orderDtoList) {
-            if (order.getMechanicShortDto().getId() == mechanicDto.getId() && order.getStatus() == OrderStatus.IN_PROGRESS) {
+            if (order.getMechanicShortDto() != null && order.getMechanicShortDto().getId() == mechanicDto.getId() && order.getStatus() == OrderStatus.IN_PROGRESS) {
                 return order;
             }
         }
@@ -258,7 +258,7 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Order is not found");
         }
         for (OrderDto orderExist : orderDtoList) {
-            if (orderExist != null && orderExist.getId() == order.getId()) {
+            if (orderExist.getMechanicShortDto() != null && orderExist != null && orderExist.getId() == order.getId()) {
                 MechanicDto mechanicDto = new MechanicDto();
                 mechanicDto.setId(orderExist.getMechanicShortDto().getId());
                 mechanicDto.setName(orderExist.getMechanicShortDto().getName());

@@ -7,6 +7,7 @@ import eu.senla.course.dto.spot.SpotDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -78,11 +79,13 @@ final public class GarageController {
         return service.lengthAllSpots();
     }
 
-    public List<SpotDto> listAvailableSpots(LocalDateTime futureDate, List<OrderDto> orderDtoList) throws ServiceException {
+    @GetMapping("/available_spots/{futureDate}")
+    public List<SpotDto> listAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
         return service.listAvailableSpots(futureDate, orderDtoList);
     }
 
-    public int numberAvailableSpots(LocalDateTime futureDate, List<OrderDto> orderDtoList) throws ServiceException {
+    @GetMapping("/count_available_spots/{futureDate}")
+    public int numberAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
         return service.numberAvailableSpots(futureDate, orderDtoList);
     }
     public void garagesFromCsv() throws ServiceException {

@@ -77,7 +77,8 @@ public abstract class AbstractHibernateRepository<T extends IEntity> implements 
     @Override
     public void addAll(List<T> ts) {
         for (T t: ts) {
-            entityManager.merge(t);
+            findEntity(t);
+            //entityManager.merge(t);
         }
     }
 }

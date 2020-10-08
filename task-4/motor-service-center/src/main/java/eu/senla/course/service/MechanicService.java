@@ -131,14 +131,12 @@ public class MechanicService implements IMechanicService {
     }
 
     @Transactional(readOnly = true)
-    public void sortMechanicsBy(Comparator<MechanicDto> comparator) throws ServiceException {
+    public List<MechanicDto> sortMechanicsBy(Comparator<MechanicDto> comparator) throws ServiceException {
         if (mechanicRepository.getAll().size() == 0) {
             throw new ServiceException("Auto mechanics are not exist");
         }
         List<MechanicDto> mechanicDtoList = mechanicRepository.getAll().stream().map(MechanicDto::new).sorted(comparator).collect(Collectors.toList());
-        for (MechanicDto mechanic: mechanicDtoList) {
-            System.out.println(mechanic.getId() + " " + mechanic.getName() + " " + mechanic.isMechanicFree());
-        }
+        return mechanicDtoList;
     }
 
     @Override
