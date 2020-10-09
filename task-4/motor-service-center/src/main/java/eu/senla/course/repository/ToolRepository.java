@@ -1,5 +1,6 @@
 package eu.senla.course.repository;
 
+import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.api.repository.IToolRepository;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Tool;
@@ -8,6 +9,9 @@ import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -17,9 +21,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("toolRepository")
 public class ToolRepository implements IToolRepository {
 
     private final static Logger logger = LogManager.getLogger(ToolRepository.class);
+
+    private IOrderRepository orderRepository;
+
+    @Autowired
+    @Qualifier("orderRepository")
+    public void setOrderRepository(IOrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     @Override
     public void add(Tool tool) throws RepositoryException {
         if (tool == null) {
@@ -45,7 +59,7 @@ public class ToolRepository implements IToolRepository {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("handler message " + e.getMessage());
+            logger.error("error message " + e.getMessage());
         }
     }
 
@@ -66,7 +80,7 @@ public class ToolRepository implements IToolRepository {
                 int hours = rs.getInt(SqlTool.HOURS.getName());
                 BigDecimal hourlyPrice = rs.getBigDecimal(SqlTool.HOURLY_PRICE.getName());
                 int orderId = rs.getInt(SqlTool.ORDER_ID.getName());
-                Order order = new OrderRepository().getById(orderId);
+                Order order = orderRepository.getById(orderId);
                 tool = new Tool(id, name, hours, hourlyPrice, order);
             }
         } catch (SQLException e) {
@@ -90,7 +104,7 @@ public class ToolRepository implements IToolRepository {
                 int hours = rs.getInt(SqlTool.HOURS.getName());
                 BigDecimal hourlyPrice = rs.getBigDecimal(SqlTool.HOURLY_PRICE.getName());
                 int orderId = rs.getInt(SqlTool.ORDER_ID.getName());
-                Order order = new OrderRepository().getById(orderId);
+                Order order = orderRepository.getById(orderId);
                 tool = new Tool(id, name, hours, hourlyPrice, order);
 
                 tools.add(tool);

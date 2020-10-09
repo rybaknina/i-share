@@ -1,5 +1,6 @@
 package eu.senla.course.repository;
 
+import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Spot;
@@ -8,6 +9,9 @@ import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +20,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("spotRepository")
 public class SpotRepository implements ISpotRepository {
     private final static Logger logger = LogManager.getLogger(SpotRepository.class);
+    private IGarageRepository garageRepository;
+
+    @Autowired
+    @Qualifier("garageRepository")
+    public void setGarageRepository(IGarageRepository garageRepository) {
+        this.garageRepository = garageRepository;
+    }
+
     @Override
     public void add(Spot spot) throws RepositoryException {
         if (spot == null) {
@@ -57,7 +70,7 @@ public class SpotRepository implements ISpotRepository {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int garageId = rs.getInt(SqlSpot.GARAGE_ID.getName());
-                Garage garage = new GarageRepository().getById(garageId);
+                Garage garage = garageRepository.getById(garageId);
                 spot = new Spot(id, garage);
             }
         } catch (SQLException e) {
@@ -76,7 +89,7 @@ public class SpotRepository implements ISpotRepository {
             while (rs.next()) {
                 int id = rs.getInt(SqlSpot.ID.getName());
                 int garageId = rs.getInt(SqlSpot.GARAGE_ID.getName());
-                Garage garage = new GarageRepository().getById(garageId);
+                Garage garage = garageRepository.getById(garageId);
                 spots.add(new Spot(id, garage));
             }
         } catch (SQLException e) {

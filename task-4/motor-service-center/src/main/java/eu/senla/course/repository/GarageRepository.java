@@ -7,6 +7,7 @@ import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("garageRepository")
 public class GarageRepository implements IGarageRepository {
     private final static Logger logger = LogManager.getLogger(GarageRepository.class);
 

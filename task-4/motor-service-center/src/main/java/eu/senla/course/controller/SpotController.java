@@ -42,12 +42,12 @@ final public class SpotController {
         return service.getSpots();
     }
 
-    @PutMapping("/spots")
+    @PatchMapping("/spots")
     public void setSpots(@PathVariable List<SpotDto> spotDtoList) {
         service.setSpots(spotDtoList);
     }
 
-    @PostMapping("/spot")
+    @PostMapping("/spots")
     public void addSpot(@RequestBody SpotDto spotDto) throws ServiceException {
         service.addSpot(spotDto);
     }
@@ -56,22 +56,22 @@ final public class SpotController {
         return service.isModifySpot();
     }
 
-    @GetMapping("/spot/{id}")
+    @GetMapping("/spots/{id}")
     public SpotDto getSpotById(@PathVariable int id) {
         return service.getSpotById(id);
     }
 
-    @DeleteMapping("/spot/{id}")
+    @DeleteMapping("/spots/{id}")
     public void deleteSpot(@PathVariable int id) {
         service.deleteSpot(id);
     }
 
-    @PutMapping("/spot")
+    @PutMapping("/spots")
     public void updateSpot(@RequestBody SpotDto spotDto) throws ServiceException {
         service.updateSpot(spotDto);
     }
 
-    @GetMapping(path = "/spots_in_garage", produces = "application/json")
+    @GetMapping(path = "/spots/garage")
     public List<SpotDto> spotsInGarage(@RequestBody GarageDto garageDto) {
         return service.spotsInGarage(garageDto);
     }

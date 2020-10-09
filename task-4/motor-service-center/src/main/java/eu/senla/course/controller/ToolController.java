@@ -36,7 +36,7 @@ final public class ToolController {
         this.instance = controller;
     }
 
-    @PostMapping("/tool")
+    @PostMapping("/tools")
     public void addTool(@RequestBody ToolDto toolDto) throws ServiceException {
         service.addTool(toolDto);
     }
@@ -46,22 +46,22 @@ final public class ToolController {
         return service.getTools();
     }
 
-    @PutMapping("/tools")
+    @PatchMapping("/tools")
     public void setTools(@PathVariable List<ToolDto> toolDtoList) {
         service.setTools(toolDtoList);
     }
 
-    @GetMapping("/tool/{id}")
+    @GetMapping("/tools/{id}")
     public ToolDto getToolById(@PathVariable int id) {
         return service.getToolById(id);
     }
 
-    @DeleteMapping("/tool/{id}")
+    @DeleteMapping("/tools/{id}")
     public void deleteTool(@PathVariable int id) {
         service.deleteTool(id);
     }
 
-    @PutMapping("/tool")
+    @PutMapping("/tools")
     public void updateTool(@RequestBody ToolDto toolDto) throws ServiceException {
         service.updateTool(toolDto);
     }

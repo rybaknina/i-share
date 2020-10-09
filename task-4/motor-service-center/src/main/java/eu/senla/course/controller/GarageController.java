@@ -44,12 +44,12 @@ final public class GarageController {
         return "Welcome to Rest Api...";
     }
 
-    @PostMapping("/garage")
+    @PostMapping("/garages")
     public void addGarage(@RequestBody GarageDto garage) throws ServiceException {
         service.addGarage(garage);
     }
 
-    @PutMapping("/garages")
+    @PatchMapping("/garages")
     public void setGarages(@PathVariable List<GarageDto> garages) {
         service.setGarages(garages);
     }
@@ -59,32 +59,32 @@ final public class GarageController {
         return service.getGarages();
     }
 
-    @GetMapping("/garage/{id}")
+    @GetMapping("/garages/{id}")
     public GarageDto getGarageById(@PathVariable int id) {
         return service.getGarageById(id);
     }
 
-    @PutMapping("/garage")
+    @PutMapping("/garages")
     public void updateGarage(@RequestBody GarageDto garageDto) throws ServiceException {
         service.updateGarage(garageDto);
     }
 
-    @DeleteMapping("/garage/{id}")
+    @DeleteMapping("/garages/{id}")
     public void deleteGarage(@PathVariable int id) {
         service.deleteGarage(id);
     }
 
-    @GetMapping("/count_spots")
+    @GetMapping("/garages/spots/count")
     public int lengthAllSpots() {
         return service.lengthAllSpots();
     }
 
-    @GetMapping("/available_spots/{futureDate}")
+    @GetMapping("/garages/spots/available/{futureDate}")
     public List<SpotDto> listAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
         return service.listAvailableSpots(futureDate, orderDtoList);
     }
 
-    @GetMapping("/count_available_spots/{futureDate}")
+    @GetMapping("/garages/spots/count/{futureDate}")
     public int numberAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
         return service.numberAvailableSpots(futureDate, orderDtoList);
     }

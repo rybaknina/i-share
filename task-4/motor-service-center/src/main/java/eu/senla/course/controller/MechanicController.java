@@ -39,7 +39,7 @@ final public class MechanicController {
         this.service = service;
     }
 
-    @PostMapping("/mechanic")
+    @PostMapping("/mechanics")
     public void addMechanic(@RequestBody MechanicDto mechanicDto) throws ServiceException {
         service.addMechanic(mechanicDto);
     }
@@ -49,34 +49,34 @@ final public class MechanicController {
         return service.getMechanics();
     }
 
-    @PutMapping("/mechanics")
+    @PatchMapping("/mechanics")
     public void setMechanics(@PathVariable List<MechanicDto> mechanicDtoList) {
         service.setMechanics(mechanicDtoList);
     }
 
-    @DeleteMapping("/mechanic/{id}")
+    @DeleteMapping("/mechanics/{id}")
     public void deleteMechanic(@PathVariable int id) {
         service.deleteMechanic(id);
     }
 
-    @PutMapping("/mechanic")
+    @PutMapping("/mechanics")
     public void updateMechanic(@RequestBody MechanicDto mechanicDto) throws ServiceException {
         service.updateMechanic(mechanicDto);
     }
 
-    @GetMapping("/mechanic/{id}")
+    @GetMapping("/mechanics/{id}")
     public MechanicDto getMechanicById(@PathVariable int id) {
         return service.getMechanicById(id);
     }
 
-    @GetMapping("/free_mechanic")
+    @GetMapping("/mechanics/free")
     public MechanicDto firstFreeMechanic() throws ServiceException {
         return service.firstFreeMechanic();
     }
 
-    @GetMapping("/sort_mechanics/{comparator}")
-    public List<MechanicDto> sortMechanicsBy(@PathVariable String comparator) throws ServiceException {
-        Comparator<MechanicDto> dtoComparator = getMechanicComparator(comparator);
+    @GetMapping("/mechanics/sort")
+    public List<MechanicDto> sortMechanicsBy(@RequestParam(value = "sort", defaultValue = "BY_ALPHABET") String sortBy) throws ServiceException {
+        Comparator<MechanicDto> dtoComparator = getMechanicComparator(sortBy);
         return service.sortMechanicsBy(dtoComparator);
     }
 

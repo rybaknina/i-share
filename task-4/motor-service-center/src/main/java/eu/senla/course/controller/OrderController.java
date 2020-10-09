@@ -48,7 +48,7 @@ final public class OrderController {
         this.service = service;
     }
 
-    @PostMapping("/order")
+    @PostMapping("/orders")
     public void addOrder(@RequestBody OrderDto orderDto) throws ServiceException {
         service.addOrder(orderDto);
     }
@@ -58,7 +58,7 @@ final public class OrderController {
         return service.getOrders();
     }
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/orders/{id}")
     public void deleteOrder(@PathVariable int id) {
         service.deleteOrder(id);
     }
@@ -70,13 +70,13 @@ final public class OrderController {
         service.addToolsToOrder(orderDto, toolDtoList);
     }
 
-    @GetMapping("/order/{id}")
+    @GetMapping("/orders/{id}")
     public OrderDto getOrderById(@PathVariable int id) {
         return service.getOrderById(id);
     }
 
-    @PutMapping("/change_order_status/{status}")
-    public void changeStatusOrder(@RequestBody OrderDto orderDto, @PathVariable OrderStatus status) throws ServiceException {
+    @PutMapping("/orders/change")
+    public void changeStatusOrder(@RequestBody OrderDto orderDto, @RequestParam(value = "status", defaultValue = "IN_PROGRESS") OrderStatus status) throws ServiceException {
         service.changeStatusOrder(orderDto, status);
     }
 
@@ -84,9 +84,9 @@ final public class OrderController {
         return service.isShiftTime();
     }
 
-    @GetMapping("/sort_orders/{comparator}")
-    public List<OrderDto> listOrders(@PathVariable String comparator) throws ServiceException {
-        Comparator<OrderDto> dtoComparator = getOrderComparator(comparator);
+    @GetMapping("/orders/sort")
+    public List<OrderDto> listOrders(@RequestParam(value = "sort", defaultValue = "BY_ALPHABET") String sortBy) throws ServiceException {
+        Comparator<OrderDto> dtoComparator = getOrderComparator(sortBy);
         return service.listOrders(dtoComparator);
     }
 
@@ -118,32 +118,32 @@ final public class OrderController {
         return dtoComparator;
     }
 
-    @PutMapping("/change_orders_start/{hours}")
-    public void changeStartDateOrders(@PathVariable int hours) throws ServiceException {
+    @PutMapping("/orders/change/start")
+    public void changeStartDateOrders(@RequestParam(value = "hours", defaultValue = "0") int hours) throws ServiceException {
         service.changeStartDateOrders(hours);
     }
 
-    @GetMapping("/next_free_date/{endDate}")
+    @GetMapping("/orders/date/next/{endDate}")
     public LocalDateTime nextAvailableDate(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDate endDate) throws ServiceException {
         return service.nextAvailableDate(endDate);
     }
 
-    @GetMapping("/order_by_mechanic")
+    @GetMapping("/orders/mechanic")
     public OrderDto mechanicOrder(@RequestBody MechanicDto mechanicDto) throws ServiceException {
         return service.mechanicOrder(mechanicDto);
     }
 
-    @GetMapping("/mechanic_by_order")
+    @GetMapping("/orders/order")
     public MechanicDto orderMechanic(@RequestBody OrderDto orderDto) throws ServiceException {
         return service.orderMechanic(orderDto);
     }
 
-    @GetMapping("/orders_for_period/{comparator}/{status}/{startDate}/{endDate}")
+    @GetMapping("/orders/period/{comparator}/{status}/{startDate}/{endDate}")
     public List<OrderDto> ordersForPeriod(@PathVariable String comparator, @PathVariable OrderStatus status, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime endDate) throws ServiceException {
         return service.ordersForPeriod(getOrderComparator(comparator), status, startDate, endDate);
     }
 
-    @GetMapping("/sort_current_orders/{comparator}")
+    @GetMapping("/orders/current/{comparator}")
     public List<OrderDto> listCurrentOrders(@PathVariable String comparator) throws ServiceException {
         Comparator<OrderDto> dtoComparator = getOrderComparator(comparator);
         return service.listCurrentOrders(dtoComparator);
@@ -154,8 +154,8 @@ final public class OrderController {
         return service.bill(orderDto);
     }
 
-    @PutMapping("/order")
-     public void updateOrder(@RequestBody OrderDto orderDto) throws ServiceException {
+    @PutMapping("/orders")
+    public void updateOrder(@RequestBody OrderDto orderDto) throws ServiceException {
         service.updateOrder(orderDto);
     }
 

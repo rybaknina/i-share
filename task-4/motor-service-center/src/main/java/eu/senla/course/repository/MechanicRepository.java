@@ -1,5 +1,6 @@
 package eu.senla.course.repository;
 
+import eu.senla.course.api.repository.IGarageRepository;
 import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.entity.Mechanic;
@@ -8,6 +9,9 @@ import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +20,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("mechanicRepository")
 public class MechanicRepository implements IMechanicRepository {
     private final static Logger logger = LogManager.getLogger(MechanicRepository.class);
+
+
+    private IGarageRepository garageRepository;
+
+    @Autowired
+    @Qualifier("garageRepository")
+    public void setGarageRepository(IGarageRepository garageRepository) {
+        this.garageRepository = garageRepository;
+    }
+
     @Override
     public void add(Mechanic mechanic) throws RepositoryException {
         if (mechanic == null) {
@@ -59,7 +74,7 @@ public class MechanicRepository implements IMechanicRepository {
             if (rs.next()) {
                 String name = rs.getString(SqlMechanic.NAME.getName());
                 int garageId = rs.getInt(SqlMechanic.GARAGE_ID.getName());
-                Garage garage = new GarageRepository().getById(garageId);
+                Garage garage = garageRepository.getById(garageId);
                 mechanic = new Mechanic(id, name, garage);
             }
         } catch (SQLException e) {
@@ -79,7 +94,7 @@ public class MechanicRepository implements IMechanicRepository {
                 int id = rs.getInt(SqlMechanic.ID.getName());
                 String name = rs.getString(SqlMechanic.NAME.getName());
                 int garageId = rs.getInt(SqlMechanic.GARAGE_ID.getName());
-                Garage garage = new GarageRepository().getById(garageId);
+                Garage garage = garageRepository.getById(garageId);
                 mechanics.add(new Mechanic(id, name, garage));
             }
         } catch (SQLException e) {
