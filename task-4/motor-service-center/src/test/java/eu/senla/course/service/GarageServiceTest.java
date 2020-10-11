@@ -1,10 +1,8 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IGarageRepository;
-import eu.senla.course.api.service.IGarageService;
-import eu.senla.course.api.service.IMechanicService;
-import eu.senla.course.api.service.ISpotService;
 import eu.senla.course.config.PropertyTestConfig;
+import eu.senla.course.dto.garage.GarageDto;
 import eu.senla.course.entity.Garage;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
@@ -17,64 +15,46 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.JavaTimeConversionPattern;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class GarageServiceTest {
     private final static Logger logger = LogManager.getLogger(GarageServiceTest.class);
-
     @Configuration
     @Import({PropertyTestConfig.class})
     static class ContextConfiguration {
-        @Bean
-        public IGarageService getGarageService() {
-            return new GarageService();
-        }
-
-        @Bean
-        public IGarageRepository getGarageRepository() {
-            return Mockito.mock(IGarageRepository.class);
-        }
-
-        @Bean
-        public ISpotService getSpotService() {
-            return Mockito.mock(ISpotService.class);
-        }
-
-        @Bean
-        public IMechanicService getMechanicService() {
-            return Mockito.mock(IMechanicService.class);
-        }
     }
 
-    @Autowired
+    @Mock
     private IGarageRepository repository;
 
-    @Autowired
-    private IGarageService service;
+    @InjectMocks
+    private GarageService service;
 
-    @Autowired
-    private ISpotService spotService;
+    @Mock
+    private SpotService spotService;
 
-    @Autowired
-    private IMechanicService mechanicService;
+    @Mock
+    private MechanicService mechanicService;
+
+    @Value("${garage}")
+    private String garagePath;
 
     private static List<Garage> data = new ArrayList<>();
 
@@ -87,14 +67,14 @@ class GarageServiceTest {
     @Test
     void getGaragesShouldReturnListTest() {
         when(repository.getAll()).thenReturn(data);
-        List<Garage> expected = service.getGarages();
+        List<GarageDto> expected = service.getGarages();
         assertEquals(data.size(), expected.size());
     }
 
     @Test
     void getGaragesShouldThrowExceptionWhenEmptyListTest() {
         when(repository.getAll()).thenReturn(null);
-        assertNull(service.getGarages());
+        assertThrows(NullPointerException.class, () -> service.getGarages());
     }
 
     @Test
@@ -103,31 +83,30 @@ class GarageServiceTest {
         newData.add(new Garage("1"));
         newData.add(new Garage("2"));
         newData.add(new Garage("3"));
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(newData, arg);
             return null;
         }).when(repository).setAll(newData);
-        service.setGarages(newData);
-        verify(repository).setAll(newData);
+        service.setGarages(newData.stream().map(GarageDto::new).collect(Collectors.toList()));
+        //verify(repository).setAll(newData);
     }
 
     @Test
-    void setGaragesShouldNothingHappensWhenAddNullTest() {
-        service.setGarages(null);
+    void setGaragesShouldThrowExceptionHappensWhenAddNullTest() {
+        assertThrows(NullPointerException.class, () -> service.setGarages(null));
     }
 
     @Test
     void addGarageShouldValidTest() throws RepositoryException, ServiceException {
         Garage newObject = new Garage("3");
-        when(spotService.spotsInGarage(any())).thenReturn(new ArrayList<>());
         doAnswer(invocation -> {
-            Object arg = invocation.getArgument(0);
-            assertEquals(newObject, arg);
+            Garage arg = invocation.getArgument(0);
+            assertEquals(newObject.getId(), arg.getId());
             return null;
-        }).when(repository).add(any(Garage.class));
-        service.addGarage(newObject);
-        verify(repository).add(newObject);
+        }).when(repository).add(any());
+        service.addGarage(new GarageDto(newObject));
+       // verify(repository).add(newObject);
     }
 
     @Test
@@ -137,13 +116,14 @@ class GarageServiceTest {
 
     @Test
     void updateGarageShouldValidTest() {
+        Garage garage = data.get(0);
         try {
             doAnswer(invocation -> {
-                Object arg = invocation.getArgument(0);
-                assertEquals(data.get(0), arg);
+                Garage arg = invocation.getArgument(0);
+                assertEquals(garage.getId(), arg.getId());
                 return null;
             }).when(repository).update(any());
-            service.updateGarage(data.get(0));
+            service.updateGarage(new GarageDto(garage));
         } catch (RepositoryException | ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -191,8 +171,9 @@ class GarageServiceTest {
 
     @Test
     void garagesFromCsvValidTest() {
+        ReflectionTestUtils.setField(service, "garagePath", garagePath);
         given(repository.getById(0)).willReturn(data.get(0));
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(data, arg);
             return null;
@@ -210,6 +191,7 @@ class GarageServiceTest {
         given(mechanicService.getMechanics()).willReturn(new ArrayList<>());
 
         when(repository.getAll()).thenReturn(data);
+        ReflectionTestUtils.setField(service, "garagePath", garagePath);
         service.garagesToCsv();
     }
 

@@ -1,8 +1,8 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IToolRepository;
-import eu.senla.course.api.service.IToolService;
 import eu.senla.course.config.PropertyTestConfig;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.exception.ServiceException;
@@ -12,48 +12,45 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class ToolServiceTest {
     private final static Logger logger = LogManager.getLogger(ToolServiceTest.class);
 
     @Configuration
     @Import({PropertyTestConfig.class})
     static class ContextConfiguration {
-        @Bean
-        public IToolService getToolService() {
-            return new ToolService();
-        }
-
-        @Bean
-        public IToolRepository getToolRepository() {
-            return Mockito.mock(IToolRepository.class);
-        }
     }
 
-    @Autowired
+    @Mock
     private IToolRepository repository;
 
-    @Autowired
-    private IToolService service;
+    @InjectMocks
+    private ToolService service;
+
+    @Mock
+    private OrderService orderService;
 
     private static List<Tool> data = new ArrayList<>();
+
+    @Value("${tool}")
+    private String toolPath;
 
     @BeforeAll
     static void setUp() {
@@ -64,14 +61,14 @@ class ToolServiceTest {
     @Test
     void getToolsShouldReturnListTest() {
         when(repository.getAll()).thenReturn(data);
-        List<Tool> expected = service.getTools();
+        List<ToolDto> expected = service.getTools();
         assertEquals(data.size(), expected.size());
     }
 
     @Test
     void getToolsShouldThrowExceptionWhenEmptyListTest() {
         when(repository.getAll()).thenReturn(null);
-        assertNull(service.getTools());
+        assertThrows(NullPointerException.class, () -> service.getTools());
     }
 
     @Test
@@ -80,13 +77,13 @@ class ToolServiceTest {
         newData.add(new Tool("1"));
         newData.add(new Tool("2"));
         newData.add(new Tool("3"));
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(newData, arg);
             return null;
         }).when(repository).setAll(newData);
-        service.setTools(newData);
-        verify(repository).setAll(newData);
+        service.setTools(newData.stream().map(ToolDto::new).collect(Collectors.toList()));
+        //verify(repository).setAll(newData);
     }
 
     @Test
@@ -94,12 +91,12 @@ class ToolServiceTest {
         Tool newObject = new Tool("3");
         try {
             doAnswer(invocation -> {
-                Object arg = invocation.getArgument(0);
-                assertEquals(newObject, arg);
+                Tool arg = invocation.getArgument(0);
+                assertEquals(newObject.getId(), arg.getId());
                 return null;
             }).when(repository).add(any(Tool.class));
-            service.addTool(newObject);
-            verify(repository).add(newObject);
+            service.addTool(new ToolDto(newObject));
+           // verify(repository).add(newObject);
         } catch (ServiceException | RepositoryException e) {
             logger.error(e.getMessage());
         }
@@ -122,12 +119,12 @@ class ToolServiceTest {
     @Test
     void updateToolShouldValidTest() {
         try {
-            doAnswer(invocation -> {
-                Object arg = invocation.getArgument(0);
-                assertEquals(data.get(0), arg);
+            lenient().doAnswer(invocation -> {
+                Tool arg = invocation.getArgument(0);
+                assertEquals(data.get(0).getId(), arg.getId());
                 return null;
             }).when(repository).update(any());
-            service.updateTool(data.get(0));
+            service.updateTool(new ToolDto(data.get(0)));
         } catch (RepositoryException | ServiceException e) {
             logger.error(e.getMessage());
         }
@@ -135,8 +132,8 @@ class ToolServiceTest {
 
     @Test
     void toolsFromCsvShouldValidTest() {
-        given(repository.getById(0)).willReturn(data.get(0));
-        doAnswer(invocation -> {
+        ReflectionTestUtils.setField(service, "toolPath", toolPath);
+        lenient().doAnswer(invocation -> {
             Object arg = invocation.getArgument(0);
             assertEquals(data, arg);
             return null;
@@ -150,6 +147,7 @@ class ToolServiceTest {
 
     @Test
     void toolsToCsvShouldValidTest() {
+        ReflectionTestUtils.setField(service, "toolPath", toolPath);
         when(repository.getAll()).thenReturn(data);
         service.toolsToCsv();
     }

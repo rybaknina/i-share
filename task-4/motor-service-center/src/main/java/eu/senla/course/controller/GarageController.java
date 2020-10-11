@@ -1,17 +1,19 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IGarageService;
-import eu.senla.course.entity.Garage;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Spot;
+import eu.senla.course.dto.garage.GarageDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.spot.SpotDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@RestController
 final public class GarageController {
 
     private IGarageService service;
@@ -32,33 +34,59 @@ final public class GarageController {
     }
 
     @Autowired
-    public void setService(IGarageService service) {
+    @Qualifier("garageService")
+    public void setGarageService(IGarageService service) {
         this.service = service;
     }
 
-    public void addGarage(Garage garage) throws ServiceException {
+    @GetMapping("/")
+    public String welcome() {
+        return "Welcome to Rest Api...";
+    }
+
+    @PostMapping("/garages")
+    public void addGarage(@RequestBody GarageDto garage) throws ServiceException {
         service.addGarage(garage);
     }
-    public void setGarages(List<Garage> garages) {
+
+    @PatchMapping("/garages")
+    public void setGarages(@PathVariable List<GarageDto> garages) {
         service.setGarages(garages);
     }
-    public List<Garage> getGarages() {
+
+    @GetMapping(path = "/garages", produces = "application/json")
+    public @ResponseBody List<GarageDto> getGarages() {
         return service.getGarages();
     }
-    public Garage getGarageById(int id) {
+
+    @GetMapping("/garages/{id}")
+    public GarageDto getGarageById(@PathVariable int id) {
         return service.getGarageById(id);
     }
-    public void deleteGarage(int id) {
+
+    @PutMapping("/garages")
+    public void updateGarage(@RequestBody GarageDto garageDto) throws ServiceException {
+        service.updateGarage(garageDto);
+    }
+
+    @DeleteMapping("/garages/{id}")
+    public void deleteGarage(@PathVariable int id) {
         service.deleteGarage(id);
     }
+
+    @GetMapping("/garages/spots/count")
     public int lengthAllSpots() {
         return service.lengthAllSpots();
     }
-    public List<Spot> listAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException {
-        return service.listAvailableSpots(futureDate, orders);
+
+    @GetMapping("/garages/spots/available/{futureDate}")
+    public List<SpotDto> listAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
+        return service.listAvailableSpots(futureDate, orderDtoList);
     }
-    public int numberAvailableSpots(LocalDateTime futureDate, List<Order> orders) throws ServiceException {
-        return service.numberAvailableSpots(futureDate, orders);
+
+    @GetMapping("/garages/spots/count/{futureDate}")
+    public int numberAvailableSpots(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime futureDate, @RequestBody List<OrderDto> orderDtoList) throws ServiceException {
+        return service.numberAvailableSpots(futureDate, orderDtoList);
     }
     public void garagesFromCsv() throws ServiceException {
         service.garagesFromCsv();

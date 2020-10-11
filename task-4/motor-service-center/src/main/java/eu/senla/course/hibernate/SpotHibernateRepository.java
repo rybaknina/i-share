@@ -4,6 +4,7 @@ import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.entity.Spot;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("spotHibernateRepository")
 public class SpotHibernateRepository extends AbstractHibernateRepository<Spot> implements ISpotRepository {
+
 }

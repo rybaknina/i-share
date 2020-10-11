@@ -1,20 +1,28 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IOrderService;
-import eu.senla.course.entity.Mechanic;
-import eu.senla.course.entity.Order;
-import eu.senla.course.entity.Tool;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.tool.ToolDto;
+import eu.senla.course.entity.comparator.order.ByCompleteDate;
+import eu.senla.course.entity.comparator.order.ByPlannedDate;
+import eu.senla.course.entity.comparator.order.ByPrice;
+import eu.senla.course.entity.comparator.order.ByRequestDate;
+import eu.senla.course.enums.OrderComparator;
 import eu.senla.course.enums.OrderStatus;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-@Component
+@RestController
 final public class OrderController {
 
     private IOrderService service;
@@ -35,64 +43,126 @@ final public class OrderController {
         this.instance = controller;
     }
     @Autowired
+    @Qualifier("orderService")
     public void setService(IOrderService service) {
         this.service = service;
     }
 
-    public void addOrder(Order order) throws ServiceException {
-        service.addOrder(order);
+    @PostMapping("/orders")
+    public void addOrder(@RequestBody OrderDto orderDto) throws ServiceException {
+        service.addOrder(orderDto);
     }
-    public List<Order> getOrders() {
+
+    @GetMapping("/orders")
+    public List<OrderDto> getOrders() {
         return service.getOrders();
     }
-    public void deleteOrder(int id) {
+
+    @DeleteMapping("/orders/{id}")
+    public void deleteOrder(@PathVariable int id) {
         service.deleteOrder(id);
     }
     public boolean isDeleteOrder() {
         return service.isDeleteOrder();
     }
-    public void addToolsToOrder(Order order, List<Tool> tools) throws ServiceException {
-        service.addToolsToOrder(order, tools);
+
+    public void addToolsToOrder(OrderDto orderDto, List<ToolDto> toolDtoList) throws ServiceException {
+        service.addToolsToOrder(orderDto, toolDtoList);
     }
-    public Order getOrderById(int id) {
+
+    @GetMapping("/orders/{id}")
+    public OrderDto getOrderById(@PathVariable int id) {
         return service.getOrderById(id);
     }
-    public void changeStatusOrder(Order order, OrderStatus status) throws ServiceException {
-        service.changeStatusOrder(order, status);
+
+    @PutMapping("/orders/change")
+    public void changeStatusOrder(@RequestBody OrderDto orderDto, @RequestParam(value = "status", defaultValue = "IN_PROGRESS") OrderStatus status) throws ServiceException {
+        service.changeStatusOrder(orderDto, status);
     }
+
     public boolean isShiftTime() {
         return service.isShiftTime();
     }
-    public List<Order> listOrders(Comparator<Order> comparator) throws ServiceException {
-        return service.listOrders(comparator);
+
+    @GetMapping("/orders/sort")
+    public List<OrderDto> listOrders(@RequestParam(value = "sort", defaultValue = "BY_ALPHABET") String sortBy) throws ServiceException {
+        Comparator<OrderDto> dtoComparator = getOrderComparator(sortBy);
+        return service.listOrders(dtoComparator);
     }
-    public void changeStartDateOrders(int hours) throws ServiceException {
+
+    private Comparator<OrderDto> getOrderComparator(String comparator) {
+        comparator = comparator.toUpperCase();
+        OrderComparator orderComparator;
+        try {
+            orderComparator = OrderComparator.valueOf(comparator);
+        } catch (IllegalArgumentException ex) {
+            orderComparator = OrderComparator.BY_COMPLETE_DATE;
+        }
+        Comparator<OrderDto> dtoComparator;
+        switch (orderComparator) {
+            case BY_COMPLETE_DATE:
+                dtoComparator = new ByCompleteDate();
+                break;
+            case BY_PLANNED_DATE:
+                dtoComparator = new ByPlannedDate();
+                break;
+            case BY_PRICE:
+                dtoComparator = new ByPrice();
+                break;
+            case BY_REQUEST_DATE:
+                dtoComparator = new ByRequestDate();
+                break;
+            default:
+                dtoComparator = new ByCompleteDate();
+        }
+        return dtoComparator;
+    }
+
+    @PutMapping("/orders/change/start")
+    public void changeStartDateOrders(@RequestParam(value = "hours", defaultValue = "0") int hours) throws ServiceException {
         service.changeStartDateOrders(hours);
     }
-    public LocalDateTime nextAvailableDate(LocalDate endDate) throws ServiceException {
+
+    @GetMapping("/orders/date/next/{endDate}")
+    public LocalDateTime nextAvailableDate(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDate endDate) throws ServiceException {
         return service.nextAvailableDate(endDate);
     }
-    public Order mechanicOrder(Mechanic mechanic) throws ServiceException {
-        return service.mechanicOrder(mechanic);
+
+    @GetMapping("/orders/mechanic")
+    public OrderDto mechanicOrder(@RequestBody MechanicDto mechanicDto) throws ServiceException {
+        return service.mechanicOrder(mechanicDto);
     }
-    public Mechanic orderMechanic(Order order) throws ServiceException {
-        return service.orderMechanic(order);
+
+    @GetMapping("/orders/order")
+    public MechanicDto orderMechanic(@RequestBody OrderDto orderDto) throws ServiceException {
+        return service.orderMechanic(orderDto);
     }
-    public List<Order> ordersForPeriod(Comparator<Order> comparator, OrderStatus status, LocalDateTime startDate, LocalDateTime endDate) throws ServiceException {
-        return service.ordersForPeriod(comparator, status, startDate, endDate);
+
+    @GetMapping("/orders/period/{comparator}/{status}/{startDate}/{endDate}")
+    public List<OrderDto> ordersForPeriod(@PathVariable String comparator, @PathVariable OrderStatus status, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime endDate) throws ServiceException {
+        return service.ordersForPeriod(getOrderComparator(comparator), status, startDate, endDate);
     }
-    public List<Order> listCurrentOrders(Comparator<Order> comparator) throws ServiceException {
-        return service.listCurrentOrders(comparator);
+
+    @GetMapping("/orders/current/{comparator}")
+    public List<OrderDto> listCurrentOrders(@PathVariable String comparator) throws ServiceException {
+        Comparator<OrderDto> dtoComparator = getOrderComparator(comparator);
+        return service.listCurrentOrders(dtoComparator);
     }
-    public void bill(Order order) throws ServiceException {
-        service.bill(order);
+
+    @PutMapping("/bill")
+    public BigDecimal bill(@RequestBody OrderDto orderDto) throws ServiceException {
+        return service.bill(orderDto);
     }
-    public void updateOrder(Order order) throws ServiceException {
-        service.updateOrder(order);
+
+    @PutMapping("/orders")
+    public void updateOrder(@RequestBody OrderDto orderDto) throws ServiceException {
+        service.updateOrder(orderDto);
     }
+
     public void ordersFromCsv() throws ServiceException {
         service.ordersFromCsv();
     }
+
     public void ordersToCsv() {
         service.ordersToCsv();
     }

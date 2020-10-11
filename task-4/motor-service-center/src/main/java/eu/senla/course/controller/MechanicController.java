@@ -1,15 +1,19 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IMechanicService;
-import eu.senla.course.entity.Mechanic;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.entity.comparator.mechanic.ByAlphabet;
+import eu.senla.course.entity.comparator.mechanic.ByBusy;
+import eu.senla.course.enums.MechanicComparator;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
 
-@Component
+@RestController
 final public class MechanicController {
 
     private IMechanicService service;
@@ -30,34 +34,75 @@ final public class MechanicController {
     }
 
     @Autowired
+    @Qualifier("mechanicService")
     public void setService(IMechanicService service) {
         this.service = service;
     }
 
-    public void addMechanic(Mechanic mechanic) throws ServiceException {
-        service.addMechanic(mechanic);
+    @PostMapping("/mechanics")
+    public void addMechanic(@RequestBody MechanicDto mechanicDto) throws ServiceException {
+        service.addMechanic(mechanicDto);
     }
-    public List<Mechanic> getMechanics() {
+
+    @GetMapping("/mechanics")
+    public List<MechanicDto> getMechanics() {
         return service.getMechanics();
     }
-    public void setMechanics(List<Mechanic> mechanics) {
-        service.setMechanics(mechanics);
+
+    @PatchMapping("/mechanics")
+    public void setMechanics(@PathVariable List<MechanicDto> mechanicDtoList) {
+        service.setMechanics(mechanicDtoList);
     }
-    public void deleteMechanic(int id) {
+
+    @DeleteMapping("/mechanics/{id}")
+    public void deleteMechanic(@PathVariable int id) {
         service.deleteMechanic(id);
     }
-    public void updateMechanic(Mechanic mechanic) throws ServiceException {
-        service.updateMechanic(mechanic);
+
+    @PutMapping("/mechanics")
+    public void updateMechanic(@RequestBody MechanicDto mechanicDto) throws ServiceException {
+        service.updateMechanic(mechanicDto);
     }
-    public Mechanic getMechanicById(int id) {
+
+    @GetMapping("/mechanics/{id}")
+    public MechanicDto getMechanicById(@PathVariable int id) {
         return service.getMechanicById(id);
     }
-    public Mechanic firstFreeMechanic() throws ServiceException {
+
+    @GetMapping("/mechanics/free")
+    public MechanicDto firstFreeMechanic() throws ServiceException {
         return service.firstFreeMechanic();
     }
-    public void sortMechanicsBy(Comparator<Mechanic> comparator) throws ServiceException {
-        service.sortMechanicsBy(comparator);
+
+    @GetMapping("/mechanics/sort")
+    public List<MechanicDto> sortMechanicsBy(@RequestParam(value = "sort", defaultValue = "BY_ALPHABET") String sortBy) throws ServiceException {
+        Comparator<MechanicDto> dtoComparator = getMechanicComparator(sortBy);
+        return service.sortMechanicsBy(dtoComparator);
     }
+
+    private Comparator<MechanicDto> getMechanicComparator(String comparator) {
+        comparator = comparator.toUpperCase();
+        MechanicComparator mechanicComparator;
+        try {
+            mechanicComparator = MechanicComparator.valueOf(comparator);
+        } catch (IllegalArgumentException ex) {
+            mechanicComparator = MechanicComparator.BY_ALPHABET;
+        }
+        Comparator<MechanicDto> dtoComparator;
+        switch (mechanicComparator) {
+            case BY_BUSY:
+                dtoComparator = new ByBusy();
+                break;
+            case BY_ALPHABET:
+                dtoComparator = new ByAlphabet();
+                break;
+            default:
+                dtoComparator = new ByAlphabet();
+                break;
+        }
+        return dtoComparator;
+    }
+
     public void mechanicsFromCsv() throws ServiceException {
         service.mechanicsFromCsv();
     }

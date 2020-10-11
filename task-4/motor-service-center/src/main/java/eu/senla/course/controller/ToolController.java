@@ -1,14 +1,15 @@
 package eu.senla.course.controller;
 
 import eu.senla.course.api.service.IToolService;
-import eu.senla.course.entity.Tool;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Component
+@RestController
 final public class ToolController {
 
     private IToolService service;
@@ -25,6 +26,7 @@ final public class ToolController {
     }
 
     @Autowired
+    @Qualifier("toolService")
     public void setService(IToolService service) {
         this.service = service;
     }
@@ -34,29 +36,40 @@ final public class ToolController {
         this.instance = controller;
     }
 
-    public void addTool(Tool tool) throws ServiceException {
-        service.addTool(tool);
+    @PostMapping("/tools")
+    public void addTool(@RequestBody ToolDto toolDto) throws ServiceException {
+        service.addTool(toolDto);
     }
-    public List<Tool> getTools() {
+
+    @GetMapping("/tools")
+    public List<ToolDto> getTools() {
         return service.getTools();
     }
-    public void setTools(List<Tool> tools) {
-        service.setTools(tools);
+
+    @PatchMapping("/tools")
+    public void setTools(@PathVariable List<ToolDto> toolDtoList) {
+        service.setTools(toolDtoList);
     }
-    public Tool getToolById(int id) {
+
+    @GetMapping("/tools/{id}")
+    public ToolDto getToolById(@PathVariable int id) {
         return service.getToolById(id);
     }
 
-    public void deleteTool(int id) {
+    @DeleteMapping("/tools/{id}")
+    public void deleteTool(@PathVariable int id) {
         service.deleteTool(id);
     }
 
-    public void updateTool(Tool tool) throws ServiceException {
-        service.updateTool(tool);
+    @PutMapping("/tools")
+    public void updateTool(@RequestBody ToolDto toolDto) throws ServiceException {
+        service.updateTool(toolDto);
     }
+
     public void toolsFromCsv() throws ServiceException {
         service.toolsFromCsv();
     }
+
     public void toolsToCsv() {
         service.toolsToCsv();
     }

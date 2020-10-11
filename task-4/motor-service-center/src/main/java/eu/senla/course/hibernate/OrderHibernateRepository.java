@@ -4,6 +4,7 @@ import eu.senla.course.api.repository.IOrderRepository;
 import eu.senla.course.entity.Order;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("orderHibernateRepository")
 public class OrderHibernateRepository extends AbstractHibernateRepository<Order> implements IOrderRepository {
+
 }

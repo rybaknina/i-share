@@ -1,12 +1,12 @@
 package eu.senla.course.entity.comparator.mechanic;
 
-import eu.senla.course.entity.Mechanic;
+import eu.senla.course.dto.mechanic.MechanicDto;
 
 import java.util.Comparator;
 
-public class ByBusy implements Comparator<Mechanic> {
+public class ByBusy implements Comparator<MechanicDto> {
     @Override
-    public int compare(Mechanic o1, Mechanic o2) {
+    public int compare(MechanicDto o1, MechanicDto o2) {
         if (o1 != null && o2 != null) {
             if ((o1.isMechanicFree() && o2.isMechanicFree()) || (!o1.isMechanicFree() && !o2.isMechanicFree())) {
                 return 0;

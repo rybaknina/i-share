@@ -1,7 +1,9 @@
 package eu.senla.course.service;
 
 import eu.senla.course.api.repository.IToolRepository;
+import eu.senla.course.api.service.IOrderService;
 import eu.senla.course.api.service.IToolService;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.entity.Tool;
 import eu.senla.course.enums.CsvToolHeader;
 import eu.senla.course.exception.RepositoryException;
@@ -12,16 +14,19 @@ import eu.senla.course.util.exception.CsvException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Component
+@Component("toolService")
 public class ToolService implements IToolService {
     private final static Logger logger = LogManager.getLogger(ToolService.class);
     @Value("${tool}")
@@ -29,44 +34,76 @@ public class ToolService implements IToolService {
 
 
     private IToolRepository toolRepository;
+    private IOrderService orderService;
+
+    private Tool toolDtoToEntity(ToolDto toolDto) {
+        Tool tool = new Tool();
+        tool.setId(toolDto.getId());
+        tool.setName(toolDto.getName());
+        tool.setHourlyPrice(toolDto.getHourlyPrice());
+        tool.setHours(toolDto.getHours());
+        if (toolDto.getOrderDto() != null) {
+            tool.setOrder(orderService.orderDtoToEntity(toolDto.getOrderDto()));
+        }
+        return tool;
+    }
+
     @Autowired
+    @Qualifier("toolHibernateRepository")
     public void setToolRepository(IToolRepository toolRepository) {
         this.toolRepository = toolRepository;
     }
 
-    public List<Tool> getTools() {
-        return toolRepository.getAll();
+    @Autowired
+    @Qualifier("orderService")
+    public void setOrderService(IOrderService orderService) {
+        this.orderService = orderService;
     }
 
-    public void setTools(List<Tool> tools) {
-        toolRepository.setAll(tools);
+    @Transactional(readOnly = true)
+    public List<ToolDto> getTools() {
+        return toolRepository
+                .getAll()
+                .stream()
+                .map(ToolDto::new)
+                .collect(Collectors.toList());
     }
 
-    public void addTool(Tool tool) throws ServiceException {
+    @Transactional
+    public void setTools(List<ToolDto> toolDtoList) {
+        toolRepository.setAll(toolDtoList.stream().map(this::toolDtoToEntity).collect(Collectors.toList()));
+    }
+
+    @Transactional
+    public void addTool(ToolDto toolDto) throws ServiceException {
         try {
-            toolRepository.add(tool);
+            toolRepository.add(toolDtoToEntity(toolDto));
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
-    public Tool getToolById(int id) {
-        return toolRepository.getById(id);
+    @Transactional(readOnly = true)
+    public ToolDto getToolById(int id) {
+        return new ToolDto(toolRepository.getById(id));
     }
 
+    @Transactional
     public void deleteTool(int id) {
         toolRepository.delete(id);
     }
 
-    public void updateTool(Tool tool) throws ServiceException {
+    @Transactional
+    public void updateTool(ToolDto toolDto) throws ServiceException {
         try {
-            toolRepository.update(tool);
+            toolRepository.update(toolDtoToEntity(toolDto));
         } catch (RepositoryException e) {
             throw new ServiceException("RepositoryException " + e.getMessage());
         }
     }
 
     @Override
+    @Transactional
     public void toolsFromCsv() throws ServiceException {
         List<List<String>> lists;
         try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(toolPath)) {
@@ -83,7 +120,7 @@ public class ToolService implements IToolService {
 
     private void createTools(List<List<String>> lists) throws ServiceException {
 
-        List<Tool> loadedTools = new ArrayList<>();
+        List<ToolDto> loadedTools = new ArrayList<>();
         try {
             for (List<String> list : lists) {
                 int n = 0;
@@ -92,14 +129,16 @@ public class ToolService implements IToolService {
                 int hours = Integer.parseInt(list.get(n++));
                 BigDecimal hourlyPrice = new BigDecimal(list.get(n));
 
-                Tool newTool = toolRepository.getById(id);
-                if (newTool != null) {
+                Tool tool = toolRepository.getById(id);
+                ToolDto newTool;
+                if (tool != null) {
+                    newTool = new ToolDto(tool);
+                    updateTool(newTool);
+                } else {
+                    newTool = new ToolDto();
                     newTool.setName(name);
                     newTool.setHours(hours);
                     newTool.setHourlyPrice(hourlyPrice);
-                    updateTool(newTool);
-                } else {
-                    newTool = new Tool(name, hours, hourlyPrice);
                     loadedTools.add(newTool);
                 }
             }
@@ -108,17 +147,19 @@ public class ToolService implements IToolService {
         }
 
         loadedTools.forEach(System.out::println);
-        toolRepository.addAll(loadedTools);
+        toolRepository.addAll(loadedTools.stream().map(this::toolDtoToEntity).collect(Collectors.toList()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void toolsToCsv() {
 
         List<List<String>> data = new ArrayList<>();
 
         try {
             File file = CsvWriter.recordFile(toolPath);
-            for (Tool tool: toolRepository.getAll()) {
+            List<ToolDto> toolDtoList = toolRepository.getAll().stream().map(ToolDto::new).collect(Collectors.toList());
+            for (ToolDto tool: toolDtoList) {
                 if (tool != null) {
                     List<String> dataIn = new ArrayList<>();
                     dataIn.add(String.valueOf(tool.getId()));

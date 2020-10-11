@@ -1,8 +1,8 @@
 package eu.senla.course.repository;
 
+import eu.senla.course.api.repository.IMechanicRepository;
 import eu.senla.course.api.repository.IOrderRepository;
-import eu.senla.course.controller.MechanicController;
-import eu.senla.course.controller.SpotController;
+import eu.senla.course.api.repository.ISpotRepository;
 import eu.senla.course.entity.Mechanic;
 import eu.senla.course.entity.Order;
 import eu.senla.course.entity.Spot;
@@ -12,6 +12,9 @@ import eu.senla.course.exception.RepositoryException;
 import eu.senla.course.util.ConnectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -19,8 +22,24 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("orderRepository")
 public class OrderRepository implements IOrderRepository {
     private final static Logger logger = LogManager.getLogger(OrderRepository.class);
+    private IMechanicRepository mechanicRepository;
+    private ISpotRepository spotRepository;
+
+    @Autowired
+    @Qualifier("mechanicRepository")
+    public void setMechanicRepository(IMechanicRepository mechanicRepository) {
+        this.mechanicRepository = mechanicRepository;
+    }
+
+    @Autowired
+    @Qualifier("spotRepository")
+    public void setSpotRepository(ISpotRepository spotRepository) {
+        this.spotRepository = spotRepository;
+    }
+
     @Override
     public void add(Order order) throws RepositoryException {
         if (order == null) {
@@ -120,8 +139,8 @@ public class OrderRepository implements IOrderRepository {
         int mechanicId = rs.getInt(SqlOrder.MECHANIC_ID.getName());
         int spotId = rs.getInt(SqlOrder.SPOT_ID.getName());
 
-        Mechanic mechanic = MechanicController.getInstance().getMechanicById(mechanicId);
-        Spot spot = SpotController.getInstance().getSpotById(spotId);
+        Mechanic mechanic = mechanicRepository.getById(mechanicId);
+        Spot spot = spotRepository.getById(spotId);
 
         order = new Order(id, requestDate, plannedDate, mechanic, spot);
         order.setStartDate(startDate);

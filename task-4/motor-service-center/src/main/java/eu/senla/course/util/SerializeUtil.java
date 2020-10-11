@@ -2,6 +2,11 @@ package eu.senla.course.util;
 
 import eu.senla.course.api.entity.IEntity;
 import eu.senla.course.controller.*;
+import eu.senla.course.dto.garage.GarageDto;
+import eu.senla.course.dto.mechanic.MechanicDto;
+import eu.senla.course.dto.order.OrderDto;
+import eu.senla.course.dto.spot.SpotDto;
+import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.entity.*;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.exception.SerializeException;
@@ -55,7 +60,7 @@ public class SerializeUtil {
                     if (max < garage.getId()) {
                         max = garage.getId();
                     }
-                    GarageController.getInstance().addGarage(garage);
+                    GarageController.getInstance().addGarage(new GarageDto(garage));
                 }
 
                 max = 0;
@@ -64,7 +69,7 @@ public class SerializeUtil {
                     if (max < mechanic.getId()) {
                         max = mechanic.getId();
                     }
-                    MechanicController.getInstance().addMechanic(mechanic);
+                    MechanicController.getInstance().addMechanic(new MechanicDto(mechanic));
                 }
 
                 max = 0;
@@ -73,7 +78,7 @@ public class SerializeUtil {
                     if (max < order.getId()) {
                         max = order.getId();
                     }
-                    OrderController.getInstance().addOrder(order);
+                    OrderController.getInstance().addOrder(new OrderDto(order));
                 }
 
                 max = 0;
@@ -82,7 +87,7 @@ public class SerializeUtil {
                     if (max < spot.getId()) {
                         max = spot.getId();
                     }
-                    SpotController.getInstance().addSpot(spot);
+                    SpotController.getInstance().addSpot(new SpotDto(spot));
                 }
 
                 max = 0;
@@ -91,7 +96,7 @@ public class SerializeUtil {
                     if (max < tool.getId()) {
                         max = tool.getId();
                     }
-                    ToolController.getInstance().addTool(tool);
+                    ToolController.getInstance().addTool(new ToolDto(tool));
                 }
             }
         } catch (FileNotFoundException e) {

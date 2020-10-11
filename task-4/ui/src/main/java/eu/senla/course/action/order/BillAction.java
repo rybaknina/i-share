@@ -2,7 +2,7 @@ package eu.senla.course.action.order;
 
 import eu.senla.course.api.IAction;
 import eu.senla.course.controller.OrderController;
-import eu.senla.course.entity.Order;
+import eu.senla.course.dto.order.OrderDto;
 import eu.senla.course.enums.ActionHelper;
 import eu.senla.course.exception.ServiceException;
 import eu.senla.course.util.InputValidator;
@@ -21,7 +21,7 @@ public class BillAction implements IAction {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         Integer id = InputValidator.readInteger(reader, ActionHelper.IN_INTEGER.getName());
-        Order order = controller.getOrderById(id);
+        OrderDto order = controller.getOrderById(id);
         try {
             controller.bill(order);
         } catch (ServiceException e) {
