@@ -24,3 +24,25 @@ INSERT INTO `motor_service_service`.`tool` (`name`, `hours`, `hourly_price`, `or
 ('Oil Change', 2, 2.5, 2), ('Tyre Change', 1, 1.5, 2), ('Check Engine', 2, 3.5, 2),
 ('Check Engine', 2, 3.5, 3), ('Diagnosis', 1, 1, 3), ('Oil Change', 2, 2.5, 3);
 
+INSERT INTO `motor_service_service`.`role` (`name`)
+VALUES ('ADMIN'), ('USER');
+
+INSERT INTO `motor_service_service`.`permission` (`name`)
+VALUES ('read'), ('write'), ('create'), ('delete');
+
+INSERT INTO `motor_service_service`.`user`
+(`username`, `password`)
+VALUES
+('user1', '$2a$04$PfGoAAICZ.firM1gb8H2ruy4nSGxr0QLTG91xVxTy7wXged4j6z1K'),
+('user2', '$2a$04$VUovHleEuRv7z58gtCBsKuR3hHvbVnqNgD9AzWl3rNlXdjxyDwI8O'),
+('user3', '$2a$04$OcGXTeykEeQtpDX.oRaXuuXJdRzgDSBBrr1C2SKKUFIar.lwMKEOa'),
+('user4', '$2a$10$mQq8P9ZpX3wLW0VuR58jU.fdQO5hy6usgmeG7amU91d6n/QCkpcGu'),
+('user5', '$2a$10$9wJfmWynHb/LiMV1MoAlxucfgTkMQE5fC4r1LCjtZKWvDUlhCpwNS');
+
+INSERT INTO `motor_service_service`.`user_role`
+(`user_id`, `role_id`)
+VALUES (1, 1), (2, 2), (3, 2), (1, 4), (3, 2) , (3, 3), (4, 2), (5, 3);
+
+INSERT INTO `motor_service_service`.`role_permission`
+(`role_id`, `permission_id`)
+VALUES (1, 2), (2, 1), (1, 4), (3, 2) , (3, 3);

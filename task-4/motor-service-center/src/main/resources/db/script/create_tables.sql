@@ -99,3 +99,77 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`tool` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `motor_service_service`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `motor_service_service`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `active` TINYINT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`))
+  ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `motor_service_service`.`role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `motor_service_service`.`role` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+  ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `motor_service_service`.`permission`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `motor_service_service`.`permission` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+  ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `motor_service_service`.`role_permission`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `motor_service_service`.`role_permission` (
+   `role_id` INT NOT NULL,
+   `permission_id` INT NOT NULL,
+   PRIMARY KEY (`role_id`, `permission_id`),
+  INDEX `fk_role_has_permission_permission1_idx` (`permission_id` ASC),
+  INDEX `fk_role_has_permission_role1_idx` (`role_id` ASC),
+  CONSTRAINT `fk_role_has_permission_role1`
+  FOREIGN KEY (`role_id`)
+  REFERENCES `motor_service_service`.`role` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
+  CONSTRAINT `fk_role_has_permission_permission1`
+  FOREIGN KEY (`permission_id`)
+  REFERENCES `motor_service_service`.`permission` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE)
+  ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `motor_service_service`.`user_role`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `motor_service_service`.`user_role` (
+   `user_id` INT NOT NULL,
+   `role_id` INT NOT NULL,
+   PRIMARY KEY (`user_id`, `role_id`),
+  INDEX `fk_user_has_role_role1_idx` (`role_id` ASC),
+  INDEX `fk_user_has_role_user1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_user_has_role_user1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `motor_service_service`.`user` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE,
+  CONSTRAINT `fk_user_has_role_role1`
+  FOREIGN KEY (`role_id`)
+  REFERENCES `motor_service_service`.`role` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE)
+  ENGINE = InnoDB;

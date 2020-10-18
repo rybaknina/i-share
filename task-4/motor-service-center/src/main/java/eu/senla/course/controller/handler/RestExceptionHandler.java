@@ -3,6 +3,8 @@ package eu.senla.course.controller.handler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -79,9 +81,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleException(AuthenticationException ex) {
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage(), ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        if (ex instanceof AccessDeniedException) {
+            status = HttpStatus.FORBIDDEN;
+        }
+        ApiError apiError = new ApiError(status, ex.getLocalizedMessage(), ex.getLocalizedMessage());
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 }
