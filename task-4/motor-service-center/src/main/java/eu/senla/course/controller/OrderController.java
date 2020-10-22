@@ -14,6 +14,7 @@ import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -23,13 +24,10 @@ import java.util.Comparator;
 import java.util.List;
 
 @RestController
-final public class OrderController {
+public class OrderController {
 
     private IOrderService service;
     private static OrderController instance;
-
-    private OrderController() {
-    }
 
     public static OrderController getInstance() {
         if (instance == null) {
@@ -58,6 +56,7 @@ final public class OrderController {
         return service.getOrders();
     }
 
+    @PreAuthorize("hasAuthority('delete')")
     @DeleteMapping("/orders/{id}")
     public void deleteOrder(@PathVariable int id) {
         service.deleteOrder(id);
@@ -154,6 +153,7 @@ final public class OrderController {
         return service.bill(orderDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('delete', 'write')")
     @PutMapping("/orders")
     public void updateOrder(@RequestBody OrderDto orderDto) throws ServiceException {
         service.updateOrder(orderDto);

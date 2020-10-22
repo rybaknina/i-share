@@ -5,18 +5,16 @@ import eu.senla.course.dto.tool.ToolDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-final public class ToolController {
+public class ToolController {
 
     private IToolService service;
     private static ToolController instance;
-
-    private ToolController() {
-    }
 
     public static ToolController getInstance() {
         if (instance == null) {
@@ -56,11 +54,13 @@ final public class ToolController {
         return service.getToolById(id);
     }
 
+    @PreAuthorize("hasAuthority('delete')")
     @DeleteMapping("/tools/{id}")
     public void deleteTool(@PathVariable int id) {
         service.deleteTool(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('delete', 'write')")
     @PutMapping("/tools")
     public void updateTool(@RequestBody ToolDto toolDto) throws ServiceException {
         service.updateTool(toolDto);

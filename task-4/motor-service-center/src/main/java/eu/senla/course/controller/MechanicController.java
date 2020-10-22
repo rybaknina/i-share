@@ -8,19 +8,17 @@ import eu.senla.course.enums.MechanicComparator;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
 
 @RestController
-final public class MechanicController {
+public class MechanicController {
 
     private IMechanicService service;
     private static MechanicController instance;
-
-    private MechanicController() {
-    }
 
     public static MechanicController getInstance() {
         if (instance == null) {
@@ -54,11 +52,13 @@ final public class MechanicController {
         service.setMechanics(mechanicDtoList);
     }
 
+    @PreAuthorize("hasAuthority('delete')")
     @DeleteMapping("/mechanics/{id}")
     public void deleteMechanic(@PathVariable int id) {
         service.deleteMechanic(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('delete', 'write')")
     @PutMapping("/mechanics")
     public void updateMechanic(@RequestBody MechanicDto mechanicDto) throws ServiceException {
         service.updateMechanic(mechanicDto);

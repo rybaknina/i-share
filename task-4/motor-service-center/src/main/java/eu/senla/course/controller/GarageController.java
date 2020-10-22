@@ -8,19 +8,17 @@ import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-final public class GarageController {
+public class GarageController {
 
     private IGarageService service;
     private static GarageController instance;
-
-    private GarageController() {
-    }
 
     public static GarageController getInstance() {
         if (instance == null) {
@@ -39,11 +37,13 @@ final public class GarageController {
         this.service = service;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/")
     public String welcome() {
         return "Welcome to Rest Api...";
     }
 
+    @PreAuthorize("hasAnyAuthority('write', 'create')")
     @PostMapping("/garages")
     public void addGarage(@RequestBody GarageDto garage) throws ServiceException {
         service.addGarage(garage);
@@ -64,11 +64,13 @@ final public class GarageController {
         return service.getGarageById(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('delete', 'write')")
     @PutMapping("/garages")
     public void updateGarage(@RequestBody GarageDto garageDto) throws ServiceException {
         service.updateGarage(garageDto);
     }
 
+    @PreAuthorize("hasAuthority('delete')")
     @DeleteMapping("/garages/{id}")
     public void deleteGarage(@PathVariable int id) {
         service.deleteGarage(id);
