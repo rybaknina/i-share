@@ -6,6 +6,8 @@ import eu.senla.course.dto.permission.PermissionDto;
 import eu.senla.course.dto.role.RoleDto;
 import eu.senla.course.entity.Permission;
 import eu.senla.course.entity.Role;
+import eu.senla.course.exception.RepositoryException;
+import eu.senla.course.exception.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("roleService")
 public class RoleService implements IRoleService {
@@ -47,5 +50,37 @@ public class RoleService implements IRoleService {
     public RoleDto loadRoleByName(String name) {
         Role role = this.roleRepository.findByName(name);
         return new RoleDto(role);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoleDto> getRoles() {
+        return roleRepository
+                .getAll()
+                .stream()
+                .map(RoleDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addRole(RoleDto roleDto) throws ServiceException {
+        try {
+            roleRepository.add(roleDtoToEntity(roleDto));
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void updateRole(RoleDto roleDto) throws ServiceException {
+        try {
+            roleRepository.update(roleDtoToEntity(roleDto));
+        } catch (RepositoryException e) {
+            throw new ServiceException("RepositoryException " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deleteRole(int id) {
+        roleRepository.delete(id);
     }
 }

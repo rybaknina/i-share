@@ -33,11 +33,11 @@ VALUES ('read'), ('write'), ('create'), ('delete');
 INSERT INTO `motor_service_service`.`user`
 (`username`, `password`)
 VALUES
-('user1', '$2a$04$PfGoAAICZ.firM1gb8H2ruy4nSGxr0QLTG91xVxTy7wXged4j6z1K'),
-('user2', '$2a$04$VUovHleEuRv7z58gtCBsKuR3hHvbVnqNgD9AzWl3rNlXdjxyDwI8O'),
-('user3', '$2a$04$OcGXTeykEeQtpDX.oRaXuuXJdRzgDSBBrr1C2SKKUFIar.lwMKEOa'),
-('user4', '$2a$10$mQq8P9ZpX3wLW0VuR58jU.fdQO5hy6usgmeG7amU91d6n/QCkpcGu'),
-('user5', '$2a$10$9wJfmWynHb/LiMV1MoAlxucfgTkMQE5fC4r1LCjtZKWvDUlhCpwNS');
+('user1', '$2a$04$PfGoAAICZ.firM1gb8H2ruy4nSGxr0QLTG91xVxTy7wXged4j6z1K', 1, 1, 1),
+('user2', '$2a$04$VUovHleEuRv7z58gtCBsKuR3hHvbVnqNgD9AzWl3rNlXdjxyDwI8O', 1, 1, 1),
+('user3', '$2a$04$OcGXTeykEeQtpDX.oRaXuuXJdRzgDSBBrr1C2SKKUFIar.lwMKEOa', 1, 1, 1),
+('user4', '$2a$10$mQq8P9ZpX3wLW0VuR58jU.fdQO5hy6usgmeG7amU91d6n/QCkpcGu', 1, 1, 1),
+('user5', '$2a$10$9wJfmWynHb/LiMV1MoAlxucfgTkMQE5fC4r1LCjtZKWvDUlhCpwNS', 1, 1, 1);
 
 INSERT INTO `motor_service_service`.`user_role`
 (`user_id`, `role_id`)

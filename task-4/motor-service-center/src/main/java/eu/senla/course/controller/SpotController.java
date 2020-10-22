@@ -6,18 +6,16 @@ import eu.senla.course.dto.spot.SpotDto;
 import eu.senla.course.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-final public class SpotController {
+public class SpotController {
 
     private ISpotService service;
     private static SpotController instance;
-
-    private SpotController() {
-    }
 
     public static SpotController getInstance() {
         if (instance == null) {
@@ -61,11 +59,13 @@ final public class SpotController {
         return service.getSpotById(id);
     }
 
+    @PreAuthorize("hasAuthority('delete')")
     @DeleteMapping("/spots/{id}")
     public void deleteSpot(@PathVariable int id) {
         service.deleteSpot(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('delete', 'write')")
     @PutMapping("/spots")
     public void updateSpot(@RequestBody SpotDto spotDto) throws ServiceException {
         service.updateSpot(spotDto);

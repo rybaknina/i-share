@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final IUserService userService;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, IUserService userService) {
-        this.setAuthenticationManager(authenticationManager);
+        this.authenticationManager = authenticationManager;
         this.userService = userService;
     }
 

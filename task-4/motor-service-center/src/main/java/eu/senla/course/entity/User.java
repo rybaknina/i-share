@@ -17,6 +17,13 @@ public class User implements IEntity, UserDetails {
     private String username;
     private String password;
     private boolean active;
+    @Column(name = "account_non_expired")
+    private boolean accountNonExpired;
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked;
+    @Column(name = "credentials_non_expired")
+    private boolean credentialsNonExpired;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -42,17 +49,17 @@ public class User implements IEntity, UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     @Override

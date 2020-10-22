@@ -18,6 +18,9 @@ public class UserDto implements IEntity, UserDetails {
     private String username;
     private String password;
     private boolean active;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
     private List<RoleDto> roleDtoList = new ArrayList<>();
 
     public UserDto() {
@@ -33,6 +36,9 @@ public class UserDto implements IEntity, UserDetails {
                 roleDtoList.add(new RoleDto(role));
             }
         }
+        this.accountNonExpired = user.isAccountNonExpired();
+        this.accountNonLocked = user.isAccountNonLocked();
+        this.credentialsNonExpired = user.isCredentialsNonExpired();
     }
 
     @Override
@@ -91,17 +97,17 @@ public class UserDto implements IEntity, UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     @Override

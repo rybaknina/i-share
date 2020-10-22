@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenService {
     private final static int TOKEN_EXPIRATION_TIME = 5 * 60 * 60 * 1000;
-
     private final static String TOKEN_KEY = "qwerty123";
     private final static String AUTHORITIES_KEY = "authorities";
 
@@ -25,17 +24,19 @@ public class JwtTokenService {
         final String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .claim(AUTHORITIES_KEY, authorities)
                 .setSubject(authentication.getName())
                 .signWith(SignatureAlgorithm.HS256, TOKEN_KEY)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
-                .compact();
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME));
+        String token = builder.compact();
+        return token;
     }
 
     String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        String subject = getClaimFromToken(token, Claims::getSubject);
+        return subject;
     }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {

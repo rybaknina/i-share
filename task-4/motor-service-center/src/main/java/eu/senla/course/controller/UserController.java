@@ -21,11 +21,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
-    public void save(@RequestBody UserDto userDto) throws ServiceException {
-        userService.save(userDto);
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/users")
     public List<UserDto> getUsers() {

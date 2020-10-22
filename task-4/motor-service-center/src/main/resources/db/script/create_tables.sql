@@ -107,6 +107,9 @@ CREATE TABLE IF NOT EXISTS `motor_service_service`.`user` (
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `active` TINYINT NOT NULL DEFAULT 1,
+  `account_non_expired` TINYINT NOT NULL DEFAULT 1,
+  `account_non_locked` TINYINT NOT NULL DEFAULT 1,
+  `credentials_non_expired` TINYINT NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`))
   ENGINE = InnoDB;
 

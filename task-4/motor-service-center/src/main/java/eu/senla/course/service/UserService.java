@@ -22,10 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("userService")
@@ -71,11 +68,11 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userRepository.findByUsername(username);
-        if (user == null) {
+        Optional<User> user = this.userRepository.findByUsername(username);
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
-        UserDto userDto = new UserDto(user);
+        UserDto userDto = new UserDto(user.get());
         return new org.springframework.security.core.userdetails.User(userDto.getUsername(), userDto.getPassword(), getAuthority(userDto));
     }
 
@@ -97,7 +94,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Transactional
     public void save(UserDto userDto) throws ServiceException {
         try {
-            if (this.userRepository.findByUsername(userDto.getUsername()) != null) {
+            if (this.userRepository.findByUsername(userDto.getUsername()).isPresent()) {
                 throw new ServiceException("User already exist with username " + userDto.getUsername());
             }
             this.userRepository.add(this.userDtoToEntity(userDto));
