@@ -1,7 +1,6 @@
 package by.ryni.share;
 
-import by.ryni.share.dto.schedule.ScheduleDto;
-import by.ryni.share.dto.schedule.ScheduleShortDto;
+import by.ryni.share.dto.ScheduleDto;
 import by.ryni.share.entity.Schedule;
 import by.ryni.share.mapper.ScheduleMapper;
 import by.ryni.share.repository.ScheduleRepository;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service("scheduleService")
-public class DefaultScheduleService extends AbstractService<ScheduleDto, ScheduleShortDto, Schedule, ScheduleRepository> implements ScheduleService {
+public class DefaultScheduleService extends AbstractService<ScheduleDto, Schedule, ScheduleRepository> implements ScheduleService {
     @Autowired
     public DefaultScheduleService(@Qualifier("scheduleRepository") ScheduleRepository repository, ScheduleMapper mapper) {
         super(repository, mapper);

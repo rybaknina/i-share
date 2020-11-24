@@ -1,7 +1,6 @@
 package by.ryni.share;
 
-import by.ryni.share.dto.base.AbstractDto;
-import by.ryni.share.dto.base.AbstractShortDto;
+import by.ryni.share.dto.AbstractDto;
 import by.ryni.share.ecxeption.RepositoryException;
 import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.AbstractEntity;
@@ -14,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractService<D extends AbstractDto, H extends AbstractShortDto, E extends AbstractEntity, R extends GenericRepository<E>> implements GenericService<D> {
+public abstract class AbstractService<D extends AbstractDto, E extends AbstractEntity, R extends GenericRepository<E>> implements GenericService<D> {
     private R repository;
-    private GenericMapper<D, H, E> mapper;
+    private GenericMapper<D, E> mapper;
 
-    public AbstractService(R repository, GenericMapper<D, H, E> mapper) {
+    public AbstractService(R repository, GenericMapper<D, E> mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

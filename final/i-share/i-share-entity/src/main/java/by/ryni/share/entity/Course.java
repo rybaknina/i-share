@@ -26,7 +26,8 @@ public class Course extends AbstractEntity {
     private boolean active;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theme_id", insertable = false, updatable = false)
+    @JoinColumn(name = "theme_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Theme theme;
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -150,5 +151,13 @@ public class Course extends AbstractEntity {
 
     public void setFeedbacks(List<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

@@ -1,5 +1,7 @@
 package by.ryni.share.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -11,10 +13,12 @@ public class Donate extends AbstractEntity {
     private Timestamp creationDate;
     private BigDecimal donation;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", insertable = false, updatable = false)
+    @JoinColumn(name = "course_id",  referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Course course;
 
     public Donate() {

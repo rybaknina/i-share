@@ -1,7 +1,6 @@
 package by.ryni.share;
 
-import by.ryni.share.dto.role.RoleDto;
-import by.ryni.share.dto.role.RoleShortDto;
+import by.ryni.share.dto.RoleDto;
 import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.Role;
 import by.ryni.share.mapper.RoleMapper;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service("roleService")
-public class DefaultRoleService extends AbstractService<RoleDto, RoleShortDto, Role, RoleRepository> implements RoleService {
+public class DefaultRoleService extends AbstractService<RoleDto, Role, RoleRepository> implements RoleService {
 
     private RoleRepository repository;
 

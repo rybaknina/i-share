@@ -1,6 +1,6 @@
 package by.ryni.share.service;
 
-import by.ryni.share.dto.base.AbstractDto;
+import by.ryni.share.dto.AbstractDto;
 import by.ryni.share.ecxeption.ServiceException;
 
 import java.util.List;

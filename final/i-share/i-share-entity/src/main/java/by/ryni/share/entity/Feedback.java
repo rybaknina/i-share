@@ -1,5 +1,7 @@
 package by.ryni.share.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -12,13 +14,16 @@ public class Feedback extends AbstractEntity {
     private Timestamp postedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", insertable = false, updatable = false)
+    @JoinColumn(name = "lesson_id",  referencedColumnName = "id")
+    @JsonBackReference
     private Lesson lesson;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", insertable = false, updatable = false)
+    @JoinColumn(name = "course_id",  referencedColumnName = "id")
+    @JsonBackReference
     private Course course;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id",  referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private User user;
 
     public Feedback() {

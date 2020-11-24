@@ -1,9 +1,10 @@
-package by.ryni.share;
+package by.ryni.share.controller;
 
-import by.ryni.share.dto.user.UserDto;
-import by.ryni.share.dto.user.UserLogin;
+import by.ryni.share.dto.UserDto;
+import by.ryni.share.dto.UserLogin;
 import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.JwtToken;
+import by.ryni.share.entity.User;
 import by.ryni.share.jwt.JwtHelper;
 import by.ryni.share.service.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,7 +39,7 @@ public class LoginController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping(path = "/login")
+    @PostMapping(path = "/authentication")
     public JwtToken login(@RequestBody UserLogin userLogin) {
         UserDetails userDetails;
         try {
@@ -66,6 +68,11 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody UserDto userDto, Principal principal) {
         // TODO: Check username already exist
+
+        Optional<User> user = userService.findByUsername(userDto.getUsername());
+        if (user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User already exist");
+        }
         try {
             userService.save(userDto);
             return new ResponseEntity<>(HttpStatus.OK);

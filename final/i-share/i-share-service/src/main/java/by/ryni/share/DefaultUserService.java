@@ -1,8 +1,7 @@
 package by.ryni.share;
 
-import by.ryni.share.dto.role.RoleShortDto;
-import by.ryni.share.dto.user.UserDto;
-import by.ryni.share.dto.user.UserShortDto;
+import by.ryni.share.dto.RoleDto;
+import by.ryni.share.dto.UserDto;
 import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.User;
 import by.ryni.share.enums.UserRole;
@@ -26,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service("userService")
-public class DefaultUserService extends AbstractService<UserDto, UserShortDto, User, UserRepository> implements UserService {
+public class DefaultUserService extends AbstractService<UserDto, User, UserRepository> implements UserService {
     private final static String PREFIX = "ROLE_";
     private UserRepository repository;
     private RoleRepository roleRepository;
@@ -70,7 +69,7 @@ public class DefaultUserService extends AbstractService<UserDto, UserShortDto, U
     @Override
     public void save(UserDto userDto) throws ServiceException {
         userDto.setPassword(encoder.encode(userDto.getPassword()));
-        RoleShortDto userRole = roleMapper.entityToShortDto(roleRepository.findByName(UserRole.USER.name()).get());
+        RoleDto userRole = roleMapper.entityToDto(roleRepository.findByName(UserRole.USER.name()).get());
         userDto.setRoles(new HashSet<>(Collections.singletonList(userRole)));
         super.save(userDto);
     }
@@ -89,13 +88,14 @@ public class DefaultUserService extends AbstractService<UserDto, UserShortDto, U
             throw new UsernameNotFoundException("Invalid username or password.");
         }
         UserDto userDto = userMapper.entityToDto(user.get());
+//        userDto.setPassword(encoder.);
         return new org.springframework.security.core.userdetails.User(userDto.getUsername(), userDto.getPassword(), getAuthority(userDto));
     }
 
     private Set<SimpleGrantedAuthority> getAuthority(UserDto userDto) {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         if (userDto.getRoles() != null) {
-            for (RoleShortDto role: userDto.getRoles()) {
+            for (RoleDto role: userDto.getRoles()) {
                 authorities.add(new SimpleGrantedAuthority(PREFIX + role.getName()));
             }
         }

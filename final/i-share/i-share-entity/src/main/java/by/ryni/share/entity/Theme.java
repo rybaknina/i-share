@@ -12,7 +12,8 @@ public class Theme extends AbstractEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chapter_id", insertable = false, updatable = false)
+    @JoinColumn(name = "chapter_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Chapter chapter;
 
     // TODO: Maybe rewrite to owner_id

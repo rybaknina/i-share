@@ -1,5 +1,7 @@
 package by.ryni.share.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -11,7 +13,8 @@ public class Schedule extends AbstractEntity {
     private byte period;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", insertable = false, updatable = false)
+    @JoinColumn(name = "lesson_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Lesson lesson;
 
     public Schedule() {

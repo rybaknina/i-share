@@ -4,6 +4,8 @@ import by.ryni.share.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,12 +14,15 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +32,8 @@ import javax.annotation.Resource;
         prePostEnabled = true
 )
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
+    private static final String AUTHORITY_PREFIX = ""; //"ROLE_";
+    private static final String CLAIM_AUTHORITIES = "authorities";
     @Resource(name = "userService")
     private UserService userService;
 
@@ -45,24 +51,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().formLogin().disable()
                 .logout().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .authorizeRequests()
+                .antMatchers("/authentication", "/register",
+                        "/v3/api-docs",           // swagger
+                        "/v3/api-docs/**",        // swagger
+                        "/webjars/**",            // swagger-ui webjars
+                        "/swagger-resources/**",  // swagger-ui resources
+                        "/configuration/**")
+                .permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .authorizeRequests(configurer ->
-                        configurer
-                             .antMatchers("/login", "/register",
-                             "/v3/api-docs",           // swagger
-                              "/v3/api-docs/**",       // swagger
-                              "/webjars/**",           // swagger-ui webjars
-                             "/swagger-resources/**",  // swagger-ui resources
-                             "/configuration/**"       // swagger configuration
-                              ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        // TODO: Did not work with @Pre..@Post..etc..hrrr...
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(unauthorizedHandler())
-                );
+                .oauth2ResourceServer()
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())) //jwtAuthenticationConverter()
+                .authenticationEntryPoint(unauthorizedHandler()).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Autowired
@@ -72,6 +74,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
+//        web.ignoring().antMatchers("/v3/api-docs",
+//                "/swagger-ui.html",
+//                "/swagger-ui/**");
         web.ignoring().antMatchers("/v3/api-docs", "/configuration/**",
                 "/swagger-resources/**",  "/swagger-ui/**", "/webjars/**", "/api-docs/**", "/swagger-ui.html");
     }
@@ -81,16 +86,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("username");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-        //grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
-
+    private Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter());
         return jwtAuthenticationConverter;
+    }
+
+    private Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter() {
+        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+        converter.setAuthorityPrefix(AUTHORITY_PREFIX);
+        converter.setAuthoritiesClaimName(CLAIM_AUTHORITIES);
+        return converter;
     }
 }

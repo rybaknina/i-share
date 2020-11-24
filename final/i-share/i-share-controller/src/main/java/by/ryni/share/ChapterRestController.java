@@ -1,26 +1,29 @@
 package by.ryni.share;
 
-import by.ryni.share.controller.ChapterController;
-import by.ryni.share.dto.chapter.ChapterDto;
+import by.ryni.share.dto.ChapterDto;
+import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.User;
+import by.ryni.share.handler.ResponseEntityError;
 import by.ryni.share.mapper.UserMapper;
 import by.ryni.share.service.ChapterService;
 import by.ryni.share.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/chapter")
-public class ChapterRestController extends AbstractRestController<ChapterDto, ChapterService> implements ChapterController {
+@RequestMapping("/chapters")
+public class ChapterRestController {
+    private Logger logger = LogManager.getLogger(ChapterRestController.class);
     private ChapterService chapterService;
     private UserService userService;
     private UserMapper userMapper;
@@ -40,32 +43,62 @@ public class ChapterRestController extends AbstractRestController<ChapterDto, Ch
         this.chapterService = chapterService;
     }
 
-    //TODO: add all logic
-
-    @Override
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody ChapterDto chapterDto, Authentication authentication) {
+    public ResponseEntity<Object> save(@RequestBody ChapterDto dto, Authentication authentication) {
         if (authentication == null) {
+            logger.error("Authentication is not valid");
             throw new AuthenticationCredentialsNotFoundException("Authentication is not valid");
         }
-        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
-        Map<String, Object> attributes = token.getTokenAttributes();
 
-        Optional<User> user = userService.findByUsername(attributes.get("username").toString());
+        Optional<User> user = userService.findByUsername(authentication.getName());
         if (!user.isPresent()) {
+            logger.error("Owner is not found");
             throw new UsernameNotFoundException("Owner is not found");
         }
-        chapterDto.setOwner(userMapper.entityToShortDto(user.get()));
-        return super.save(chapterDto, authentication);
+        dto.setOwner(userMapper.entityToDto(user.get()));
+        try {
+            chapterService.save(dto);
+            return ResponseEntity.ok(dto);
+        } catch (ServiceException e) {
+            return ResponseEntityError
+                    .objectResponseEntity(logger, "Service exception " + e.getMessage(), e.getLocalizedMessage());
+        }
     }
-//    @PostFilter("filterObject.owner.username == authentication.name")
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable int id) {
+        try {
+            chapterService.delete(id);
+            return ResponseEntity.ok(id);
+        } catch (ServiceException e) {
+            return ResponseEntityError
+                    .objectResponseEntity(logger, "Service exception " + e.getMessage(), e.getLocalizedMessage());
+        }
+    }
+
+    @PatchMapping
+    public ResponseEntity<Object> update(@RequestBody ChapterDto dto) {
+        try {
+            chapterService.update(dto);
+            return ResponseEntity.ok(dto);
+        } catch (ServiceException e) {
+            return ResponseEntityError
+                    .objectResponseEntity(logger, "Service exception " + e.getMessage(), e.getLocalizedMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable int id) {
+        return ResponseEntity.ok(chapterService.getById(id).get());
+    }
+
+    //TODO: add all logic
+
+    @PostFilter("filterObject.owner.username == authentication.name or hasRole('ADMIN')")
     // TODO: PostAuthorize etc.. did not work
-//    @PostAuthorize("hasRole('ADMIN')")
-//    @Secured("ROLE_ADMIN")
-//    @PreAuthorize("permitAll()")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    @Override
     public @ResponseBody List<ChapterDto> getAll() {
-        return super.getAll();
+        return chapterService.getAll();
     }
 }

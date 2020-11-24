@@ -1,6 +1,6 @@
 package by.ryni.share.service;
 
-import by.ryni.share.dto.donate.DonateDto;
+import by.ryni.share.dto.DonateDto;
 
 public interface DonateService extends GenericService<DonateDto> {
 }

@@ -13,9 +13,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
-//@EnableOpenApi
 @ComponentScan(basePackages = {"org.springdoc"})
-//@EnableWebMvc
 //@Import({SpringDataRestConfiguration.class, BeanValidatorPluginsConfiguration.class})
 public class SwaggerConfiguration extends WebMvcConfigurationSupport {
     private final static String PATH_PATTERNS = "swagger-ui.html";

@@ -1,6 +1,7 @@
 package by.ryni.share.entity;
 
 import by.ryni.share.enums.LessonType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -18,7 +19,8 @@ public class Lesson extends AbstractEntity {
     private boolean active;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", insertable = false, updatable = false)
+    @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Course course;
 
     @OneToMany //(mappedBy = "lesson", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
