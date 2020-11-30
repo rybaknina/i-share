@@ -1,20 +1,28 @@
 package by.ryni.share.dto;
 
 import by.ryni.share.enums.DonateType;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class CourseDto extends AbstractDto {
+    @NotEmpty
+    @Size(min = 10, max = 255, message = "{course.name.bad.size}")
     private String title;
+    @NotEmpty
     private String content;
-    private Byte level;
-    private Byte limitMembers;
-    private DonateType donateType;
-    private BigDecimal amount;
-    private boolean active;
-    private ThemeDto theme;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Digits(integer = 1, fraction = 0, message = "{course.level.not.valid}")
+    private Byte level = 0;
+    @Min(0)
+    @Max(127)
+    private Byte limitMembers = 0;
+    private DonateType donateType = DonateType.FREE;
+    private BigDecimal amount = BigDecimal.ZERO;
+    private Boolean active = true;
+    @NotNull
+    private int themeId;
+    @JsonIgnore
     private UserDto owner;
 
     public CourseDto() {
@@ -52,11 +60,11 @@ public class CourseDto extends AbstractDto {
         this.limitMembers = limitMembers;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -76,12 +84,12 @@ public class CourseDto extends AbstractDto {
         this.amount = amount;
     }
 
-    public ThemeDto getTheme() {
-        return theme;
+    public int getThemeId() {
+        return themeId;
     }
 
-    public void setTheme(ThemeDto theme) {
-        this.theme = theme;
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
     }
 
     public UserDto getOwner() {

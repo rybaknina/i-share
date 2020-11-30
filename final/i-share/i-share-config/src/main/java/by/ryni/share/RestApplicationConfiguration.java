@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @EnableWebMvc
 @ComponentScan("by.ryni.share")
-@PropertySource({"classpath:/hibernate.properties", "classpath:/application.properties"})
+@PropertySource({"classpath:hibernate.properties", "classpath:application.properties"})
 public class RestApplicationConfiguration {
     private static final String dateFormat = "yyyy-MM-dd";
     private static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";

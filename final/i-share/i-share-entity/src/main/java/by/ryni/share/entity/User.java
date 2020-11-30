@@ -11,17 +11,18 @@ import java.util.*;
 @Entity
 @Table(name = "user")
 public class User extends AbstractEntity implements UserDetails {
+    @Column(name = "username", nullable = false, updatable = false)
     private String username;
     private String password;
     private String email;
     private Date birthday;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", updatable = false, insertable = false)
     private Set<Chapter> chapters = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", updatable = false, insertable = false)
     private Set<Theme> themes = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

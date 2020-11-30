@@ -1,7 +1,7 @@
 package by.ryni.share;
 
 import by.ryni.share.entity.Schedule;
-import by.ryni.share.repository.ScheduleRepository;
+import by.ryni.share.api.ScheduleRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository("scheduleRepository")

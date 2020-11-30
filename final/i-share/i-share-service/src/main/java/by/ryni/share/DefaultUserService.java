@@ -1,15 +1,18 @@
 package by.ryni.share;
 
+import by.ryni.share.dto.ProfileDto;
 import by.ryni.share.dto.RoleDto;
 import by.ryni.share.dto.UserDto;
-import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.User;
 import by.ryni.share.enums.UserRole;
+import by.ryni.share.exception.RepositoryException;
+import by.ryni.share.exception.ServiceException;
+import by.ryni.share.mapper.ProfileMapper;
 import by.ryni.share.mapper.RoleMapper;
 import by.ryni.share.mapper.UserMapper;
-import by.ryni.share.repository.RoleRepository;
-import by.ryni.share.repository.UserRepository;
-import by.ryni.share.service.UserService;
+import by.ryni.share.api.RoleRepository;
+import by.ryni.share.api.UserRepository;
+import by.ryni.share.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +33,7 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     private UserRepository repository;
     private RoleRepository roleRepository;
     private UserMapper userMapper;
+    private ProfileMapper profileMapper;
     private RoleMapper roleMapper;
     private PasswordEncoder encoder;
 
@@ -51,8 +55,13 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     }
 
     @Autowired
-    public void setMapper(UserMapper userMapper) {
+    public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setProfileMapper(ProfileMapper profileMapper) {
+        this.profileMapper = profileMapper;
     }
 
     @Autowired
@@ -68,6 +77,10 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     @Transactional
     @Override
     public void save(UserDto userDto) throws ServiceException {
+        Optional<User> user = this.repository.findByUsername(userDto.getUsername());
+        if (user.isPresent()) {
+            throw new ServiceException("User already exists");
+        }
         userDto.setPassword(encoder.encode(userDto.getPassword()));
         RoleDto userRole = roleMapper.entityToDto(roleRepository.findByName(UserRole.USER.name()).get());
         userDto.setRoles(new HashSet<>(Collections.singletonList(userRole)));
@@ -88,7 +101,6 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
             throw new UsernameNotFoundException("Invalid username or password.");
         }
         UserDto userDto = userMapper.entityToDto(user.get());
-//        userDto.setPassword(encoder.);
         return new org.springframework.security.core.userdetails.User(userDto.getUsername(), userDto.getPassword(), getAuthority(userDto));
     }
 
@@ -100,5 +112,33 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
             }
         }
         return authorities;
+    }
+
+    @Transactional
+    @Override
+    public void updateProfile(ProfileDto profileDto, String username) throws ServiceException {
+        profileDto.setUsername(username);
+        Optional<User> findUser = this.repository.findByUsername(username);
+        if (!findUser.isPresent()) {
+            throw new UsernameNotFoundException("User does not found.");
+        }
+        profileDto.setPassword(encoder.encode(profileDto.getPassword()));
+        User user = profileMapper.dtoToEntity(profileDto, findUser.get());
+        try {
+            repository.update(user);
+        } catch (RepositoryException e) {
+            throw new ServiceException("Repository exception " + e.getLocalizedMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<ProfileDto> getProfile(String username) {
+        Optional<User> user = repository.findByUsername(username);
+        if (!user.isPresent()) {
+            return Optional.empty();
+        }
+        ProfileDto profileDto = profileMapper.entityToDto(user.get());
+        return Optional.ofNullable(profileDto);
     }
 }

@@ -1,13 +1,17 @@
 package by.ryni.share.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class ChapterDto extends AbstractDto {
+    @NotEmpty
+    @Size(min = 10, max = 255, message = "{chapter.name.bad.size}")
     private String name;
     private String description;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private UserDto owner;
-//    private int ownerId;
 
     public ChapterDto() {
     }

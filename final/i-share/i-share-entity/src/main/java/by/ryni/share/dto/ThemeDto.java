@@ -1,12 +1,18 @@
 package by.ryni.share.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ThemeDto extends AbstractDto {
+    @NotNull
+    @Size(min = 10, max = 255, message = "{theme.name.bad.size}")
     private String name;
     private String description;
-    private ChapterDto chapter;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @NotNull
+    private int chapterId;
+    @JsonIgnore
     private UserDto owner;
 
     public ThemeDto() {
@@ -28,12 +34,12 @@ public class ThemeDto extends AbstractDto {
         this.description = description;
     }
 
-    public ChapterDto getChapter() {
-        return chapter;
+    public int getChapterId() {
+        return chapterId;
     }
 
-    public void setChapter(ChapterDto chapter) {
-        this.chapter = chapter;
+    public void setChapterId(int chapterId) {
+        this.chapterId = chapterId;
     }
 
     public UserDto getOwner() {

@@ -1,8 +1,8 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.RoleDto;
-import by.ryni.share.ecxeption.ServiceException;
-import by.ryni.share.service.RoleService;
+import by.ryni.share.exception.ServiceException;
+import by.ryni.share.api.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/roles")
 public class RoleRestController {
@@ -34,7 +35,7 @@ public class RoleRestController {
     public ResponseEntity<Object> delete(@PathVariable int id) {
         try {
             roleService.delete(id);
-            return ResponseEntity.ok(id);
+            return ResponseEntity.ok("Object deleted successfully");
         } catch (ServiceException e) {
             return ResponseEntity.badRequest().body(id);
         }
@@ -55,8 +56,6 @@ public class RoleRestController {
         return roleService.getById(id).get();
     }
 
-    //TODO: add more security
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public @ResponseBody List<RoleDto> getAll() {
         return roleService.getAll();

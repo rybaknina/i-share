@@ -1,12 +1,15 @@
 package by.ryni.share.dto;
 
-import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.NotEmpty;
 
 public class FeedbackDto extends AbstractDto {
+    @NotEmpty
     private String text;
-    private Timestamp postedDate;
-    private LessonDto lesson;
-    private CourseDto course;
+    private int lessonId;
+    private int courseId;
+    @JsonIgnore
     private UserDto user;
 
     public FeedbackDto() {
@@ -20,28 +23,20 @@ public class FeedbackDto extends AbstractDto {
         this.text = text;
     }
 
-    public Timestamp getPostedDate() {
-        return postedDate;
+    public int getLessonId() {
+        return lessonId;
     }
 
-    public void setPostedDate(Timestamp postedDate) {
-        this.postedDate = postedDate;
+    public void setLessonId(int lessonId) {
+        this.lessonId = lessonId;
     }
 
-    public LessonDto getLesson() {
-        return lesson;
+    public int getCourseId() {
+        return courseId;
     }
 
-    public void setLesson(LessonDto lesson) {
-        this.lesson = lesson;
-    }
-
-    public CourseDto getCourse() {
-        return course;
-    }
-
-    public void setCourse(CourseDto course) {
-        this.course = course;
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public UserDto getUser() {

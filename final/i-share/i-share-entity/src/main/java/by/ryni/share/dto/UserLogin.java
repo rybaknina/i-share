@@ -3,8 +3,12 @@ package by.ryni.share.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotEmpty;
+
 public class UserLogin {
+    @NotEmpty(message = "{user.username.not.empty}")
     private String username;
+    @NotEmpty(message = "{user.password.not.empty}")
     private String password;
 
     public String getUsername() {

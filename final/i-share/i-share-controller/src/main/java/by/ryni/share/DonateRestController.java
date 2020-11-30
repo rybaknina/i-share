@@ -1,15 +1,18 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.DonateDto;
-import by.ryni.share.ecxeption.ServiceException;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.handler.ResponseEntityError;
-import by.ryni.share.service.DonateService;
+import by.ryni.share.helper.UserHelper;
+import by.ryni.share.api.DonateService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,6 +20,12 @@ import java.util.List;
 public class DonateRestController {
     private Logger logger = LogManager.getLogger(DonateRestController.class);
     private DonateService donateService;
+    private UserHelper userHelper;
+
+    @Autowired
+    public void setUserHelper(UserHelper userHelper) {
+        this.userHelper = userHelper;
+    }
 
     @Autowired
     public void setDonateService(DonateService donateService) {
@@ -24,7 +33,8 @@ public class DonateRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody DonateDto dto) {
+    public ResponseEntity<Object> donate(@RequestBody DonateDto dto, Principal principal) {
+        dto.setUser(userHelper.setCurrentUser(logger, principal));
         try {
             donateService.save(dto);
             return ResponseEntity.ok(dto);
@@ -34,6 +44,7 @@ public class DonateRestController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable int id) {
         try {
@@ -45,6 +56,7 @@ public class DonateRestController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping
     public ResponseEntity<Object> update(@RequestBody DonateDto dto) {
         try {
@@ -56,11 +68,13 @@ public class DonateRestController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable int id) {
         return ResponseEntity.ok(donateService.getById(id).get());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public @ResponseBody
     List<DonateDto> getAll() {

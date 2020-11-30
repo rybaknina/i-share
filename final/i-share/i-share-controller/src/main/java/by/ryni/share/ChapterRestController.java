@@ -1,22 +1,17 @@
 package by.ryni.share;
 
+import by.ryni.share.api.ChapterService;
 import by.ryni.share.dto.ChapterDto;
-import by.ryni.share.ecxeption.ServiceException;
-import by.ryni.share.entity.User;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.handler.ResponseEntityError;
-import by.ryni.share.mapper.UserMapper;
-import by.ryni.share.service.ChapterService;
-import by.ryni.share.service.UserService;
+import by.ryni.share.helper.UserHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,37 +20,21 @@ import java.util.Optional;
 public class ChapterRestController {
     private Logger logger = LogManager.getLogger(ChapterRestController.class);
     private ChapterService chapterService;
-    private UserService userService;
-    private UserMapper userMapper;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private UserHelper userHelper;
 
     @Autowired
     public void setChapterService(ChapterService chapterService) {
         this.chapterService = chapterService;
     }
 
-    @PostMapping
-    public ResponseEntity<Object> save(@RequestBody ChapterDto dto, Authentication authentication) {
-        if (authentication == null) {
-            logger.error("Authentication is not valid");
-            throw new AuthenticationCredentialsNotFoundException("Authentication is not valid");
-        }
+    @Autowired
+    public void setUserHelper(UserHelper userHelper) {
+        this.userHelper = userHelper;
+    }
 
-        Optional<User> user = userService.findByUsername(authentication.getName());
-        if (!user.isPresent()) {
-            logger.error("Owner is not found");
-            throw new UsernameNotFoundException("Owner is not found");
-        }
-        dto.setOwner(userMapper.entityToDto(user.get()));
+    @PostMapping
+    public ResponseEntity<Object> save(@RequestBody ChapterDto dto, Principal principal) {
+        dto.setOwner(userHelper.setCurrentUser(logger, principal));
         try {
             chapterService.save(dto);
             return ResponseEntity.ok(dto);
@@ -77,7 +56,12 @@ public class ChapterRestController {
     }
 
     @PatchMapping
-    public ResponseEntity<Object> update(@RequestBody ChapterDto dto) {
+    public ResponseEntity<Object> update(@RequestBody ChapterDto dto, Principal principal) {
+        Optional<ChapterDto> chapterDto = chapterService.getById(dto.getId());
+        if (!chapterDto.isPresent() ||
+                !chapterDto.get().getOwner().getUsername().equals(principal.getName())) {
+            return ResponseEntity.badRequest().body("You are not authorize for this operation");
+        }
         try {
             chapterService.update(dto);
             return ResponseEntity.ok(dto);
@@ -89,16 +73,15 @@ public class ChapterRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable int id) {
-        return ResponseEntity.ok(chapterService.getById(id).get());
+        Optional<ChapterDto> chapterDto = chapterService.getById(id);
+        return chapterDto.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().body("Chapter does not exists"));
     }
 
-    //TODO: add all logic
-
-    @PostFilter("filterObject.owner.username == authentication.name or hasRole('ADMIN')")
-    // TODO: PostAuthorize etc.. did not work
-//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public @ResponseBody List<ChapterDto> getAll() {
         return chapterService.getAll();
     }
+
+    //TODO: add all logic
 }

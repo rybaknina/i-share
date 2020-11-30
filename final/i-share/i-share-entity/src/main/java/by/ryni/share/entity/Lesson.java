@@ -1,7 +1,6 @@
 package by.ryni.share.entity;
 
 import by.ryni.share.enums.LessonType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -16,16 +15,13 @@ public class Lesson extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private LessonType type;
     private byte level;
-    private boolean active;
+    private Boolean active;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
-    private Course course;
+    @Column(name = "course_id", nullable = false)
+    private int courseId;
 
-    @OneToMany //(mappedBy = "lesson", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    //@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
-    @JoinColumn(name = "schedule_id")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id", updatable = false, insertable = false)
     private Set<Schedule> schedules = new HashSet<>();
 
     public Lesson() {
@@ -63,20 +59,20 @@ public class Lesson extends AbstractEntity {
         this.level = level;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
-    public Course getCourse() {
-        return course;
+    public int getCourseId() {
+        return courseId;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public Set<Schedule> getSchedules() {

@@ -3,7 +3,7 @@ package by.ryni.share;
 import by.ryni.share.entity.Role;
 import by.ryni.share.entity.User;
 import by.ryni.share.entity.User_;
-import by.ryni.share.repository.UserRepository;
+import by.ryni.share.api.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

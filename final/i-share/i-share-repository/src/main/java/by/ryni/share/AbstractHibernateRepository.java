@@ -1,8 +1,8 @@
 package by.ryni.share;
 
-import by.ryni.share.ecxeption.RepositoryException;
 import by.ryni.share.entity.AbstractEntity;
-import by.ryni.share.repository.GenericRepository;
+import by.ryni.share.exception.RepositoryException;
+import by.ryni.share.api.GenericRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +55,8 @@ public abstract class AbstractHibernateRepository<E extends AbstractEntity> impl
 
     @Override
     public void update(E entity) throws RepositoryException {
-        if (entity == null) {
+        E findEntity = entityManager.find(entityClass, entity.getId());
+        if (findEntity == null) {
             throw new RepositoryException("Entity does not exist");
         }
         entityManager.merge(entity);

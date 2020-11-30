@@ -1,6 +1,6 @@
 package by.ryni.share;
 
-import by.ryni.share.service.UserService;
+import by.ryni.share.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authentication", "/register",
                         "/v3/api-docs",           // swagger
+                        "/v3/api-docs**",
                         "/v3/api-docs/**",        // swagger
                         "/webjars/**",            // swagger-ui webjars
                         "/swagger-resources/**",  // swagger-ui resources
@@ -74,9 +75,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-//        web.ignoring().antMatchers("/v3/api-docs",
-//                "/swagger-ui.html",
-//                "/swagger-ui/**");
         web.ignoring().antMatchers("/v3/api-docs", "/configuration/**",
                 "/swagger-resources/**",  "/swagger-ui/**", "/webjars/**", "/api-docs/**", "/swagger-ui.html");
     }

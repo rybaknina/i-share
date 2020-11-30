@@ -7,7 +7,7 @@ import java.io.Serializable;
 public abstract class AbstractEntity implements Serializable {
     private static final long serialVersionUID = -1061232114240373193L;
     @Id
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 

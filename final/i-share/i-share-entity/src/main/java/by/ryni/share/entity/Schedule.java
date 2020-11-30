@@ -1,21 +1,20 @@
 package by.ryni.share.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "schedule")
 public class Schedule extends AbstractEntity {
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private Timestamp startDate;
-    private byte period;
+    @Column(name = "period", nullable = false)
+    private byte period = 30;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
-    private Lesson lesson;
+    @Column(name = "lesson_id", nullable = false)
+    private int lessonId;
 
     public Schedule() {
     }
@@ -36,11 +35,11 @@ public class Schedule extends AbstractEntity {
         this.period = period;
     }
 
-    public Lesson getLesson() {
-        return lesson;
+    public int getLessonId() {
+        return lessonId;
     }
 
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
+    public void setLessonId(int lessonId) {
+        this.lessonId = lessonId;
     }
 }

@@ -1,6 +1,9 @@
 package by.ryni.share.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class RoleDto extends AbstractDto {
+    @NotEmpty
     private String name;
 
     public RoleDto() {

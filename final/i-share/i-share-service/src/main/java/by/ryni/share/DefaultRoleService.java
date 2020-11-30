@@ -1,11 +1,11 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.RoleDto;
-import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.Role;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.mapper.RoleMapper;
-import by.ryni.share.repository.RoleRepository;
-import by.ryni.share.service.RoleService;
+import by.ryni.share.api.RoleRepository;
+import by.ryni.share.api.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

@@ -1,12 +1,12 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.AbstractDto;
-import by.ryni.share.ecxeption.RepositoryException;
-import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.AbstractEntity;
+import by.ryni.share.exception.RepositoryException;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.mapper.GenericMapper;
-import by.ryni.share.repository.GenericRepository;
-import by.ryni.share.service.GenericService;
+import by.ryni.share.api.GenericRepository;
+import by.ryni.share.api.GenericService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -37,6 +37,9 @@ public abstract class AbstractService<D extends AbstractDto, E extends AbstractE
     @Override
     public void delete(int id) throws ServiceException {
         try {
+            if (!repository.getById(id).isPresent()) {
+                throw new ServiceException("Entity does not exists");
+            }
             repository.delete(id);
         } catch (RepositoryException e) {
             throw new ServiceException("Repository exception " + e.getMessage());
@@ -48,7 +51,10 @@ public abstract class AbstractService<D extends AbstractDto, E extends AbstractE
     public Optional<D> update(D dto) throws ServiceException {
         Optional<D> updatedDto;
         try {
-            repository.update(mapper.dtoToEntity(dto));
+            if (!repository.getById(dto.getId()).isPresent()) {
+                throw new ServiceException("Entity does not exists");
+            }
+            repository.update(mapper.dtoToEntity(dto, repository.getById(dto.getId()).get()));
             updatedDto = repository.getById(dto.getId()).map(e -> mapper.entityToDto(e));
         } catch (RepositoryException e) {
             throw new ServiceException("Repository exception " + e.getMessage());

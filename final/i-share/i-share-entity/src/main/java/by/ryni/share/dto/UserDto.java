@@ -5,14 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class UserDto extends AbstractDto {
 
+    @NotEmpty(message = "{user.username.not.empty}")
     private String username;
+    @NotEmpty(message = "{user.password.not.empty}")
     private String password;
+    @Email(message = "{user.email.not.valid}")
     private String email;
     @JsonProperty
     @DateTimeFormat(pattern = "dd-MM-yyyy")
@@ -21,7 +26,7 @@ public class UserDto extends AbstractDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<RoleDto> roles = new HashSet<>();
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private boolean enabled = true;
+    private Boolean enabled = true;
 
     public UserDto() {
     }
@@ -46,7 +51,7 @@ public class UserDto extends AbstractDto {
         this.birthday = birthday;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -58,6 +63,7 @@ public class UserDto extends AbstractDto {
     public String getPassword() {
         return password;
     }
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public void setPassword(String password) {
         this.password = password;
@@ -71,7 +77,7 @@ public class UserDto extends AbstractDto {
         this.roles = roles;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 }

@@ -1,9 +1,9 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.ScheduleDto;
-import by.ryni.share.ecxeption.ServiceException;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.handler.ResponseEntityError;
-import by.ryni.share.service.ScheduleService;
+import by.ryni.share.api.ScheduleService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +60,6 @@ public class ScheduleRestController {
     public ResponseEntity<Object> getById(@PathVariable int id) {
         return ResponseEntity.ok(scheduleService.getById(id).get());
     }
-
-    //TODO: add all logic
 
     @GetMapping
     public @ResponseBody List<ScheduleDto> getAll() {

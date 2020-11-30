@@ -4,15 +4,6 @@
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
-    <!--<changeSet id="drop-db" author="Nin">-->
-        <!--<sql>DROP database IF EXISTS `i_share`;</sql>-->
-    <!--</changeSet>-->
-    <!--<changeSet id="update-db" author="Nin">-->
-        <!--<sql>UPDATE DATABASECHANGELOGLOCK SET LOCKED=0;</sql>-->
-    <!--</changeSet>-->
-    <!--<changeSet id="create-db" author="Nin">-->
-        <!--<sql>CREATE database IF NOT EXISTS `i_share` DEFAULT CHARACTER SET utf8;</sql>-->
-    <!--</changeSet>-->
 
     <changeSet author="Nin" id="1605689415557-1">
         <preConditions onFail="MARK_RAN">
@@ -45,9 +36,9 @@
             </column>
             <column name="title" type="VARCHAR(255)"/>
             <column name="content" type="MEDIUMTEXT"/>
-            <column defaultValueBoolean="true" name="level" type="BIT(1)"/>
+            <column defaultValueBoolean="true" name="level" type="TINYINT(1)"/>
             <column defaultValueNumeric="0" name="limit_members" type="TINYINT(3)"/>
-            <column defaultValueNumeric="1" name="active" type="TINYINT(3)">
+            <column defaultValueNumeric="1" name="active" type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="donate_type" type="VARCHAR(45)"/>
@@ -78,7 +69,6 @@
             <column name="course_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="donate_id" type="INT"/>
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-4">
@@ -98,7 +88,6 @@
             <column name="user_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="feedback_id" type="INT"/>
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-5">
@@ -116,14 +105,15 @@
             <column name="type" type="VARCHAR(45)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueBoolean="true" name="level" type="BIT(1)">
+            <column defaultValueBoolean="true" name="level" type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueBoolean="true" name="active" type="BIT(1)">
+            <column defaultValueBoolean="true" name="active" type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
-            <column name="course_id" type="INT"/>
-            <column name="lesson_id" type="INT"/>
+            <column name="course_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-6">
@@ -156,7 +146,6 @@
             <column name="lesson_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="schedule_id" type="INT"/>
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-8">
@@ -179,7 +168,6 @@
             <column name="owner_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="theme_id" type="INT"/>
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-9">
@@ -200,23 +188,22 @@
             </column>
             <column name="email" type="VARCHAR(255)"/>
             <column name="birthday" type="date"/>
-            <column defaultValueNumeric="1" name="enabled" type="BIT(1)">
+            <column defaultValueNumeric="1" name="enabled" type="TINYINT(1)">
             <constraints nullable="false"/>
         </column>
             <column defaultValueNumeric="1"
                     name="account_non_expired"
-                    type="BIT(1)">
+                    type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueNumeric="1" name="account_non_locked" type="BIT(1)">
+            <column defaultValueNumeric="1" name="account_non_locked" type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
             <column defaultValueNumeric="1"
                     name="credentials_non_expired"
-                    type="BIT(1)">
+                    type="TINYINT(1)">
                 <constraints nullable="false"/>
             </column>
-
         </createTable>
     </changeSet>
     <changeSet author="Nin" id="1605689415557-10">

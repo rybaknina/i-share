@@ -1,11 +1,29 @@
 package by.ryni.share.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 public class ScheduleDto extends AbstractDto {
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private Timestamp startDate;
+    @NotNull
+    @Digits(integer = 2, fraction = 0)
+    @Min(15)
+    @Max(99)
     private byte period;
-    private LessonDto lesson;
+    @NotNull
+    private int lessonId;
 
     public ScheduleDto() {
     }
@@ -26,11 +44,11 @@ public class ScheduleDto extends AbstractDto {
         this.period = period;
     }
 
-    public LessonDto getLesson() {
-        return lesson;
+    public int getLessonId() {
+        return lessonId;
     }
 
-    public void setLesson(LessonDto lesson) {
-        this.lesson = lesson;
+    public void setLessonId(int lessonId) {
+        this.lessonId = lessonId;
     }
 }

@@ -1,7 +1,7 @@
 package by.ryni.share;
 
 import by.ryni.share.entity.Feedback;
-import by.ryni.share.repository.FeedbackRepository;
+import by.ryni.share.api.FeedbackRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository("feedbackRepository")

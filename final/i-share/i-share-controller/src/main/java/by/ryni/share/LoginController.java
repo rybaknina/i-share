@@ -2,11 +2,11 @@ package by.ryni.share.controller;
 
 import by.ryni.share.dto.UserDto;
 import by.ryni.share.dto.UserLogin;
-import by.ryni.share.ecxeption.ServiceException;
 import by.ryni.share.entity.JwtToken;
-import by.ryni.share.entity.User;
+import by.ryni.share.exception.ServiceException;
+import by.ryni.share.handler.ResponseEntityError;
 import by.ryni.share.jwt.JwtHelper;
-import by.ryni.share.service.UserService;
+import by.ryni.share.api.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -20,10 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,18 +65,13 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody UserDto userDto, Principal principal) {
-        // TODO: Check username already exist
-
-        Optional<User> user = userService.findByUsername(userDto.getUsername());
-        if (user.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User already exist");
-        }
+    public ResponseEntity<Object> register(@Valid @RequestBody UserDto userDto) {
         try {
             userService.save(userDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ServiceException e) {
-            return ResponseEntity.badRequest().body(userDto);
+            return ResponseEntityError
+                    .objectResponseEntity(logger, "Service exception " + e.getMessage(), e.getLocalizedMessage());
         }
     }
 }

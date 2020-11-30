@@ -1,7 +1,7 @@
 package by.ryni.share;
 
 import by.ryni.share.entity.Role;
-import by.ryni.share.repository.RoleRepository;
+import by.ryni.share.api.RoleRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

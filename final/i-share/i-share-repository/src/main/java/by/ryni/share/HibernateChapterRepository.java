@@ -1,7 +1,7 @@
 package by.ryni.share;
 
 import by.ryni.share.entity.Chapter;
-import by.ryni.share.repository.ChapterRepository;
+import by.ryni.share.api.ChapterRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository("chapterRepository")

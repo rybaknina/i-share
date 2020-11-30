@@ -23,15 +23,13 @@ public class Course extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private DonateType donateType;
     private BigDecimal amount;
-    private boolean active;
+    private Boolean active;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theme_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
-    private Theme theme;
+    @Column(name = "theme_id", nullable = false)
+    private int themeId;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id")
+    @JoinColumn(name = "lesson_id", updatable = false, insertable = false)
     private Set<Lesson> lessons = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -41,16 +39,15 @@ public class Course extends AbstractEntity {
     private Set<User> members = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "donate_id")
+    @JoinColumn(name = "donate_id", updatable = false, insertable = false)
     private List<Donate> donates = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedback_id")
+    @JoinColumn(name = "feedback_id", updatable = false, insertable = false)
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    // TODO: Maybe rewrite to owner_id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false, updatable = false)
     @JsonBackReference
     private User owner;
 
@@ -89,11 +86,11 @@ public class Course extends AbstractEntity {
         this.limitMembers = limitMembers;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -113,12 +110,12 @@ public class Course extends AbstractEntity {
         this.amount = amount;
     }
 
-    public Theme getTheme() {
-        return theme;
+    public int getThemeId() {
+        return themeId;
     }
 
-    public void setTheme(Theme theme) {
-        this.theme = theme;
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
     }
 
     public Set<Lesson> getLessons() {

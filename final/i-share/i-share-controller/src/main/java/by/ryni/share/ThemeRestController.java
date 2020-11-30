@@ -1,15 +1,17 @@
 package by.ryni.share;
 
 import by.ryni.share.dto.ThemeDto;
-import by.ryni.share.ecxeption.ServiceException;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.handler.ResponseEntityError;
-import by.ryni.share.service.ThemeService;
+import by.ryni.share.helper.UserHelper;
+import by.ryni.share.api.ThemeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,14 +19,21 @@ import java.util.List;
 public class ThemeRestController {
     private Logger logger = LogManager.getLogger(ThemeRestController.class);
     private ThemeService themeService;
+    private UserHelper userHelper;
 
     @Autowired
     public void setThemeService(ThemeService themeService) {
         this.themeService = themeService;
     }
 
+    @Autowired
+    public void setUserHelper(UserHelper userHelper) {
+        this.userHelper = userHelper;
+    }
+
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody ThemeDto dto) {
+    public ResponseEntity<Object> save(@RequestBody ThemeDto dto, Principal principal) {
+        dto.setOwner(userHelper.setCurrentUser(logger, principal));
         try {
             themeService.save(dto);
             return ResponseEntity.ok(dto);
@@ -60,8 +69,6 @@ public class ThemeRestController {
     public ResponseEntity<Object> getById(@PathVariable int id) {
         return ResponseEntity.ok(themeService.getById(id).get());
     }
-
-    //TODO: add all logic
 
     @GetMapping
     public @ResponseBody List<ThemeDto> getAll() {

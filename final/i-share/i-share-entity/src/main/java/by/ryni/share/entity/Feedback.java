@@ -1,6 +1,7 @@
 package by.ryni.share.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,19 +11,16 @@ import java.sql.Timestamp;
 public class Feedback extends AbstractEntity {
     @Column(columnDefinition = "TEXT")
     private String text;
-    @Column(name = "posted_date")
+    @Column(name = "posted_date", nullable = false, updatable = false)
+    @CreationTimestamp
     private Timestamp postedDate;
+    @Column(name = "lesson_id", updatable = false)
+    private int lessonId;
+    @Column(name = "course_id", updatable = false)
+    private int courseId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id",  referencedColumnName = "id")
-    @JsonBackReference
-    private Lesson lesson;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id",  referencedColumnName = "id")
-    @JsonBackReference
-    private Course course;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",  referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id",  referencedColumnName = "id", nullable = false, updatable = false)
     @JsonBackReference
     private User user;
 
@@ -45,20 +43,20 @@ public class Feedback extends AbstractEntity {
         this.postedDate = postedDate;
     }
 
-    public Lesson getLesson() {
-        return lesson;
+    public int getLessonId() {
+        return lessonId;
     }
 
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
+    public void setLessonId(int lessonId) {
+        this.lessonId = lessonId;
     }
 
-    public Course getCourse() {
-        return course;
+    public int getCourseId() {
+        return courseId;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public User getUser() {

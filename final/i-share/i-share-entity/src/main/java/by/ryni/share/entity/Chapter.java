@@ -10,20 +10,17 @@ import java.util.Set;
 @Table(name = "chapter")
 public class Chapter extends AbstractEntity {
     private String name;
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theme_id")
+    @JoinColumn(name = "theme_id", updatable = false, insertable = false)
     private Set<Theme> themes = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false, updatable = false)
     @JsonBackReference
     private User owner;
-    // TODO: Maybe rewrite to owner_id
-//    @Column(name = "owner_id")
-//    private int ownerId;
 
     public Chapter() {
     }

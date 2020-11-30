@@ -15,13 +15,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>i-share-api</module>
         <module>i-share-config</module>
         <module>i-share-entity</module>
         <module>i-share-repository</module>
         <module>i-share-service</module>
         <module>i-share-controller</module>
-        <module>i-share-util</module>
     </modules>
 
     <properties>
@@ -36,9 +34,7 @@
         <maven.checkstyle.version>3.1.1</maven.checkstyle.version>
         <jpamodelgen.version>5.4.21.Final</jpamodelgen.version>
         <liquibase.version>4.2.0</liquibase.version>
-        <!--<tomcat.version>9.0.0.39</tomcat.version>-->
         <maven.tomcat.port>8085</maven.tomcat.port>
-        <!--<querydsl.version>4.4.0</querydsl.version>-->
         <spring.security.version>5.4.1</spring.security.version>
     </properties>
     <build>
@@ -63,8 +59,8 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven.checkstyle.version}</version>
                 <configuration>
-                    <configLocation>../../resources/checkstyle.xml</configLocation>
-                    <propertyExpansion>checkstyle.config.path=../../resources</propertyExpansion>
+                    <configLocation>../i-share/src/main/resources/checkstyle.xml</configLocation>
+                    <propertyExpansion>checkstyle.config.path=../i-share/src/main/resources</propertyExpansion>
                     <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>
@@ -175,6 +171,15 @@
             <artifactId>spring-aop</artifactId>
             <version>5.3.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.6.Final</version>
+        </dependency>
     </dependencies>
 </project>

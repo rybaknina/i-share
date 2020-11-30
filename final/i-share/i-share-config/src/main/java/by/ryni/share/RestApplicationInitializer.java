@@ -24,7 +24,7 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
         Configurator.setRootLevel(Level.ERROR);
 
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-        ctx.register(RestApplicationConfiguration.class, JwtConfiguration.class,
+        ctx.register(RestApplicationConfiguration.class, JwtConfiguration.class, MessageSourceConfiguration.class,
                 HibernateConfiguration.class, SecurityConfiguration.class, SwaggerConfiguration.class,
                 org.springdoc.core.SwaggerUiConfigProperties.class, org.springdoc.core.SwaggerUiOAuthProperties.class,
                 org.springdoc.core.SpringDocConfiguration.class, org.springdoc.core.SpringDocConfigProperties.class,

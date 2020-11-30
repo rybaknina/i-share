@@ -1,9 +1,10 @@
 package by.ryni.share;
 
+import by.ryni.share.api.LessonService;
 import by.ryni.share.dto.LessonDto;
-import by.ryni.share.ecxeption.ServiceException;
+import by.ryni.share.exception.ServiceException;
 import by.ryni.share.handler.ResponseEntityError;
-import by.ryni.share.service.LessonService;
+import by.ryni.share.helper.SearchHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,16 @@ import java.util.List;
 public class LessonRestController {
     private Logger logger = LogManager.getLogger(LessonRestController.class);
     private LessonService lessonService;
+    private SearchHelper searchHelper;
 
     @Autowired
     public void setLessonService(LessonService lessonService) {
         this.lessonService = lessonService;
+    }
+
+    @Autowired
+    public void setSearchHelper(SearchHelper searchHelper) {
+        this.searchHelper = searchHelper;
     }
 
     @PostMapping
@@ -61,12 +68,14 @@ public class LessonRestController {
         return ResponseEntity.ok(lessonService.getById(id).get());
     }
 
-    //TODO: add all logic
+    @GetMapping("/search")
+    public @ResponseBody List<LessonDto> search(@RequestParam(value = "search", required = false) String search) {
+        return lessonService.search(searchHelper.getParams(search));
+    }
 
     @GetMapping
     public @ResponseBody
     List<LessonDto> getAll() {
         return lessonService.getAll();
     }
-    //TODO: add all logic
 }

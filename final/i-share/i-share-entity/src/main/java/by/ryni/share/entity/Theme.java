@@ -8,17 +8,14 @@ import javax.persistence.*;
 @Table(name = "theme")
 public class Theme extends AbstractEntity {
     private String name;
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chapter_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
-    private Chapter chapter;
+    @Column(name = "chapter_id", nullable = false)
+    private int chapterId;
 
-    // TODO: Maybe rewrite to owner_id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "owner_id",  referencedColumnName = "id", nullable = false, updatable = false)
     @JsonBackReference
     private User owner;
 
@@ -41,12 +38,12 @@ public class Theme extends AbstractEntity {
         this.description = description;
     }
 
-    public Chapter getChapter() {
-        return chapter;
+    public int getChapterId() {
+        return chapterId;
     }
 
-    public void setChapter(Chapter chapter) {
-        this.chapter = chapter;
+    public void setChapterId(int chapterId) {
+        this.chapterId = chapterId;
     }
 
     public User getOwner() {
