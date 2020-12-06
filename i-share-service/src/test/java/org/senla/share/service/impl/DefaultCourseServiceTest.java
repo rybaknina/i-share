@@ -56,7 +56,6 @@ class DefaultCourseServiceTest {
         courseDtoList.add(courseDto);
     }
 
-
     @AfterEach
     void tearDown() {
         courseList.clear();

@@ -29,7 +29,7 @@ import java.util.Set;
 @Service("userService")
 public class DefaultUserService extends AbstractService<UserDto, User, UserRepository> implements UserService {
     private final static String PREFIX = "";
-    private UserRepository repository;
+    private UserRepository userRepository;
     private UserMapper userMapper;
     private ProfileMapper profileMapper;
     private RoleService roleService;
@@ -37,14 +37,14 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     private PasswordEncoder encoder;
 
     @Autowired
-    public DefaultUserService(@Qualifier("userRepository") UserRepository repository, UserMapper userMapper) {
-        super(repository, userMapper);
+    public DefaultUserService(@Qualifier("userRepository") UserRepository userRepository, UserMapper userMapper) {
+        super(userRepository, userMapper);
     }
 
     @Autowired
     @Qualifier("userRepository")
-    public void setRepository(UserRepository repository) {
-        this.repository = repository;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Autowired
@@ -76,7 +76,7 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     @Transactional
     @Override
     public Optional<UserDto> save(UserDto userDto) {
-        Optional<User> user = this.repository.findByUsername(userDto.getUsername());
+        Optional<User> user = this.userRepository.findByUsername(userDto.getUsername());
         if (!user.isPresent()) {
             userDto.setPassword(encoder.encode(userDto.getPassword()));
             RoleDto userRole = roleService.findByName(UserRole.USER.name()).get();
@@ -90,13 +90,13 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByUsername(String username) {
-        return repository.findByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = this.repository.findByUsername(username);
+        Optional<User> user = this.userRepository.findByUsername(username);
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
@@ -118,7 +118,7 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
     @Override
     public Optional<ProfileDto> updateProfile(ProfileDto profileDto, String username) {
         profileDto.setUsername(username);
-        Optional<User> findUser = this.repository.findByUsername(username);
+        Optional<User> findUser = this.userRepository.findByUsername(username);
         if (!findUser.isPresent()) {
             throw new UsernameNotFoundException("User does not found.");
         }
@@ -126,13 +126,13 @@ public class DefaultUserService extends AbstractService<UserDto, User, UserRepos
             profileDto.setPassword(encoder.encode(profileDto.getPassword()));
         }
         User user = profileMapper.dtoToEntity(profileDto, findUser.get());
-        return Optional.ofNullable(profileMapper.entityToDto(repository.update(user).get()));
+        return Optional.ofNullable(profileMapper.entityToDto(userRepository.update(user).get()));
     }
 
     @Transactional(readOnly = true)
     @Override
     public Optional<ProfileDto> getProfile(String username) {
-        Optional<User> user = repository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
         if (!user.isPresent()) {
             return Optional.empty();
         }

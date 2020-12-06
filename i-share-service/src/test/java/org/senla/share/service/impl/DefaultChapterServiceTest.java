@@ -49,7 +49,6 @@ class DefaultChapterServiceTest {
         chapterDtoList.add(chapterDto);
     }
 
-
     @AfterEach
     void tearDown() {
         chapterList.clear();

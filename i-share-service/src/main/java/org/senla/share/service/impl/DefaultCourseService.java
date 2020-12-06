@@ -127,15 +127,6 @@ public class DefaultCourseService extends AbstractService<CourseDto, Course, Cou
                 if (!find) {
                     User user = userService.findByUsername(username).get();
                     Role userRole = roleMapper.dtoToEntity(roleService.findByName(UserRole.MEMBER.name()).get());
-//                    Predicate<String> predicate = Predicate.isEqual(userRole.getName());
-//                    boolean hasRole = false;
-//                    for (Role role : user.getRoles()) {
-//                        String name = role.getName();
-//                        if (predicate.test(name)) {
-//                            hasRole = true;
-//                            break;
-//                        }
-//                    }
                     if (user.getRoles().stream().map(Role::getName).noneMatch(Predicate.isEqual(userRole.getName()))) {
                         user.getRoles().add(userRole);
                     }
