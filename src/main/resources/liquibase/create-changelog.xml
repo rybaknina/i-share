@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet author="Nin" id="1605689415557-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="chapter"/>
+            </not>
+        </preConditions>
+        <createTable tableName="chapter">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="MEDIUMTEXT"/>
+            <column name="owner_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="course"/>
+            </not>
+        </preConditions>
+        <createTable tableName="course">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="content" type="MEDIUMTEXT"/>
+            <column defaultValueBoolean="true" name="level" type="TINYINT(1)"/>
+            <column defaultValueNumeric="0" name="limit_members" type="TINYINT(3)"/>
+            <column defaultValueNumeric="1" name="active" type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="donate_type" type="VARCHAR(45)"/>
+            <column defaultValueComputed="0.00" name="amount" type="DECIMAL(17, 2)"/>
+            <column name="theme_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="donate"/>
+            </not>
+        </preConditions>
+        <createTable tableName="donate">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="timestamp"/>
+            <column name="donation" type="DECIMAL(17, 2)"/>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="feedback"/>
+            </not>
+        </preConditions>
+        <createTable tableName="feedback">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="text" type="TEXT"/>
+            <column name="posted_date" type="timestamp"/>
+            <column name="lesson_id" type="INT"/>
+            <column name="course_id" type="INT"/>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="lesson"/>
+            </not>
+        </preConditions>
+        <createTable tableName="lesson">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="content" type="LONGTEXT"/>
+            <column name="type" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="level" type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="active" type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="role"/>
+            </not>
+        </preConditions>
+        <createTable tableName="role">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="schedule"/>
+            </not>
+        </preConditions>
+        <createTable tableName="schedule">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="start_date" type="timestamp"/>
+            <column name="period" type="TINYINT(3)"/>
+            <column name="lesson_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="theme"/>
+            </not>
+        </preConditions>
+        <createTable tableName="theme">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="MEDIUMTEXT"/>
+            <column name="chapter_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-9">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="username" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="birthday" type="date"/>
+            <column defaultValueNumeric="1" name="enabled" type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1"
+                    name="account_non_expired"
+                    type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="account_non_locked" type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1"
+                    name="credentials_non_expired"
+                    type="TINYINT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-10">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_course"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_course">
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="course_id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Nin" id="1605689415557-11">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_role"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_role">
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="role_id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

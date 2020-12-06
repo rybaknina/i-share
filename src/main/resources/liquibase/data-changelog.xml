@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="Nina" id="insert-role-1">
+        <insert tableName="role">
+            <column name="name" value="ADMIN"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-role-2">
+        <insert tableName="role">
+            <column name="name" value="USER"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-role-3">
+        <insert tableName="role">
+            <column name="name" value="TRAINER"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-role-4">
+        <insert tableName="role">
+            <column name="name" value="MEMBER"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-user-1">
+        <insert tableName="user">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$0urFLIUOpA2PARSG/4eDruMUugv/wWFVsjtpGYiZjdLhcax1kEQUC"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-user_role-1">
+        <insert tableName="user_role">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-user-2">
+        <insert tableName="user">
+            <column name="username" value="user1"/>
+            <column name="password" value="$2a$10$UdEvZ85sKpNEJ8jIlr1l8.urnnbFYEh2nfdtBpoTq9D3Bu7U69RDa"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-user_role-2">
+        <insert tableName="user_role">
+            <column name="user_id" value="2"/>
+            <column name="role_id" value="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-user-3">
+        <insert tableName="user">
+            <column name="username" value="user2"/>
+            <column name="password" value="$2a$10$ki/BggYl1yQ9GGGk5.ei7uCCKDg0gWvwhFVvkI6nrO6LhfvfJW/Eq"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-user_role-3">
+        <insert tableName="user_role">
+            <column name="user_id" value="3"/>
+            <column name="role_id" value="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-chapter-1">
+        <insert tableName="chapter">
+            <column name="name" value="Mathematics for all"/>
+            <column name="description" value="Mathematics for all ages"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-chapter-2">
+        <insert tableName="chapter">
+            <column name="name" value="Programming for children"/>
+            <column name="description" value="Programming for children"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-1">
+        <insert tableName="theme">
+            <column name="name" value="Numbers point 1"/>
+            <column name="description" value="Numbers from 0 to 10"/>
+            <column name="chapter_id" value="1"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-2">
+        <insert tableName="theme">
+            <column name="name" value="Numbers point 2"/>
+            <column name="description" value="Numbers from 11 to 20"/>
+            <column name="chapter_id" value="1"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Nina" id="insert-theme-3">
+        <insert tableName="theme">
+            <column name="name" value="Simple comparison"/>
+            <column name="description" value="Simple comparison"/>
+            <column name="chapter_id" value="1"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-4">
+        <insert tableName="theme">
+            <column name="name" value="Simple addition"/>
+            <column name="description" value="Simple addition"/>
+            <column name="chapter_id" value="1"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-5">
+        <insert tableName="theme">
+            <column name="name" value="Scratch - first steps"/>
+            <column name="description" value="Introduction to scratch"/>
+            <column name="chapter_id" value="2"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-6">
+        <insert tableName="theme">
+            <column name="name" value="Scratch - first cartoon"/>
+            <column name="description" value="The first cartoon"/>
+            <column name="chapter_id" value="2"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Nina" id="insert-theme-7">
+        <insert tableName="theme">
+            <column name="name" value="Scratch - first game"/>
+            <column name="description" value="The first game"/>
+            <column name="chapter_id" value="2"/>
+            <column name="owner_id" value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
